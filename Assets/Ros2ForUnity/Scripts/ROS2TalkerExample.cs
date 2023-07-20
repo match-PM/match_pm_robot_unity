@@ -40,7 +40,7 @@ public class ROS2TalkerExample : MonoBehaviour
             if (ros2Node == null)
             {
                 ros2Node = ros2Unity.CreateNode("ROS2UnityTalkerNode");
-                chatter_pub = ros2Node.CreatePublisher<std_msgs.msg.String>("chatter_test");
+                chatter_pub = ros2Node.CreatePublisher<std_msgs.msg.String>("chatter");
             }
 
             i++;
@@ -49,7 +49,6 @@ public class ROS2TalkerExample : MonoBehaviour
             chatter_pub.Publish(msg);
         }
     }
-
 }
 
 }  // namespace ROS2

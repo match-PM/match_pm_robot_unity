@@ -14,7 +14,6 @@
 
 using System;
 using UnityEngine;
-//using RosMessageTypes.Moveit;
 
 namespace ROS2
 {
@@ -26,9 +25,7 @@ public class ROS2ListenerExample : MonoBehaviour
 {
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
-    private ISubscription<sensor_msgs.msg.JointState> chatter_sub;
-
-    //private Double[] position;
+    private ISubscription<std_msgs.msg.String> chatter_sub;
 
     void Start()
     {
@@ -40,16 +37,9 @@ public class ROS2ListenerExample : MonoBehaviour
         if (ros2Node == null && ros2Unity.Ok())
         {
             ros2Node = ros2Unity.CreateNode("ROS2UnityListenerNode");
-            chatter_sub = ros2Node.CreateSubscription<sensor_msgs.msg.JointState>(
-              "/joint_states", msg => current_Position(msg.Name, msg.Position));//Debug.Log("Unity listener heard: [" + msg.Position[1] + "]"));
-
-            //Debug.Log(position[1].ToString());
+            chatter_sub = ros2Node.CreateSubscription<std_msgs.msg.String>(
+              "chatter", msg => Debug.Log("Unity listener heard: [" + msg.Data + "]"));
         }
-    }
-
-    private void current_Position(String[] name, Double[] position)
-    {
-        Debug.Log("Joint: " + name[1] + "Position: " + position[1]);
     }
 }
 
