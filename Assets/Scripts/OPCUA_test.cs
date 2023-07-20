@@ -16,7 +16,36 @@ public class OPCUA_test : MonoBehaviour
     async void Start()
     {
         await InitClient();
-        await ConnectToServer("opc.tcp://localhost:4840/");
+        await ConnectToServer("opc.tcp://PC1M0484-1:4840/");
+    }
+
+    async void Update()
+    {
+        // NodeId of the data point you want to read
+        NodeId nodeId = new NodeId(50241, 0);
+
+        // New value you want to write
+        object newValue = 100;
+        
+        // CancellationTokenSource
+        CancellationTokenSource cts = new CancellationTokenSource();
+
+        // Call WriteData function
+        //StatusCode status = await WriteData(nodeId, newValue, cts.Token);
+
+        DataValue dataValue = await ReadData(nodeId, cts.Token);
+
+        Debug.Log("Value read from server: "+ dataValue.Value);
+
+        // Handle the returned status
+        // if (StatusCode.IsGood(status))
+        // {
+        //     Debug.Log("Successfully wrote value to server");
+        // }
+        // else
+        // {
+        //     Debug.Log("Failed to write value to server");
+        // }
     }
 
     async Task InitClient()
@@ -52,31 +81,6 @@ public class OPCUA_test : MonoBehaviour
 
         session = await Session.Create(config, endpoint, false, "", 60000, null, null);
         Debug.Log("Connected to OPC UA server");
-    }
-
-    async void Update()
-    {
-        // NodeId of the data point you want to read
-        NodeId nodeId = new NodeId(50885, 0);
-
-        // New value you want to write
-        object newValue = 100;
-        
-        // CancellationTokenSource
-        CancellationTokenSource cts = new CancellationTokenSource();
-
-        // Call WriteData function
-        StatusCode status = await WriteData(nodeId, newValue, cts.Token);
-
-        // Handle the returned status
-        if (StatusCode.IsGood(status))
-        {
-            Debug.Log("Successfully wrote value to server");
-        }
-        else
-        {
-            Debug.Log("Failed to write value to server");
-        }
     }
 
     async Task<StatusCode> WriteData(NodeId nodeId, object value, CancellationToken ct)
