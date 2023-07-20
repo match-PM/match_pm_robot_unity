@@ -318,6 +318,13 @@
 -r:"/home/match-mover/Unity/Hub/Editor/2021.3.25f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Xml.XmlDocument.dll"
 -r:"/home/match-mover/Unity/Hub/Editor/2021.3.25f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Xml.XmlSerializer.dll"
 -r:"/home/match-mover/Unity/Hub/Editor/2021.3.25f1/Editor/Data/NetStandard/ref/2.1.0/netstandard.dll"
+-r:"Assets/Plugins/Microsoft.Extensions.DependencyInjection.Abstractions.dll"
+-r:"Assets/Plugins/Microsoft.Extensions.Logging.Abstractions.dll"
+-r:"Assets/Plugins/Opc.Ua.Client.dll"
+-r:"Assets/Plugins/Opc.Ua.Core.dll"
+-r:"Assets/Plugins/Opc.Ua.Security.Certificates.dll"
+-r:"Assets/Plugins/Opc.Ua.Server.dll"
+-r:"Assets/Plugins/System.Formats.Asn1.dll"
 -r:"Assets/Ros2ForUnity/Plugins/action_msgs_assembly.dll"
 -r:"Assets/Ros2ForUnity/Plugins/actionlib_msgs_assembly.dll"
 -r:"Assets/Ros2ForUnity/Plugins/builtin_interfaces_assembly.dll"
@@ -385,6 +392,7 @@
 "Assets/Scripts/Cam1_Publisher.cs"
 "Assets/Scripts/GetAxisName.cs"
 "Assets/Scripts/Joint_States_To_Axis.cs"
+"Assets/Scripts/OPCUA_test.cs"
 "Assets/Scripts/Update_Robot_URDF.cs"
 -langversion:9.0
 

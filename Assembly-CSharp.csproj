@@ -36,6 +36,7 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets/Scripts/OPCUA_test.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/Time/TimeUtils.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2TalkerExample.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/Sensor.cs" />
@@ -311,6 +312,9 @@
     <Reference Include="example_interfaces_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/example_interfaces_assembly.dll</HintPath>
     </Reference>
+    <Reference Include="Opc.Ua.Core">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Plugins/Opc.Ua.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.visualscripting@1.8.0/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
     </Reference>
@@ -323,8 +327,14 @@
     <Reference Include="std_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/std_msgs_assembly.dll</HintPath>
     </Reference>
+    <Reference Include="Opc.Ua.Client">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Plugins/Opc.Ua.Client.dll</HintPath>
+    </Reference>
     <Reference Include="AssimpNet">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.robotics.urdf-importer@90f353e435/Runtime/UnityMeshImporter/Plugins/AssimpNet/AssimpNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Server">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Plugins/Opc.Ua.Server.dll</HintPath>
     </Reference>
     <Reference Include="statistics_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/statistics_msgs_assembly.dll</HintPath>
@@ -338,11 +348,17 @@
     <Reference Include="geometry_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/geometry_msgs_assembly.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Plugins/Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="composition_interfaces_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/composition_interfaces_assembly.dll</HintPath>
     </Reference>
     <Reference Include="trajectory_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/trajectory_msgs_assembly.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Formats.Asn1">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Plugins/System.Formats.Asn1.dll</HintPath>
     </Reference>
     <Reference Include="stereo_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/stereo_msgs_assembly.dll</HintPath>
@@ -352,6 +368,9 @@
     </Reference>
     <Reference Include="visualization_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/visualization_msgs_assembly.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Security.Certificates">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Plugins/Opc.Ua.Security.Certificates.dll</HintPath>
     </Reference>
     <Reference Include="sensor_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/sensor_msgs_assembly.dll</HintPath>
@@ -370,6 +389,9 @@
     </Reference>
     <Reference Include="rosgraph_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/rosgraph_msgs_assembly.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Plugins/Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="builtin_interfaces_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/builtin_interfaces_assembly.dll</HintPath>
