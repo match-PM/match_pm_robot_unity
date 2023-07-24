@@ -13,7 +13,9 @@ public class OPCUA_test : MonoBehaviour
     private ApplicationConfiguration config;
     private Session session;
 
-    async void Start()
+    public DataValue coaxLightMessage;
+
+    async void Awake()
     {
         await InitClient();
         await ConnectToServer("opc.tcp://PC1M0484-1:4840/");
@@ -22,7 +24,9 @@ public class OPCUA_test : MonoBehaviour
     async void Update()
     {
         // NodeId of the data point you want to read
-        NodeId nodeId = new NodeId(50241, 0);
+        NodeId nodeId = new NodeId(50364, 0);
+
+        NodeId coaxLightNodeId = new NodeId(50364, 0);
 
         // New value you want to write
         object newValue = 100;
@@ -34,8 +38,10 @@ public class OPCUA_test : MonoBehaviour
         //StatusCode status = await WriteData(nodeId, newValue, cts.Token);
 
         DataValue dataValue = await ReadData(nodeId, cts.Token);
+        
+        coaxLightMessage = await ReadData(coaxLightNodeId, cts.Token);
 
-        Debug.Log("Value read from server: "+ dataValue.Value);
+        //Debug.Log("Value read from server: "+ coaxLightMessage.Value);
 
         // Handle the returned status
         // if (StatusCode.IsGood(status))
@@ -46,6 +52,44 @@ public class OPCUA_test : MonoBehaviour
         // {
         //     Debug.Log("Failed to write value to server");
         // }
+    }
+
+
+    async void OnApplicationQuit()
+    {
+        // Call a method to disconnect from the OPC UA server and release resources.
+        try
+        {
+            // Check if session is connected
+            if (session != null && session.Connected)
+            {
+                // Close the session
+                await session.CloseAsync();
+                Debug.Log("Disconnected from OPC UA server");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Error disconnecting from the server: " + e.Message);
+        }
+    }
+
+    private async Task DisconnectFromServer()
+    {
+        try
+        {
+            // Check if session is connected
+            if (session != null && session.Connected)
+            {
+                // Close the session
+                await session.CloseAsync();
+                Debug.Log("Disconnected from OPC UA server");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Error disconnecting from the server: " + e.Message);
+        }
     }
 
     async Task InitClient()

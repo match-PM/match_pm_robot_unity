@@ -40,6 +40,7 @@
      <Compile Include="Assets/Ros2ForUnity/Scripts/Time/TimeUtils.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2TalkerExample.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/Sensor.cs" />
+     <Compile Include="Assets/coaxLightControl.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2UnityComponent.cs" />
      <Compile Include="Assets/Scripts/Update_Robot_URDF.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ITimeSource.cs" />
@@ -58,8 +59,8 @@
      <Compile Include="Assets/Ros2ForUnity/Scripts/Transformations.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ListenerExample.cs" />
      <Compile Include="Assets/Scripts/GetAxisName.cs" />
-     <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
      <Compile Include="Assets/Scripts/OPCUA_Server.cs" />
+     <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
      <None Include="Assets/Ros2ForUnity/Plugins/metadata_ros2cs.xml" />
      <None Include="Assets/Scripts/nodeset_pm_server.xml" />
      <None Include="Assets/Ros2ForUnity/metadata_ros2_for_unity.xml" />
