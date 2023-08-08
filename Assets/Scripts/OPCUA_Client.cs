@@ -51,7 +51,6 @@ public class OPCUA_Client : MonoBehaviour
         CancellationTokenSource cts = new CancellationTokenSource();
 
         await updateNodeValues(cts);
-        Debug.Log(allNodes["NestNozzle"].childrenNodes["State"].nodeId);
     }
 
 
