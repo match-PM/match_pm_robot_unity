@@ -44,13 +44,6 @@ public class OPCUA_Client : MonoBehaviour
 
     async void Update()
     {
-        // NodeId of the data point you want to read
-        NodeId nodeId = new NodeId(50365, 2);
-
-        // NodeId coaxLightNodeId = new NodeId(50364, 0);
-        // NodeId ringLightNodeId = new NodeId(50365, 0);
-
-
         // New value you want to write
         object newValue = 100;
         
@@ -59,36 +52,6 @@ public class OPCUA_Client : MonoBehaviour
 
         await updateNodeValues(cts);
         Debug.Log(allNodes["NestNozzle"].childrenNodes["State"].nodeId);
-
-        
-        // Debug.Log(await ReadData(allNodes["Camera1"].childrenNodes["CoaxLight"].nodeId, cts.Token));
-        
-        
-        // Debug.Log(nodeID);
-
-        // Call WriteData function
-        //StatusCode status = await WriteData(nodeId, newValue, cts.Token);
-
-        // DataValue dataValue = await ReadData(nodeId, cts.Token);
-
-        // var d = await ReadData(nodeId, cts.Token);
-
-        // Debug.Log(d.Value);
-    
-        // coaxLightMessage = await ReadData(coaxLightNodeId, cts.Token);
-        // ringLightMessage = await ReadData(ringLightNodeId, cts.Token);
-        
-        //Debug.Log("Value read from server: "+ coaxLightMessage.Value);
-
-        // Handle the returned status
-        // if (StatusCode.IsGood(status))
-        // {
-        //     Debug.Log("Successfully wrote value to server");
-        // }
-        // else
-        // {
-        //     Debug.Log("Failed to write value to server");
-        // }
     }
 
 
