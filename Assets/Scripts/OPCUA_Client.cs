@@ -8,25 +8,48 @@ using Opc.Ua;
 using Opc.Ua.Client;
 using Opc.Ua.Configuration;
 
-public class OPCUA_test : MonoBehaviour
+public class OPCUA_Client : MonoBehaviour
 {
     private ApplicationConfiguration config;
     private Session session;
 
     public DataValue coaxLightMessage;
+    public DataValue ringLightMessage;
+
+    public class ChildNode
+    {
+        public NodeId nodeId {get; set;}
+        public DataValue result = new DataValue();
+    }
+    
+    public class NodeData
+    {
+        public NodeId nodeId {get; set;}
+        public Dictionary<string, ChildNode> childrenNodes {get; set;} 
+    }
+
+    public Dictionary<string, NodeData> allNodes;
+
+    public List<(string, string)> nodeNames = new List<(string, string)>();
+
+    public ReadValueIdCollection nodesToRead = new ReadValueIdCollection();
 
     async void Awake()
     {
         await InitClient();
-        await ConnectToServer("opc.tcp://PC1M0484-1:4840/");
+        // await ConnectToServer("opc.tcp://PC1M0484-1:4840/");
+        await ConnectToServer("opc.tcp://pmlab-101:4840");
+        allNodes = getAllNodes(session);
     }
 
     async void Update()
     {
         // NodeId of the data point you want to read
-        NodeId nodeId = new NodeId(50364, 0);
+        NodeId nodeId = new NodeId(50365, 2);
 
-        NodeId coaxLightNodeId = new NodeId(50364, 0);
+        // NodeId coaxLightNodeId = new NodeId(50364, 0);
+        // NodeId ringLightNodeId = new NodeId(50365, 0);
+
 
         // New value you want to write
         object newValue = 100;
@@ -34,13 +57,27 @@ public class OPCUA_test : MonoBehaviour
         // CancellationTokenSource
         CancellationTokenSource cts = new CancellationTokenSource();
 
+        await updateNodeValues(cts);
+        Debug.Log(allNodes["NestNozzle"].childrenNodes["State"].nodeId);
+
+        
+        // Debug.Log(await ReadData(allNodes["Camera1"].childrenNodes["CoaxLight"].nodeId, cts.Token));
+        
+        
+        // Debug.Log(nodeID);
+
         // Call WriteData function
         //StatusCode status = await WriteData(nodeId, newValue, cts.Token);
 
-        DataValue dataValue = await ReadData(nodeId, cts.Token);
-        
-        coaxLightMessage = await ReadData(coaxLightNodeId, cts.Token);
+        // DataValue dataValue = await ReadData(nodeId, cts.Token);
 
+        // var d = await ReadData(nodeId, cts.Token);
+
+        // Debug.Log(d.Value);
+    
+        // coaxLightMessage = await ReadData(coaxLightNodeId, cts.Token);
+        // ringLightMessage = await ReadData(ringLightNodeId, cts.Token);
+        
         //Debug.Log("Value read from server: "+ coaxLightMessage.Value);
 
         // Handle the returned status
@@ -179,6 +216,71 @@ public class OPCUA_test : MonoBehaviour
         {
             Debug.LogError("Error reading data: " + e.Message);
             return null;
+        }
+    }
+
+    public Dictionary<string, NodeData> getAllNodes(Session session)
+    {  
+        Dictionary<string, NodeData> nodeDataDict = new Dictionary<string, NodeData>();
+        var browseDescription = new BrowseDescription
+        {
+            NodeId = ObjectIds.ObjectsFolder,
+            BrowseDirection = BrowseDirection.Forward,
+            ReferenceTypeId = ReferenceTypeIds.HierarchicalReferences,
+            IncludeSubtypes = true,
+            NodeClassMask = (uint) NodeClass.Object | (uint) NodeClass.Variable,
+            ResultMask = (uint) BrowseResultMask.All
+        };
+
+        BrowseResultCollection results;
+        DiagnosticInfoCollection diagnosticInfos;
+        session.Browse(null, null, 0, new BrowseDescriptionCollection {browseDescription}, out results, out diagnosticInfos);
+        foreach (var result in results[0].References)
+        {
+            NodeData parentNodeData = new NodeData();
+            NodeId parentNodeID =  ExpandedNodeId.ToNodeId(result.NodeId, session.NamespaceUris);
+            parentNodeData.nodeId = parentNodeID;
+
+
+            Dictionary<string, ChildNode> childrenNodesDict = new Dictionary<string, ChildNode>();
+            var childBrowseDescription = new BrowseDescription
+            {
+                NodeId = parentNodeID,
+                BrowseDirection = BrowseDirection.Forward,
+                ReferenceTypeId = ReferenceTypeIds.HierarchicalReferences,
+                IncludeSubtypes = true,
+                NodeClassMask = (uint) NodeClass.Object | (uint) NodeClass.Variable,
+                ResultMask = (uint) BrowseResultMask.All
+            };
+            BrowseResultCollection childResults;
+            DiagnosticInfoCollection chidlDiagnosticInfos;
+            session.Browse(null, null, 0, new BrowseDescriptionCollection {childBrowseDescription}, out childResults, out chidlDiagnosticInfos);
+
+            foreach (var childResult in childResults[0].References)
+            {
+                ChildNode childNode = new ChildNode() {nodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris)};  
+                childrenNodesDict.Add(childResult.DisplayName.Text, childNode);
+                nodesToRead.Add(new ReadValueId{NodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris), AttributeId = Attributes.Value});
+            };
+            parentNodeData.childrenNodes = childrenNodesDict;
+            nodeDataDict.Add(result.DisplayName.Text, parentNodeData);
+            
+        }
+        return nodeDataDict;
+    }
+
+    async Task updateNodeValues(CancellationTokenSource cts)
+    {
+        ReadResponse response = await session.ReadAsync(null, 0, TimestampsToReturn.Both, nodesToRead, cts.Token);
+        int i = 0;
+
+        foreach(KeyValuePair<string, NodeData> parent in allNodes)
+        {
+            foreach(KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
+            {
+                allNodes[parent.Key].childrenNodes[child.Key].result = response.Results[i];
+                i+=1;
+            }
         }
     }
 }
