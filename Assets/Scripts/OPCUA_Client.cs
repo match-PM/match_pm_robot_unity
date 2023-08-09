@@ -13,9 +13,6 @@ public class OPCUA_Client : MonoBehaviour
     private ApplicationConfiguration config;
     private Session session;
 
-    public DataValue coaxLightMessage;
-    public DataValue ringLightMessage;
-
     public class ChildNode
     {
         public NodeId nodeId {get; set;}
@@ -28,11 +25,11 @@ public class OPCUA_Client : MonoBehaviour
         public Dictionary<string, ChildNode> childrenNodes {get; set;} 
     }
 
+
     public Dictionary<string, NodeData> allNodes;
-
     public List<(string, string)> nodeNames = new List<(string, string)>();
-
     public ReadValueIdCollection nodesToRead = new ReadValueIdCollection();
+
 
     async void Awake()
     {
@@ -226,7 +223,6 @@ public class OPCUA_Client : MonoBehaviour
             };
             parentNodeData.childrenNodes = childrenNodesDict;
             nodeDataDict.Add(result.DisplayName.Text, parentNodeData);
-            
         }
         return nodeDataDict;
     }
