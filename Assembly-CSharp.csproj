@@ -62,6 +62,7 @@
      <Compile Include="Assets/Scripts/OPCUA_Server.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
      <Compile Include="Assets/UtilityFunctions.cs" />
+     <Compile Include="Assets/Camera2LightControl.cs" />
      <None Include="Assets/Ros2ForUnity/Plugins/metadata_ros2cs.xml" />
      <None Include="Assets/Scripts/nodeset_pm_server.xml" />
      <None Include="Assets/Ros2ForUnity/metadata_ros2_for_unity.xml" />
