@@ -7,30 +7,17 @@ using System.Threading;
 using Opc.Ua;
 using Opc.Ua.Client;
 using Opc.Ua.Configuration;
+using UtilityFunctions.OPCUA;
 
 public class OPCUA_Client : MonoBehaviour
 {
     private ApplicationConfiguration config;
     private Session session;
-
-    public class ChildNode
-    {
-        public NodeId nodeId {get; set;}
-        public DataValue result = new DataValue();
-    }
-    
-    public class NodeData
-    {
-        public NodeId nodeId {get; set;}
-        public Dictionary<string, ChildNode> childrenNodes {get; set;} 
-    }
-
-
     public Dictionary<string, NodeData> allNodes;
     public List<(string, string)> nodeNames = new List<(string, string)>();
     public ReadValueIdCollection nodesToRead = new ReadValueIdCollection();
-
-
+    public CancellationTokenSource  cts;
+    
     async void Awake()
     {
         await InitClient();
@@ -38,6 +25,7 @@ public class OPCUA_Client : MonoBehaviour
         // await ConnectToServer("opc.tcp://pmlab-101:4840"); // Hiwi Raum Simulation
         await ConnectToServer("opc.tcp://pmlab-ROS2:4840"); // Klimaraum Simulation 
         allNodes = getAllNodes(session);
+
     }
 
     async void Update()
@@ -46,11 +34,10 @@ public class OPCUA_Client : MonoBehaviour
         object newValue = 100;
         
         // CancellationTokenSource
-        CancellationTokenSource cts = new CancellationTokenSource();
+        cts = new CancellationTokenSource();
 
-        await updateNodeValues(cts);
+        await updateNodeValues();
     }
-
 
     async void OnApplicationQuit()
     {
@@ -124,61 +111,6 @@ public class OPCUA_Client : MonoBehaviour
         Debug.Log("Connected to OPC UA server");
     }
 
-    async Task<StatusCode> WriteData(NodeId nodeId, object value, CancellationToken ct)
-    {
-        // Check if session is connected
-        if (session == null || session.Connected == false)
-        {
-            Debug.LogError("Not connected to a server");
-            return StatusCodes.BadNotConnected;
-        }
-
-        // Write the node
-        try
-        {
-            WriteValue nodeToWrite = new WriteValue();
-            nodeToWrite.NodeId = nodeId;
-            nodeToWrite.AttributeId = Attributes.Value;
-            nodeToWrite.Value = new DataValue(new Variant(value));
-            WriteResponse response = await session.WriteAsync(null, new WriteValueCollection { nodeToWrite }, ct);
-            
-            // Return the status
-            return response.Results[0];
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("Error writing data: " + e.Message);
-            return StatusCodes.BadUnexpectedError;
-        }
-    }
-
-    async Task<DataValue> ReadData(NodeId nodeId, CancellationToken ct)
-    {
-        // Check if session is connected
-        if (session == null || session.Connected == false)
-        {
-            Debug.LogError("Not connected to a server");
-            return null;
-        }
-        
-        // Read the node
-        try
-        {
-            ReadValueId nodeToRead = new ReadValueId();
-            nodeToRead.NodeId = nodeId;
-            nodeToRead.AttributeId = Attributes.Value;
-            ReadResponse response = await session.ReadAsync(null, 0, TimestampsToReturn.Both, new ReadValueIdCollection { nodeToRead }, ct);
-            
-            // Return the value
-            return response.Results[0];
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("Error reading data: " + e.Message);
-            return null;
-        }
-    }
-
     public Dictionary<string, NodeData> getAllNodes(Session session)
     {  
         Dictionary<string, NodeData> nodeDataDict = new Dictionary<string, NodeData>();
@@ -228,17 +160,63 @@ public class OPCUA_Client : MonoBehaviour
         return nodeDataDict;
     }
 
-    async Task updateNodeValues(CancellationTokenSource cts)
-    {
-        ReadResponse response = await session.ReadAsync(null, 0, TimestampsToReturn.Both, nodesToRead, cts.Token);
-        int i = 0;
 
-        foreach(KeyValuePair<string, NodeData> parent in allNodes)
+    async Task WriteValues(List<OPCUAWriteContainer> writeContainers)
+    {
+        if (session == null || session.Connected == false)
         {
-            foreach(KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
+            Debug.LogError("Not connected to a server");
+        }
+        else
+        {
+            try
             {
-                allNodes[parent.Key].childrenNodes[child.Key].result = response.Results[i];
-                i+=1;
+                WriteValueCollection nodesToWrite = new WriteValueCollection();
+                foreach(OPCUAWriteContainer writeContainer in writeContainers)
+                {
+                    WriteValue writeValues = new WriteValue()
+                    {
+                        NodeId = allNodes[writeContainer.parent].childrenNodes[writeContainer.child].nodeId, 
+                        AttributeId = Attributes.Value,
+                        Value = writeContainer.writeValue
+                    };
+                    nodesToWrite.Add(writeValues);
+                    Debug.Log(nodesToWrite);
+                }
+                WriteResponse response = await session.WriteAsync(null, nodesToWrite, cts.Token);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error writing data: " + e.Message);
+            }
+        }
+    }
+
+    async Task updateNodeValues()
+    {
+        if (session == null || session.Connected == false)
+        {
+            Debug.LogError("Not connected to a server");
+        }
+        else
+        {
+            try
+            {
+                ReadResponse response = await session.ReadAsync(null, 0, TimestampsToReturn.Both, nodesToRead, cts.Token);
+                int i = 0;
+
+                foreach(KeyValuePair<string, NodeData> parent in allNodes)
+                {
+                    foreach(KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
+                    {
+                        allNodes[parent.Key].childrenNodes[child.Key].result = response.Results[i];
+                        i+=1;
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                Debug.LogError("Error reading data: " + e.Message);
             }
         }
     }
