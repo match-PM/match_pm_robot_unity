@@ -12,10 +12,8 @@ using System.Linq;
 
 namespace UtilityFunctions
 {
-    public class ComponentClasses
+    public static class ComponentClasses
     {
-        public ComponentClasses() {}
-
         public class Component
         {
             public string name;
@@ -137,7 +135,35 @@ namespace UtilityFunctions
 
             return currentColor;
         } 
-        
+    }
 
+
+    namespace OPCUA
+    {
+        public class NodeData
+        {
+            public NodeId nodeId {get; set;}
+            public Dictionary<string, ChildNode> childrenNodes {get; set;} 
+        }
+
+        public class ChildNode
+        {
+            public NodeId nodeId {get; set;}
+            public DataValue result = new DataValue();
+        }  
+
+        public class OPCUAWriteContainer
+        {
+            public string parent; 
+            public string child;
+            public DataValue writeValue = new DataValue();
+
+            public OPCUAWriteContainer(string parentName, string childName, Variant value)
+            {
+                parent = parentName; 
+                child = childName;
+                writeValue = new DataValue(value);
+            }  
+        }
     }
 }
