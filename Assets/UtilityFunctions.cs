@@ -102,6 +102,45 @@ namespace UtilityFunctions
                 }
             }
         };
+
+
+        public class AxisComponent:Component
+        {
+            public ArticulationBody articulationBody;
+            public ArticulationDrive newDrive;
+            
+
+            public AxisComponent(GameObject currentGameObject)
+            {
+                this.name = currentGameObject.name;
+                this.parentObject = currentGameObject;
+                articulationBody = currentGameObject.GetComponent<ArticulationBody>();
+            }
+
+            public void move(int readTarget)
+            {
+                float newTarget = doTargetConversion(readTarget);
+                if(newTarget != articulationBody.xDrive.target)
+                {
+                    newDrive = articulationBody.xDrive;
+                    newDrive.target = newTarget;
+                    articulationBody.xDrive = newDrive;
+                }
+            }
+
+            float doTargetConversion(int readTarget)
+            {
+                float newTarget = 0.0f;
+
+                if(articulationBody.jointType == ArticulationJointType.PrismaticJoint)
+                {
+                    newTarget = (float) readTarget * (float) Math.Pow(10, -6);
+                }
+                
+                return newTarget;
+            }
+
+        }
     }
     
 
@@ -135,6 +174,11 @@ namespace UtilityFunctions
 
             return currentColor;
         } 
+
+        public static bool checkForStart(string parentName, OPCUA_Client OPCUA_Client)
+        {
+            return !OPCUA_Client.allNodes[parentName].childrenNodes.Values.Any(item => item.result.Value ==  null);
+        }
     }
 
 
