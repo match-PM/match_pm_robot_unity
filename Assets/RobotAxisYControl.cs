@@ -12,13 +12,14 @@ using UtilityFunctions;
 using UtilityFunctions.OPCUA;
 
 
-public class RobotAxisXControl : MonoBehaviour
+public class RobotAxisYControl : MonoBehaviour
 {
     ComponentClasses.AxisComponent axis;
     float currentTarget;
     int readTarget;
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
+
 
     async void updateAxis()
     {

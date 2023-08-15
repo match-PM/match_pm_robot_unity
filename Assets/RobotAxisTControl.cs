@@ -11,8 +11,7 @@ using System.Linq;
 using UtilityFunctions;
 using UtilityFunctions.OPCUA;
 
-
-public class RobotAxisXControl : MonoBehaviour
+public class RobotAxisTControl : MonoBehaviour
 {
     ComponentClasses.AxisComponent axis;
     float currentTarget;
@@ -20,14 +19,16 @@ public class RobotAxisXControl : MonoBehaviour
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
 
+
     async void updateAxis()
     {
         readTarget = (int) OPCUA_Client.allNodes[gameObject.name].childrenNodes["TargetPosition"].result.Value;
         axis.move(readTarget);
-        float position = axis.articulationBody.jointPosition[0];
+        float rotation = axis.articulationBody.jointPosition[0];
+        Debug.Log(rotation);
 
         // IMPORTANT CHANGE TOLERANCE TO ACTUAL POSITION!!!
-        OPCUAWriteContainer container = new OPCUAWriteContainer(gameObject.name, "Tolerance", new Variant((int) (position * (float) Math.Pow(10, 6))));
+        OPCUAWriteContainer container = new OPCUAWriteContainer(gameObject.name, "Tolerance", new Variant((int) rotation));
         await OPCUA_Client.WriteValues(new List<OPCUAWriteContainer> {container});
     }
     
@@ -47,6 +48,5 @@ public class RobotAxisXControl : MonoBehaviour
         {
             updateAxis();
         }
-
     }
 }
