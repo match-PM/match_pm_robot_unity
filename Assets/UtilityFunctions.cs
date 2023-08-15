@@ -136,6 +136,12 @@ namespace UtilityFunctions
                 {
                     newTarget = (float) readTarget * (float) Math.Pow(10, -6);
                 }
+
+                if(articulationBody.jointType == ArticulationJointType.RevoluteJoint)
+                {
+                    // newTarget = (float) readTarget * ((float) Math.PI/180.0f);
+                    newTarget = (float) readTarget;
+                }
                 
                 return newTarget;
             }
