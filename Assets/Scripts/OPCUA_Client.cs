@@ -22,8 +22,8 @@ public class OPCUA_Client : MonoBehaviour
     {
         await InitClient();
         // await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
-        // await ConnectToServer("opc.tcp://pmlab-101:4840"); // Hiwi Raum Simulation
-        await ConnectToServer("opc.tcp://pmlab-ROS2:4840"); // Klimaraum Simulation 
+        await ConnectToServer("opc.tcp://pmlab-101:4840"); // Hiwi Raum Simulation
+        // await ConnectToServer("opc.tcp://pmlab-ROS2:4840"); // Klimaraum Simulation 
         allNodes = getAllNodes(session);
 
     }
@@ -161,7 +161,7 @@ public class OPCUA_Client : MonoBehaviour
     }
 
 
-    async Task WriteValues(List<OPCUAWriteContainer> writeContainers)
+    async public Task WriteValues(List<OPCUAWriteContainer> writeContainers)
     {
         if (session == null || session.Connected == false)
         {
@@ -181,7 +181,6 @@ public class OPCUA_Client : MonoBehaviour
                         Value = writeContainer.writeValue
                     };
                     nodesToWrite.Add(writeValues);
-                    Debug.Log(nodesToWrite);
                 }
                 WriteResponse response = await session.WriteAsync(null, nodesToWrite, cts.Token);
             }
