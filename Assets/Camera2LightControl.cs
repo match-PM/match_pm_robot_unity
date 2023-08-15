@@ -16,16 +16,6 @@ public class Camera2LightControl : MonoBehaviour
     private GameObject robotGameObject;
     private List <ComponentClasses.LightComponent> lightComponents = new List<ComponentClasses.LightComponent>();
 
-    bool checkForStart()
-    {
-        bool start = true;
-        if(lightComponents.Any(item => OPCUA_Client.allNodes["Camera2"].childrenNodes[item.name].result.Value == null))
-        {
-            start = false;
-        }
-        return start;
-    }
-
     void updateLights()
     {
         foreach(ComponentClasses.LightComponent lightComponent in lightComponents)
@@ -54,7 +44,7 @@ public class Camera2LightControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(checkForStart())
+        if(GenericFunctions.checkForStart(gameObject.name, OPCUA_Client))
         {
             updateLights();
         }
