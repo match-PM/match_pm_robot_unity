@@ -6801,7 +6801,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 361350886}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9613736aed949601b913471d6feee11b, type: 3}
+  m_Script: {fileID: 11500000, guid: c9002dfcdcb57a1b8823e94aa2424710, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &364861663
@@ -12773,8 +12773,9 @@ GameObject:
   - component: {fileID: 691588426}
   - component: {fileID: 691588425}
   - component: {fileID: 691588424}
+  - component: {fileID: 691588428}
   m_Layer: 0
-  m_Name: Gripper_Rot_Plate
+  m_Name: RobotAxisT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12898,6 +12899,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &691588428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 691588422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9002dfcdcb57a1b8823e94aa2424710, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &702038481 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8465253489510517315, guid: f74ef71abdbc9f1b7bea119254038a8c, type: 3}
@@ -19885,7 +19898,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1096091856}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5dc9acad6dd78355baa247b93df5037, type: 3}
+  m_Script: {fileID: 11500000, guid: c9002dfcdcb57a1b8823e94aa2424710, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1098285549
@@ -27978,7 +27991,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1461858367}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df1b95d448d3d5bc4957ecfc97ae7b1b, type: 3}
+  m_Script: {fileID: 11500000, guid: c9002dfcdcb57a1b8823e94aa2424710, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1465927105

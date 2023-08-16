@@ -12,7 +12,7 @@ using UtilityFunctions;
 using UtilityFunctions.OPCUA;
 
 
-public class RobotAxisXControl : MonoBehaviour
+public class RobotAxisControl : MonoBehaviour
 {
     ComponentClasses.AxisComponent axis;
     float currentTarget;
