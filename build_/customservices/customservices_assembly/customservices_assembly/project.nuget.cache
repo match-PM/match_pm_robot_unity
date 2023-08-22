@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "ty1gQXjLA3ZXYgB6w2YGMtd7SE/i5bums+w1mOUDKZjBtJQSkIzd+M0dQViy7DGinLsWwwiGn9UrN9zWYk0leQ==",
+  "success": true,
+  "projectFilePath": "/home/pmlab/Downloads/ros2cs/build/customservices/customservices_assembly/customservices_assembly_dotnetcore.csproj",
+  "expectedPackageFiles": [
+    "/home/pmlab/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "/home/pmlab/.nuget/packages/netstandard.library/2.0.3/netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

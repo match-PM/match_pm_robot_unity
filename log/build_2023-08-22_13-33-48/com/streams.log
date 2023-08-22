@@ -1,0 +1,27 @@
+[0.017s] Invoking command in '/home/pmlab/Documents/match_pm_robot_unity/build/com': /usr/bin/cmake /home/pmlab/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.ide.visualstudio@2.0.18/Editor/COMIntegration/COMIntegration~ -DCMAKE_INSTALL_PREFIX=/home/pmlab/Documents/match_pm_robot_unity/install/com
+[0.061s] -- The C compiler identification is GNU 11.4.0
+[0.112s] -- The CXX compiler identification is GNU 11.4.0
+[0.120s] -- Detecting C compiler ABI info
+[0.176s] -- Detecting C compiler ABI info - done
+[0.182s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.183s] -- Detecting C compile features
+[0.183s] -- Detecting C compile features - done
+[0.186s] -- Detecting CXX compiler ABI info
+[0.257s] -- Detecting CXX compiler ABI info - done
+[0.265s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.265s] -- Detecting CXX compile features
+[0.265s] -- Detecting CXX compile features - done
+[0.266s] -- Configuring done
+[0.267s] -- Generating done
+[0.268s] -- Build files have been written to: /home/pmlab/Documents/match_pm_robot_unity/build/com
+[0.271s] Invoked command in '/home/pmlab/Documents/match_pm_robot_unity/build/com' returned '0': /usr/bin/cmake /home/pmlab/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.ide.visualstudio@2.0.18/Editor/COMIntegration/COMIntegration~ -DCMAKE_INSTALL_PREFIX=/home/pmlab/Documents/match_pm_robot_unity/install/com
+[0.273s] Invoking command in '/home/pmlab/Documents/match_pm_robot_unity/build/com': /usr/bin/cmake --build /home/pmlab/Documents/match_pm_robot_unity/build/com -- -j12 -l12
+[0.318s] [ 50%] [32mBuilding CXX object CMakeFiles/COMIntegration.dir/COMIntegration.cpp.o[0m
+[0.367s] [01m[K/home/pmlab/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.ide.visualstudio@2.0.18/Editor/COMIntegration/COMIntegration~/COMIntegration.cpp:11:10:[m[K [01;31m[Kfatal error: [m[Kwindows.h: No such file or directory
+[0.368s]    11 | #include [01;31m[K<windows.h>[m[K
+[0.368s]       |          [01;31m[K^~~~~~~~~~~[m[K
+[0.368s] compilation terminated.
+[0.369s] gmake[2]: *** [CMakeFiles/COMIntegration.dir/build.make:76: CMakeFiles/COMIntegration.dir/COMIntegration.cpp.o] Error 1
+[0.369s] gmake[1]: *** [CMakeFiles/Makefile2:83: CMakeFiles/COMIntegration.dir/all] Error 2
+[0.369s] gmake: *** [Makefile:91: all] Error 2
+[0.371s] Invoked command in '/home/pmlab/Documents/match_pm_robot_unity/build/com' returned '2': /usr/bin/cmake --build /home/pmlab/Documents/match_pm_robot_unity/build/com -- -j12 -l12

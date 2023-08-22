@@ -1,0 +1,2 @@
+Invoking command in '/home/pmlab/Documents/match_pm_robot_unity/build/com': /usr/bin/cmake --build /home/pmlab/Documents/match_pm_robot_unity/build/com -- -j12 -l12
+Invoked command in '/home/pmlab/Documents/match_pm_robot_unity/build/com' returned '2': /usr/bin/cmake --build /home/pmlab/Documents/match_pm_robot_unity/build/com -- -j12 -l12

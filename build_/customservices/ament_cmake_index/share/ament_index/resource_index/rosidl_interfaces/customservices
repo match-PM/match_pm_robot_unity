@@ -1,0 +1,8 @@
+msg/SpawnObject_Request.idl
+msg/SpawnObject_Request.msg
+msg/SpawnObject_Response.idl
+msg/SpawnObject_Response.msg
+srv/SpawnObject.idl
+srv/SpawnObject.srv
+srv/SpawnObject_Request.msg
+srv/SpawnObject_Response.msg

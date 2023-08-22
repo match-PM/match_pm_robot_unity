@@ -1,0 +1,36 @@
+[0.025s] Invoking command in '/home/pmlab/Documents/match_pm_robot_unity/build/dotnet_cmake_module': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/pmlab/pm_ros2_ws/install/tf2_tools:/home/pmlab/pm_ros2_ws/install/examples_tf2_py:/home/pmlab/pm_ros2_ws/install/tf2_ros_py:/home/pmlab/pm_ros2_ws/install/sensor_msgs_py:/home/pmlab/pm_ros2_ws/install/pm_robot_control_test:/opt/ros/humble /usr/bin/cmake --build /home/pmlab/Documents/match_pm_robot_unity/build/dotnet_cmake_module -- -j12 -l12
+[0.050s] Invoked command in '/home/pmlab/Documents/match_pm_robot_unity/build/dotnet_cmake_module' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/pmlab/pm_ros2_ws/install/tf2_tools:/home/pmlab/pm_ros2_ws/install/examples_tf2_py:/home/pmlab/pm_ros2_ws/install/tf2_ros_py:/home/pmlab/pm_ros2_ws/install/sensor_msgs_py:/home/pmlab/pm_ros2_ws/install/pm_robot_control_test:/opt/ros/humble /usr/bin/cmake --build /home/pmlab/Documents/match_pm_robot_unity/build/dotnet_cmake_module -- -j12 -l12
+[0.075s] Invoking command in '/home/pmlab/Documents/match_pm_robot_unity/build/dotnet_cmake_module': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/pmlab/pm_ros2_ws/install/tf2_tools:/home/pmlab/pm_ros2_ws/install/examples_tf2_py:/home/pmlab/pm_ros2_ws/install/tf2_ros_py:/home/pmlab/pm_ros2_ws/install/sensor_msgs_py:/home/pmlab/pm_ros2_ws/install/pm_robot_control_test:/opt/ros/humble /usr/bin/cmake --install /home/pmlab/Documents/match_pm_robot_unity/build/dotnet_cmake_module
+[0.081s] -- Install configuration: ""
+[0.081s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/ament_index/resource_index/package_run_dependencies/dotnet_cmake_module
+[0.081s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/ament_index/resource_index/parent_prefix_path/dotnet_cmake_module
+[0.081s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/environment/ament_prefix_path.sh
+[0.081s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/environment/ament_prefix_path.dsv
+[0.081s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/environment/path.sh
+[0.081s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/environment/path.dsv
+[0.082s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/local_setup.bash
+[0.082s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/local_setup.sh
+[0.082s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/local_setup.zsh
+[0.082s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/local_setup.dsv
+[0.082s] -- Installing: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/package.dsv
+[0.083s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/ament_index/resource_index/packages/dotnet_cmake_module
+[0.083s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/dotnet_cmake_module-extras.cmake
+[0.084s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/dotnet_cmake_moduleConfig.cmake
+[0.084s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/dotnet_cmake_moduleConfig-version.cmake
+[0.085s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/package.xml
+[0.085s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake
+[0.085s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules
+[0.086s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/FindCSBuild.cmake
+[0.087s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/dotnet
+[0.087s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/dotnet/packages.config.in
+[0.087s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/dotnet/Directory.Build.props.in
+[0.087s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/dotnet/entry_point.unix.in
+[0.087s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/dotnet/msbuild.csproj.in
+[0.088s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/dotnet/dotnetcore.csproj.in
+[0.088s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/dotnet/FindDotNetCore.cmake
+[0.088s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/dotnet/FindMono.cmake
+[0.088s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/dotnet/entry_point.windows.in
+[0.089s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/dotnet/UseCSharpProjectBuilder.cmake
+[0.089s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/Modules/FindDotNETExtra.cmake
+[0.089s] -- Up-to-date: /home/pmlab/Documents/match_pm_robot_unity/install/dotnet_cmake_module/share/dotnet_cmake_module/cmake/ConfigureFile.cmake
+[0.089s] Invoked command in '/home/pmlab/Documents/match_pm_robot_unity/build/dotnet_cmake_module' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/pmlab/pm_ros2_ws/install/tf2_tools:/home/pmlab/pm_ros2_ws/install/examples_tf2_py:/home/pmlab/pm_ros2_ws/install/tf2_ros_py:/home/pmlab/pm_ros2_ws/install/sensor_msgs_py:/home/pmlab/pm_ros2_ws/install/pm_robot_control_test:/opt/ros/humble /usr/bin/cmake --install /home/pmlab/Documents/match_pm_robot_unity/build/dotnet_cmake_module

@@ -1,0 +1,539 @@
+// generated from rosidl_generator_c/resource/idl__functions.c.em
+// with input from customservices:srv/SpawnObject.idl
+// generated code does not contain a copyright notice
+#include "customservices/srv/detail/spawn_object__functions.h"
+
+#include <assert.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "rcutils/allocator.h"
+
+// Include directives for member types
+// Member `obj_name`
+// Member `parent_frame`
+// Member `cad_data`
+#include "rosidl_runtime_c/string_functions.h"
+
+bool
+customservices__srv__SpawnObject_Request__init(customservices__srv__SpawnObject_Request * msg)
+{
+  if (!msg) {
+    return false;
+  }
+  // obj_name
+  if (!rosidl_runtime_c__String__init(&msg->obj_name)) {
+    customservices__srv__SpawnObject_Request__fini(msg);
+    return false;
+  }
+  // parent_frame
+  if (!rosidl_runtime_c__String__init(&msg->parent_frame)) {
+    customservices__srv__SpawnObject_Request__fini(msg);
+    return false;
+  }
+  // translation
+  // rotation
+  // cad_data
+  if (!rosidl_runtime_c__String__init(&msg->cad_data)) {
+    customservices__srv__SpawnObject_Request__fini(msg);
+    return false;
+  }
+  return true;
+}
+
+void
+customservices__srv__SpawnObject_Request__fini(customservices__srv__SpawnObject_Request * msg)
+{
+  if (!msg) {
+    return;
+  }
+  // obj_name
+  rosidl_runtime_c__String__fini(&msg->obj_name);
+  // parent_frame
+  rosidl_runtime_c__String__fini(&msg->parent_frame);
+  // translation
+  // rotation
+  // cad_data
+  rosidl_runtime_c__String__fini(&msg->cad_data);
+}
+
+bool
+customservices__srv__SpawnObject_Request__are_equal(const customservices__srv__SpawnObject_Request * lhs, const customservices__srv__SpawnObject_Request * rhs)
+{
+  if (!lhs || !rhs) {
+    return false;
+  }
+  // obj_name
+  if (!rosidl_runtime_c__String__are_equal(
+      &(lhs->obj_name), &(rhs->obj_name)))
+  {
+    return false;
+  }
+  // parent_frame
+  if (!rosidl_runtime_c__String__are_equal(
+      &(lhs->parent_frame), &(rhs->parent_frame)))
+  {
+    return false;
+  }
+  // translation
+  for (size_t i = 0; i < 3; ++i) {
+    if (lhs->translation[i] != rhs->translation[i]) {
+      return false;
+    }
+  }
+  // rotation
+  for (size_t i = 0; i < 4; ++i) {
+    if (lhs->rotation[i] != rhs->rotation[i]) {
+      return false;
+    }
+  }
+  // cad_data
+  if (!rosidl_runtime_c__String__are_equal(
+      &(lhs->cad_data), &(rhs->cad_data)))
+  {
+    return false;
+  }
+  return true;
+}
+
+bool
+customservices__srv__SpawnObject_Request__copy(
+  const customservices__srv__SpawnObject_Request * input,
+  customservices__srv__SpawnObject_Request * output)
+{
+  if (!input || !output) {
+    return false;
+  }
+  // obj_name
+  if (!rosidl_runtime_c__String__copy(
+      &(input->obj_name), &(output->obj_name)))
+  {
+    return false;
+  }
+  // parent_frame
+  if (!rosidl_runtime_c__String__copy(
+      &(input->parent_frame), &(output->parent_frame)))
+  {
+    return false;
+  }
+  // translation
+  for (size_t i = 0; i < 3; ++i) {
+    output->translation[i] = input->translation[i];
+  }
+  // rotation
+  for (size_t i = 0; i < 4; ++i) {
+    output->rotation[i] = input->rotation[i];
+  }
+  // cad_data
+  if (!rosidl_runtime_c__String__copy(
+      &(input->cad_data), &(output->cad_data)))
+  {
+    return false;
+  }
+  return true;
+}
+
+customservices__srv__SpawnObject_Request *
+customservices__srv__SpawnObject_Request__create()
+{
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+  customservices__srv__SpawnObject_Request * msg = (customservices__srv__SpawnObject_Request *)allocator.allocate(sizeof(customservices__srv__SpawnObject_Request), allocator.state);
+  if (!msg) {
+    return NULL;
+  }
+  memset(msg, 0, sizeof(customservices__srv__SpawnObject_Request));
+  bool success = customservices__srv__SpawnObject_Request__init(msg);
+  if (!success) {
+    allocator.deallocate(msg, allocator.state);
+    return NULL;
+  }
+  return msg;
+}
+
+void
+customservices__srv__SpawnObject_Request__destroy(customservices__srv__SpawnObject_Request * msg)
+{
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+  if (msg) {
+    customservices__srv__SpawnObject_Request__fini(msg);
+  }
+  allocator.deallocate(msg, allocator.state);
+}
+
+
+bool
+customservices__srv__SpawnObject_Request__Sequence__init(customservices__srv__SpawnObject_Request__Sequence * array, size_t size)
+{
+  if (!array) {
+    return false;
+  }
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+  customservices__srv__SpawnObject_Request * data = NULL;
+
+  if (size) {
+    data = (customservices__srv__SpawnObject_Request *)allocator.zero_allocate(size, sizeof(customservices__srv__SpawnObject_Request), allocator.state);
+    if (!data) {
+      return false;
+    }
+    // initialize all array elements
+    size_t i;
+    for (i = 0; i < size; ++i) {
+      bool success = customservices__srv__SpawnObject_Request__init(&data[i]);
+      if (!success) {
+        break;
+      }
+    }
+    if (i < size) {
+      // if initialization failed finalize the already initialized array elements
+      for (; i > 0; --i) {
+        customservices__srv__SpawnObject_Request__fini(&data[i - 1]);
+      }
+      allocator.deallocate(data, allocator.state);
+      return false;
+    }
+  }
+  array->data = data;
+  array->size = size;
+  array->capacity = size;
+  return true;
+}
+
+void
+customservices__srv__SpawnObject_Request__Sequence__fini(customservices__srv__SpawnObject_Request__Sequence * array)
+{
+  if (!array) {
+    return;
+  }
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+
+  if (array->data) {
+    // ensure that data and capacity values are consistent
+    assert(array->capacity > 0);
+    // finalize all array elements
+    for (size_t i = 0; i < array->capacity; ++i) {
+      customservices__srv__SpawnObject_Request__fini(&array->data[i]);
+    }
+    allocator.deallocate(array->data, allocator.state);
+    array->data = NULL;
+    array->size = 0;
+    array->capacity = 0;
+  } else {
+    // ensure that data, size, and capacity values are consistent
+    assert(0 == array->size);
+    assert(0 == array->capacity);
+  }
+}
+
+customservices__srv__SpawnObject_Request__Sequence *
+customservices__srv__SpawnObject_Request__Sequence__create(size_t size)
+{
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+  customservices__srv__SpawnObject_Request__Sequence * array = (customservices__srv__SpawnObject_Request__Sequence *)allocator.allocate(sizeof(customservices__srv__SpawnObject_Request__Sequence), allocator.state);
+  if (!array) {
+    return NULL;
+  }
+  bool success = customservices__srv__SpawnObject_Request__Sequence__init(array, size);
+  if (!success) {
+    allocator.deallocate(array, allocator.state);
+    return NULL;
+  }
+  return array;
+}
+
+void
+customservices__srv__SpawnObject_Request__Sequence__destroy(customservices__srv__SpawnObject_Request__Sequence * array)
+{
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+  if (array) {
+    customservices__srv__SpawnObject_Request__Sequence__fini(array);
+  }
+  allocator.deallocate(array, allocator.state);
+}
+
+bool
+customservices__srv__SpawnObject_Request__Sequence__are_equal(const customservices__srv__SpawnObject_Request__Sequence * lhs, const customservices__srv__SpawnObject_Request__Sequence * rhs)
+{
+  if (!lhs || !rhs) {
+    return false;
+  }
+  if (lhs->size != rhs->size) {
+    return false;
+  }
+  for (size_t i = 0; i < lhs->size; ++i) {
+    if (!customservices__srv__SpawnObject_Request__are_equal(&(lhs->data[i]), &(rhs->data[i]))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool
+customservices__srv__SpawnObject_Request__Sequence__copy(
+  const customservices__srv__SpawnObject_Request__Sequence * input,
+  customservices__srv__SpawnObject_Request__Sequence * output)
+{
+  if (!input || !output) {
+    return false;
+  }
+  if (output->capacity < input->size) {
+    const size_t allocation_size =
+      input->size * sizeof(customservices__srv__SpawnObject_Request);
+    rcutils_allocator_t allocator = rcutils_get_default_allocator();
+    customservices__srv__SpawnObject_Request * data =
+      (customservices__srv__SpawnObject_Request *)allocator.reallocate(
+      output->data, allocation_size, allocator.state);
+    if (!data) {
+      return false;
+    }
+    // If reallocation succeeded, memory may or may not have been moved
+    // to fulfill the allocation request, invalidating output->data.
+    output->data = data;
+    for (size_t i = output->capacity; i < input->size; ++i) {
+      if (!customservices__srv__SpawnObject_Request__init(&output->data[i])) {
+        // If initialization of any new item fails, roll back
+        // all previously initialized items. Existing items
+        // in output are to be left unmodified.
+        for (; i-- > output->capacity; ) {
+          customservices__srv__SpawnObject_Request__fini(&output->data[i]);
+        }
+        return false;
+      }
+    }
+    output->capacity = input->size;
+  }
+  output->size = input->size;
+  for (size_t i = 0; i < input->size; ++i) {
+    if (!customservices__srv__SpawnObject_Request__copy(
+        &(input->data[i]), &(output->data[i])))
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+bool
+customservices__srv__SpawnObject_Response__init(customservices__srv__SpawnObject_Response * msg)
+{
+  if (!msg) {
+    return false;
+  }
+  // success
+  return true;
+}
+
+void
+customservices__srv__SpawnObject_Response__fini(customservices__srv__SpawnObject_Response * msg)
+{
+  if (!msg) {
+    return;
+  }
+  // success
+}
+
+bool
+customservices__srv__SpawnObject_Response__are_equal(const customservices__srv__SpawnObject_Response * lhs, const customservices__srv__SpawnObject_Response * rhs)
+{
+  if (!lhs || !rhs) {
+    return false;
+  }
+  // success
+  if (lhs->success != rhs->success) {
+    return false;
+  }
+  return true;
+}
+
+bool
+customservices__srv__SpawnObject_Response__copy(
+  const customservices__srv__SpawnObject_Response * input,
+  customservices__srv__SpawnObject_Response * output)
+{
+  if (!input || !output) {
+    return false;
+  }
+  // success
+  output->success = input->success;
+  return true;
+}
+
+customservices__srv__SpawnObject_Response *
+customservices__srv__SpawnObject_Response__create()
+{
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+  customservices__srv__SpawnObject_Response * msg = (customservices__srv__SpawnObject_Response *)allocator.allocate(sizeof(customservices__srv__SpawnObject_Response), allocator.state);
+  if (!msg) {
+    return NULL;
+  }
+  memset(msg, 0, sizeof(customservices__srv__SpawnObject_Response));
+  bool success = customservices__srv__SpawnObject_Response__init(msg);
+  if (!success) {
+    allocator.deallocate(msg, allocator.state);
+    return NULL;
+  }
+  return msg;
+}
+
+void
+customservices__srv__SpawnObject_Response__destroy(customservices__srv__SpawnObject_Response * msg)
+{
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+  if (msg) {
+    customservices__srv__SpawnObject_Response__fini(msg);
+  }
+  allocator.deallocate(msg, allocator.state);
+}
+
+
+bool
+customservices__srv__SpawnObject_Response__Sequence__init(customservices__srv__SpawnObject_Response__Sequence * array, size_t size)
+{
+  if (!array) {
+    return false;
+  }
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+  customservices__srv__SpawnObject_Response * data = NULL;
+
+  if (size) {
+    data = (customservices__srv__SpawnObject_Response *)allocator.zero_allocate(size, sizeof(customservices__srv__SpawnObject_Response), allocator.state);
+    if (!data) {
+      return false;
+    }
+    // initialize all array elements
+    size_t i;
+    for (i = 0; i < size; ++i) {
+      bool success = customservices__srv__SpawnObject_Response__init(&data[i]);
+      if (!success) {
+        break;
+      }
+    }
+    if (i < size) {
+      // if initialization failed finalize the already initialized array elements
+      for (; i > 0; --i) {
+        customservices__srv__SpawnObject_Response__fini(&data[i - 1]);
+      }
+      allocator.deallocate(data, allocator.state);
+      return false;
+    }
+  }
+  array->data = data;
+  array->size = size;
+  array->capacity = size;
+  return true;
+}
+
+void
+customservices__srv__SpawnObject_Response__Sequence__fini(customservices__srv__SpawnObject_Response__Sequence * array)
+{
+  if (!array) {
+    return;
+  }
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+
+  if (array->data) {
+    // ensure that data and capacity values are consistent
+    assert(array->capacity > 0);
+    // finalize all array elements
+    for (size_t i = 0; i < array->capacity; ++i) {
+      customservices__srv__SpawnObject_Response__fini(&array->data[i]);
+    }
+    allocator.deallocate(array->data, allocator.state);
+    array->data = NULL;
+    array->size = 0;
+    array->capacity = 0;
+  } else {
+    // ensure that data, size, and capacity values are consistent
+    assert(0 == array->size);
+    assert(0 == array->capacity);
+  }
+}
+
+customservices__srv__SpawnObject_Response__Sequence *
+customservices__srv__SpawnObject_Response__Sequence__create(size_t size)
+{
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+  customservices__srv__SpawnObject_Response__Sequence * array = (customservices__srv__SpawnObject_Response__Sequence *)allocator.allocate(sizeof(customservices__srv__SpawnObject_Response__Sequence), allocator.state);
+  if (!array) {
+    return NULL;
+  }
+  bool success = customservices__srv__SpawnObject_Response__Sequence__init(array, size);
+  if (!success) {
+    allocator.deallocate(array, allocator.state);
+    return NULL;
+  }
+  return array;
+}
+
+void
+customservices__srv__SpawnObject_Response__Sequence__destroy(customservices__srv__SpawnObject_Response__Sequence * array)
+{
+  rcutils_allocator_t allocator = rcutils_get_default_allocator();
+  if (array) {
+    customservices__srv__SpawnObject_Response__Sequence__fini(array);
+  }
+  allocator.deallocate(array, allocator.state);
+}
+
+bool
+customservices__srv__SpawnObject_Response__Sequence__are_equal(const customservices__srv__SpawnObject_Response__Sequence * lhs, const customservices__srv__SpawnObject_Response__Sequence * rhs)
+{
+  if (!lhs || !rhs) {
+    return false;
+  }
+  if (lhs->size != rhs->size) {
+    return false;
+  }
+  for (size_t i = 0; i < lhs->size; ++i) {
+    if (!customservices__srv__SpawnObject_Response__are_equal(&(lhs->data[i]), &(rhs->data[i]))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool
+customservices__srv__SpawnObject_Response__Sequence__copy(
+  const customservices__srv__SpawnObject_Response__Sequence * input,
+  customservices__srv__SpawnObject_Response__Sequence * output)
+{
+  if (!input || !output) {
+    return false;
+  }
+  if (output->capacity < input->size) {
+    const size_t allocation_size =
+      input->size * sizeof(customservices__srv__SpawnObject_Response);
+    rcutils_allocator_t allocator = rcutils_get_default_allocator();
+    customservices__srv__SpawnObject_Response * data =
+      (customservices__srv__SpawnObject_Response *)allocator.reallocate(
+      output->data, allocation_size, allocator.state);
+    if (!data) {
+      return false;
+    }
+    // If reallocation succeeded, memory may or may not have been moved
+    // to fulfill the allocation request, invalidating output->data.
+    output->data = data;
+    for (size_t i = output->capacity; i < input->size; ++i) {
+      if (!customservices__srv__SpawnObject_Response__init(&output->data[i])) {
+        // If initialization of any new item fails, roll back
+        // all previously initialized items. Existing items
+        // in output are to be left unmodified.
+        for (; i-- > output->capacity; ) {
+          customservices__srv__SpawnObject_Response__fini(&output->data[i]);
+        }
+        return false;
+      }
+    }
+    output->capacity = input->size;
+  }
+  output->size = input->size;
+  for (size_t i = 0; i < input->size; ++i) {
+    if (!customservices__srv__SpawnObject_Response__copy(
+        &(input->data[i]), &(output->data[i])))
+    {
+      return false;
+    }
+  }
+  return true;
+}

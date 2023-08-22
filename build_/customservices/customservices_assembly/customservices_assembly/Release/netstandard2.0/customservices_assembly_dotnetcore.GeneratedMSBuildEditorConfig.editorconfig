@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = customservices_assembly_dotnetcore
+build_property.ProjectDir = /home/pmlab/Downloads/ros2cs/build/customservices/customservices_assembly/

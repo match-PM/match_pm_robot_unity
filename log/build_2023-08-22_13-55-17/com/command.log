@@ -1,0 +1,4 @@
+Invoking command in '/home/pmlab/Documents/match_pm_robot_unity/build/com': /usr/bin/cmake /home/pmlab/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.ide.visualstudio@2.0.18/Editor/COMIntegration/COMIntegration~ -DCMAKE_INSTALL_PREFIX=/home/pmlab/Documents/match_pm_robot_unity/install/com
+Invoked command in '/home/pmlab/Documents/match_pm_robot_unity/build/com' returned '0': /usr/bin/cmake /home/pmlab/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.ide.visualstudio@2.0.18/Editor/COMIntegration/COMIntegration~ -DCMAKE_INSTALL_PREFIX=/home/pmlab/Documents/match_pm_robot_unity/install/com
+Invoking command in '/home/pmlab/Documents/match_pm_robot_unity/build/com': /usr/bin/cmake --build /home/pmlab/Documents/match_pm_robot_unity/build/com -- -j12 -l12
+Invoked command in '/home/pmlab/Documents/match_pm_robot_unity/build/com' returned '2': /usr/bin/cmake --build /home/pmlab/Documents/match_pm_robot_unity/build/com -- -j12 -l12

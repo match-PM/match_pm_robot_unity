@@ -1,0 +1,3 @@
+source;share/rosidl_default_runtime/hook/cmake_prefix_path.ps1
+source;share/rosidl_default_runtime/hook/cmake_prefix_path.dsv
+source;share/rosidl_default_runtime/hook/cmake_prefix_path.sh

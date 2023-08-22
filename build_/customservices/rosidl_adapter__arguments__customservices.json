@@ -1,0 +1,8 @@
+{
+  "package_name": "customservices",
+  "non_idl_tuples": [
+    "/home/pmlab/Downloads/ros2cs/customservices:msg/SpawnObject_Request.msg",
+    "/home/pmlab/Downloads/ros2cs/customservices:msg/SpawnObject_Response.msg",
+    "/home/pmlab/Downloads/ros2cs/customservices:srv/SpawnObject.srv"
+  ]
+}
