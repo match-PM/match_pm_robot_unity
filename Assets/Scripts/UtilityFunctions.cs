@@ -117,9 +117,9 @@ namespace UtilityFunctions
                 articulationBody = currentGameObject.GetComponent<ArticulationBody>();
             }
 
-            public void move(int readTarget)
+            public void move(int readTarget,double unitsPerIncrement)
             {
-                float newTarget = doTargetConversion(readTarget);
+                float newTarget = doTargetConversion(readTarget, unitsPerIncrement);
                 if(newTarget != articulationBody.xDrive.target)
                 {
                     newDrive = articulationBody.xDrive;
@@ -128,13 +128,13 @@ namespace UtilityFunctions
                 }
             }
 
-            float doTargetConversion(int readTarget)
+            float doTargetConversion(int readTarget, double unitsPerIncrement)
             {
                 float newTarget = 0.0f;
 
                 if(articulationBody.jointType == ArticulationJointType.PrismaticJoint)
                 {
-                    newTarget = (float) readTarget * (float) Math.Pow(10, -6);
+                    newTarget = (float) readTarget * (float) unitsPerIncrement * (float) Math.Pow(10, -6);
                 }
 
                 if(articulationBody.jointType == ArticulationJointType.RevoluteJoint)
