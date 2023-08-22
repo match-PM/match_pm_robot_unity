@@ -21,22 +21,21 @@ public class OPCUA_Client : MonoBehaviour
     async void Awake()
     {
         await InitClient();
-        // await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
-        await ConnectToServer("opc.tcp://pmlab-101:4840"); // Hiwi Raum Simulation
+        await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
+        // await ConnectToServer("opc.tcp://pmlab-101:4840"); // Hiwi Raum Simulation
         // await ConnectToServer("opc.tcp://pmlab-ROS2:4840"); // Klimaraum Simulation 
         allNodes = getAllNodes(session);
 
     }
 
-    async void Update()
+    void Update()
     {
         // New value you want to write
         object newValue = 100;
         
         // CancellationTokenSource
         cts = new CancellationTokenSource();
-
-        await updateNodeValues();
+        updateNodeValues();
     }
 
     async void OnApplicationQuit()
@@ -191,7 +190,7 @@ public class OPCUA_Client : MonoBehaviour
         }
     }
 
-    async Task updateNodeValues()
+    void updateNodeValues()
     {
         if (session == null || session.Connected == false)
         {
@@ -201,14 +200,14 @@ public class OPCUA_Client : MonoBehaviour
         {
             try
             {
-                ReadResponse response = await session.ReadAsync(null, 0, TimestampsToReturn.Both, nodesToRead, cts.Token);
+                session.Read(null, 0, TimestampsToReturn.Both, nodesToRead, out DataValueCollection resultsValues, out DiagnosticInfoCollection diagnosticInfos);
                 int i = 0;
 
                 foreach(KeyValuePair<string, NodeData> parent in allNodes)
                 {
                     foreach(KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
                     {
-                        allNodes[parent.Key].childrenNodes[child.Key].result = response.Results[i];
+                        allNodes[parent.Key].childrenNodes[child.Key].result = resultsValues[i];
                         i+=1;
                     }
                 }
