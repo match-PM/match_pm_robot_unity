@@ -19,16 +19,17 @@ public class RobotAxisControl : MonoBehaviour
     int readTarget;
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
+    double unitsPerIncrement;
 
-    async void updateAxis()
+    void updateAxis()
     {
         readTarget = (int) OPCUA_Client.allNodes[gameObject.name].childrenNodes["TargetPosition"].result.Value;
-        axis.move(readTarget);
+        axis.move(readTarget, unitsPerIncrement);
         float position = axis.articulationBody.jointPosition[0];
 
         // IMPORTANT CHANGE TOLERANCE TO ACTUAL POSITION!!!
-        OPCUAWriteContainer container = new OPCUAWriteContainer(gameObject.name, "Tolerance", new Variant((int) (position * (float) Math.Pow(10, 6))));
-        await OPCUA_Client.WriteValues(new List<OPCUAWriteContainer> {container});
+        // OPCUAWriteContainer container = new OPCUAWriteContainer(gameObject.name, "Tolerance", new Variant((int) (position * (float) Math.Pow(10, 6))));
+        // await OPCUA_Client.WriteValues(new List<OPCUAWriteContainer> {container});
     }
     
     // Start is called before the first frame update
@@ -37,14 +38,17 @@ public class RobotAxisControl : MonoBehaviour
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         axis = new ComponentClasses.AxisComponent(gameObject); 
+        unitsPerIncrement = (double) OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        if(GenericFunctions.checkForStart(gameObject.name, OPCUA_Client))
+        if(OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["TargetPosition"].result.Value != null)
         {
+            unitsPerIncrement = (double) OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value;
             updateAxis();
         }
 
