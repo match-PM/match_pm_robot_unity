@@ -1,11 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ROS2;
 
-using spawnObjReq = spawn_object_interface.srv.SpawnObject_Request;
-using spawnObjResp = spawn_object_interface.srv.SpawnObject_Response;
+//using spawnObjReq = spawn_object_interfaces.msg.SpawnObject;
+//using spawnObjResp = spawn_object_interfaces.msg.SpawnObject_Response;
 //using spawnObjectBoth = spawn_object_interface.srv.Spawn_Object;
+
+using spawnObjReq = customservices.msg.SpawnObjectRequest;
+using spawnObjResp = customservices.msg.SpawnObjectResponse;
+
+
 /// <summary>
 /// This script subscribes to the /SpawnObject service and creates an object at the given position and rotation.
 /// The object has the following Attributes:
@@ -17,6 +23,10 @@ using spawnObjResp = spawn_object_interface.srv.SpawnObject_Response;
 ///     ---
 ///     bool success
 /// </summary>
+
+//ros2 service call /object_manager/spawn_object spawn_object_interfaces/srv/SpawnObject "{obj_name: Siemens_UFC, parent_frame: Gonio_Right_Part_Origin , translation:[0.0,0.0,0.0], rotation:[0.0,0.0,0.0,1.0], cad_data: //home/pmlab/Downloads/Tool_MPG_10_Base.STL}"
+//ros2 launch pm_robot_bringup pm_robot_sim_HW.launch.py 
+
 
 namespace ROS2
 {
@@ -30,7 +40,7 @@ public class Spawn_Object : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("ich bin hier: 1");
+        Debug.Log("ich bin hier: 1 " + typeof(spawnObjReq));
        
         ros2Unity = GetComponent<ROS2UnityComponent>();
         if (ros2Unity.Ok())
@@ -41,21 +51,32 @@ public class Spawn_Object : MonoBehaviour
             {
                 Debug.Log("ich bin hier: 3");
                 
-                ros2Node = ros2Unity.CreateNode("ROS2UnityTestTestTestService");
+                ros2Node = ros2Unity.CreateNode("ROS2UnityService");
                 
                 Debug.Log("ich bin hier: 4");
                 
-                SpawnObjectService = ros2Node.CreateService<spawnObjReq, spawnObjResp>("/object_manager/spawn_object", spawnObject);
+                try
+                {
+                    SpawnObjectService = ros2Node.CreateService<spawnObjReq, spawnObjResp>("/object_manager/spawn_object", spawnObject);
+                    Debug.Log("ich bin hier: 4.5");
+                }
+                catch(Exception ex)
+                {
+                    Debug.Log(ex.InnerException);
+                }
+                Debug.Log("ich bin hier: 5");
+                Debug.Log(SpawnObjectService.ToString());
+                
             }
         }
     }
 
-    public spawn_object_interface.srv.SpawnObject_Response spawnObject(spawn_object_interface.srv.SpawnObject_Request msg)
+    public customservices.msg.SpawnObjectResponse spawnObject(customservices.msg.SpawnObjectRequest msg)
     {
         Debug.Log("ich bin hier: " + msg);
         // Debug.Log("Spawning Object with name:" + msg.obj_name + " and parent frame: " + msg.parent_frame +
          //            ", at position: " + msg.translation + " and rotation: " + msg.rotation + ". CAD-Data: " + msg.cad_data);
-        spawn_object_interface.srv.SpawnObject_Response response = new spawn_object_interface.srv.SpawnObject_Response();
+        customservices.msg.SpawnObjectResponse response = new customservices.msg.SpawnObjectResponse();
         //response.success = true;
         return response;
     }
