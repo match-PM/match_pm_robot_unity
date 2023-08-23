@@ -52,7 +52,6 @@
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ForUnity.cs" />
      <Compile Include="Assets/Scripts/Camera1LightControl.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ROS2TimeSource.cs" />
-     <Compile Include="Assets/Scripts/ForceSensorTest.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ServiceExample.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/Time/DotnetTimeSource.cs" />
      <Compile Include="Assets/Scripts/Cam1_Publisher.cs" />
@@ -412,6 +411,18 @@
     </Reference>
     <Reference Include="std_srvs_assembly">
         <HintPath>/home/pmlab/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/std_srvs_assembly.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
+        <HintPath>/home/pmlab/Unity/Hub/Editor/2021.3.28f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Common">
+        <HintPath>/home/pmlab/Unity/Hub/Editor/2021.3.28f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Android.Types">
+        <HintPath>/home/pmlab/Unity/Hub/Editor/2021.3.28f1/Editor/Data/PlaybackEngines/AndroidPlayer/Unity.Android.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Android.Gradle">
+        <HintPath>/home/pmlab/Unity/Hub/Editor/2021.3.28f1/Editor/Data/PlaybackEngines/AndroidPlayer/Unity.Android.Gradle.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
         <HintPath>/home/pmlab/Unity/Hub/Editor/2021.3.28f1/Editor/Data/NetStandard/ref/2.1.0/netstandard.dll</HintPath>

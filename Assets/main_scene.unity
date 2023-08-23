@@ -6649,7 +6649,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 360218746}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ca7a6953acc378e38e884841b130671, type: 3}
   m_Name: 
@@ -12906,7 +12906,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 691588422}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9002dfcdcb57a1b8823e94aa2424710, type: 3}
   m_Name: 
@@ -19953,7 +19953,7 @@ ArticulationBody:
     stiffness: 0
     damping: 0
     forceLimit: 100
-    target: 0
+    target: -6.4
     targetVelocity: 0
   m_YDrive:
     lowerLimit: 0
@@ -29202,7 +29202,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1469834259}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eedc6a35b6751f23c8d47eea4340d907, type: 3}
   m_Name: 

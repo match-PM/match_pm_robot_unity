@@ -17,15 +17,19 @@ public class OPCUA_Client : MonoBehaviour
     public List<(string, string)> nodeNames = new List<(string, string)>();
     public ReadValueIdCollection nodesToRead = new ReadValueIdCollection();
     public CancellationTokenSource  cts;
+    private Subscription subscription;
+    private Dictionary<string, Tuple<string, string>> monitoredItems;
     
     async void Awake()
     {
         await InitClient();
-        await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
-        // await ConnectToServer("opc.tcp://pmlab-101:4840"); // Hiwi Raum Simulation
+        // await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
+        // await ConnectToServer("opc.tcp://pmlab-101:4840"); // Hiwi Raum Simulation - ML Rechner 
+        await ConnectToServer("opc.tcp://pmlab-ros21:4840"); // Hiwi Raum - der zweite Rechner
         // await ConnectToServer("opc.tcp://pmlab-ROS2:4840"); // Klimaraum Simulation 
         allNodes = getAllNodes(session);
-
+        startSubscription();
+        addMonitoredItems();
     }
 
     void Update()
@@ -35,7 +39,6 @@ public class OPCUA_Client : MonoBehaviour
         
         // CancellationTokenSource
         cts = new CancellationTokenSource();
-        updateNodeValues();
     }
 
     async void OnApplicationQuit()
@@ -128,33 +131,35 @@ public class OPCUA_Client : MonoBehaviour
         session.Browse(null, null, 0, new BrowseDescriptionCollection {browseDescription}, out results, out diagnosticInfos);
         foreach (var result in results[0].References)
         {
-            NodeData parentNodeData = new NodeData();
-            NodeId parentNodeID =  ExpandedNodeId.ToNodeId(result.NodeId, session.NamespaceUris);
-            parentNodeData.nodeId = parentNodeID;
+            if(result.DisplayName.Text != "Server"){
+                NodeData parentNodeData = new NodeData();
+                NodeId parentNodeID =  ExpandedNodeId.ToNodeId(result.NodeId, session.NamespaceUris);
+                parentNodeData.nodeId = parentNodeID;
 
 
-            Dictionary<string, ChildNode> childrenNodesDict = new Dictionary<string, ChildNode>();
-            var childBrowseDescription = new BrowseDescription
-            {
-                NodeId = parentNodeID,
-                BrowseDirection = BrowseDirection.Forward,
-                ReferenceTypeId = ReferenceTypeIds.HierarchicalReferences,
-                IncludeSubtypes = true,
-                NodeClassMask = (uint) NodeClass.Object | (uint) NodeClass.Variable,
-                ResultMask = (uint) BrowseResultMask.All
-            };
-            BrowseResultCollection childResults;
-            DiagnosticInfoCollection chidlDiagnosticInfos;
-            session.Browse(null, null, 0, new BrowseDescriptionCollection {childBrowseDescription}, out childResults, out chidlDiagnosticInfos);
+                Dictionary<string, ChildNode> childrenNodesDict = new Dictionary<string, ChildNode>();
+                var childBrowseDescription = new BrowseDescription
+                {
+                    NodeId = parentNodeID,
+                    BrowseDirection = BrowseDirection.Forward,
+                    ReferenceTypeId = ReferenceTypeIds.HierarchicalReferences,
+                    IncludeSubtypes = true,
+                    NodeClassMask = (uint) NodeClass.Object | (uint) NodeClass.Variable,
+                    ResultMask = (uint) BrowseResultMask.All
+                };
+                BrowseResultCollection childResults;
+                DiagnosticInfoCollection chidlDiagnosticInfos;
+                session.Browse(null, null, 0, new BrowseDescriptionCollection {childBrowseDescription}, out childResults, out chidlDiagnosticInfos);
 
-            foreach (var childResult in childResults[0].References)
-            {
-                ChildNode childNode = new ChildNode() {nodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris)};  
-                childrenNodesDict.Add(childResult.DisplayName.Text, childNode);
-                nodesToRead.Add(new ReadValueId{NodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris), AttributeId = Attributes.Value});
-            };
-            parentNodeData.childrenNodes = childrenNodesDict;
-            nodeDataDict.Add(result.DisplayName.Text, parentNodeData);
+                foreach (var childResult in childResults[0].References)
+                {
+                    ChildNode childNode = new ChildNode() {nodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris)};  
+                    childrenNodesDict.Add(childResult.DisplayName.Text, childNode);
+                    nodesToRead.Add(new ReadValueId{NodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris), AttributeId = Attributes.Value});
+                };
+                parentNodeData.childrenNodes = childrenNodesDict;
+                nodeDataDict.Add(result.DisplayName.Text, parentNodeData);
+            } 
         }
         return nodeDataDict;
     }
@@ -217,5 +222,50 @@ public class OPCUA_Client : MonoBehaviour
                 Debug.LogError("Error reading data: " + e.Message);
             }
         }
+    }
+
+    void startSubscription()
+    {
+        if( subscription == null )
+        {
+            subscription = new Subscription(session.DefaultSubscription);
+            subscription.PublishingEnabled=true;
+            subscription.PublishingInterval=10;
+            session.AddSubscription(subscription);
+            subscription.Create();
+            Debug.Log("Subscrtiption initialized...");
+        }
+        else{
+            Debug.Log("Subscription existing...");
+        }
+    }
+
+    void addMonitoredItems()
+    {   
+        foreach(KeyValuePair<string, NodeData> parent in allNodes)
+        {
+            foreach(KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
+            {
+                MonitoredItem monitoredItem = new MonitoredItem(subscription.DefaultItem);
+                monitoredItem.StartNodeId = allNodes[parent.Key].childrenNodes[child.Key].nodeId;
+                monitoredItem.AttributeId = Attributes.Value;
+                monitoredItem.MonitoringMode = MonitoringMode.Reporting;
+                monitoredItem.SamplingInterval = 10;
+                monitoredItem.QueueSize = 1;
+                monitoredItem.DiscardOldest = true;
+                monitoredItem.DisplayName = parent.Key + "/" + child.Key;
+                monitoredItem.Notification += new MonitoredItemNotificationEventHandler(updateNodeCallback);
+                subscription.AddItem(monitoredItem);
+                subscription.ApplyChanges();
+                
+            }
+        }
+    }
+
+    void updateNodeCallback(MonitoredItem item, MonitoredItemNotificationEventArgs e)
+    {
+        var value = item.DequeueValues()[0];
+        string[] identifier = item.DisplayName.Split("/");
+        allNodes[identifier[0]].childrenNodes[identifier[1]].result=value;
     }
 }
