@@ -37,9 +37,7 @@ public class RobotAxisControl : MonoBehaviour
     {
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
-        axis = new ComponentClasses.AxisComponent(gameObject); 
-        unitsPerIncrement = (double) OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value;
-        
+        axis = new ComponentClasses.AxisComponent(gameObject);  
     }
 
     // Update is called once per frame
@@ -51,6 +49,5 @@ public class RobotAxisControl : MonoBehaviour
             unitsPerIncrement = (double) OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value;
             updateAxis();
         }
-
     }
 }

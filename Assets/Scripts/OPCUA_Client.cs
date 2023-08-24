@@ -23,9 +23,9 @@ public class OPCUA_Client : MonoBehaviour
     async void Awake()
     {
         await InitClient();
-        // await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
+        await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
         // await ConnectToServer("opc.tcp://pmlab-101:4840"); // Hiwi Raum Simulation - ML Rechner 
-        await ConnectToServer("opc.tcp://pmlab-ros21:4840"); // Hiwi Raum - der zweite Rechner
+        // await ConnectToServer("opc.tcp://pmlab-ros21:4840"); // Hiwi Raum - der zweite Rechner
         // await ConnectToServer("opc.tcp://pmlab-ROS2:4840"); // Klimaraum Simulation 
         allNodes = getAllNodes(session);
         startSubscription();
@@ -242,6 +242,8 @@ public class OPCUA_Client : MonoBehaviour
 
     void addMonitoredItems()
     {   
+        List<MonitoredItem> monitoredItems = new List<MonitoredItem>();
+        Debug.Log("Adding Monitored Items...");
         foreach(KeyValuePair<string, NodeData> parent in allNodes)
         {
             foreach(KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
@@ -255,11 +257,12 @@ public class OPCUA_Client : MonoBehaviour
                 monitoredItem.DiscardOldest = true;
                 monitoredItem.DisplayName = parent.Key + "/" + child.Key;
                 monitoredItem.Notification += new MonitoredItemNotificationEventHandler(updateNodeCallback);
-                subscription.AddItem(monitoredItem);
-                subscription.ApplyChanges();
-                
+                monitoredItems.Add(monitoredItem);
             }
         }
+        subscription.AddItems(monitoredItems);
+        subscription.ApplyChanges();
+        Debug.Log("Monitored Items added!");
     }
 
     void updateNodeCallback(MonitoredItem item, MonitoredItemNotificationEventArgs e)
