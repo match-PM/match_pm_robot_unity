@@ -16,16 +16,16 @@ public class OPCUA_Client : MonoBehaviour
     public Dictionary<string, NodeData> allNodes;
     public List<(string, string)> nodeNames = new List<(string, string)>();
     public ReadValueIdCollection nodesToRead = new ReadValueIdCollection();
-    public CancellationTokenSource  cts;
+    public CancellationTokenSource cts;
     private Subscription subscription;
     private Dictionary<string, Tuple<string, string>> monitoredItems;
-    
+
     async void Awake()
     {
         await InitClient();
-        // await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
+        await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
         // await ConnectToServer("opc.tcp://pmlab-101:4840"); // Hiwi Raum Simulation - ML Rechner 
-        await ConnectToServer("opc.tcp://pmlab-ros21:4840"); // Hiwi Raum - der zweite Rechner
+        // await ConnectToServer("opc.tcp://pmlab-ros21:4840"); // Hiwi Raum - der zweite Rechner
         // await ConnectToServer("opc.tcp://pmlab-ROS2:4840"); // Klimaraum Simulation 
         allNodes = getAllNodes(session);
         startSubscription();
@@ -36,7 +36,7 @@ public class OPCUA_Client : MonoBehaviour
     {
         // New value you want to write
         object newValue = 100;
-        
+
         // CancellationTokenSource
         cts = new CancellationTokenSource();
     }
@@ -114,7 +114,7 @@ public class OPCUA_Client : MonoBehaviour
     }
 
     public Dictionary<string, NodeData> getAllNodes(Session session)
-    {  
+    {
         Dictionary<string, NodeData> nodeDataDict = new Dictionary<string, NodeData>();
         var browseDescription = new BrowseDescription
         {
@@ -122,18 +122,19 @@ public class OPCUA_Client : MonoBehaviour
             BrowseDirection = BrowseDirection.Forward,
             ReferenceTypeId = ReferenceTypeIds.HierarchicalReferences,
             IncludeSubtypes = true,
-            NodeClassMask = (uint) NodeClass.Object | (uint) NodeClass.Variable,
-            ResultMask = (uint) BrowseResultMask.All
+            NodeClassMask = (uint)NodeClass.Object | (uint)NodeClass.Variable,
+            ResultMask = (uint)BrowseResultMask.All
         };
 
         BrowseResultCollection results;
         DiagnosticInfoCollection diagnosticInfos;
-        session.Browse(null, null, 0, new BrowseDescriptionCollection {browseDescription}, out results, out diagnosticInfos);
+        session.Browse(null, null, 0, new BrowseDescriptionCollection { browseDescription }, out results, out diagnosticInfos);
         foreach (var result in results[0].References)
         {
-            if(result.DisplayName.Text != "Server"){
+            if (result.DisplayName.Text != "Server")
+            {
                 NodeData parentNodeData = new NodeData();
-                NodeId parentNodeID =  ExpandedNodeId.ToNodeId(result.NodeId, session.NamespaceUris);
+                NodeId parentNodeID = ExpandedNodeId.ToNodeId(result.NodeId, session.NamespaceUris);
                 parentNodeData.nodeId = parentNodeID;
 
 
@@ -144,22 +145,22 @@ public class OPCUA_Client : MonoBehaviour
                     BrowseDirection = BrowseDirection.Forward,
                     ReferenceTypeId = ReferenceTypeIds.HierarchicalReferences,
                     IncludeSubtypes = true,
-                    NodeClassMask = (uint) NodeClass.Object | (uint) NodeClass.Variable,
-                    ResultMask = (uint) BrowseResultMask.All
+                    NodeClassMask = (uint)NodeClass.Object | (uint)NodeClass.Variable,
+                    ResultMask = (uint)BrowseResultMask.All
                 };
                 BrowseResultCollection childResults;
                 DiagnosticInfoCollection chidlDiagnosticInfos;
-                session.Browse(null, null, 0, new BrowseDescriptionCollection {childBrowseDescription}, out childResults, out chidlDiagnosticInfos);
+                session.Browse(null, null, 0, new BrowseDescriptionCollection { childBrowseDescription }, out childResults, out chidlDiagnosticInfos);
 
                 foreach (var childResult in childResults[0].References)
                 {
-                    ChildNode childNode = new ChildNode() {nodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris)};  
+                    ChildNode childNode = new ChildNode() { nodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris) };
                     childrenNodesDict.Add(childResult.DisplayName.Text, childNode);
-                    nodesToRead.Add(new ReadValueId{NodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris), AttributeId = Attributes.Value});
+                    nodesToRead.Add(new ReadValueId { NodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris), AttributeId = Attributes.Value });
                 };
                 parentNodeData.childrenNodes = childrenNodesDict;
                 nodeDataDict.Add(result.DisplayName.Text, parentNodeData);
-            } 
+            }
         }
         return nodeDataDict;
     }
@@ -176,11 +177,11 @@ public class OPCUA_Client : MonoBehaviour
             try
             {
                 WriteValueCollection nodesToWrite = new WriteValueCollection();
-                foreach(OPCUAWriteContainer writeContainer in writeContainers)
+                foreach (OPCUAWriteContainer writeContainer in writeContainers)
                 {
                     WriteValue writeValues = new WriteValue()
                     {
-                        NodeId = allNodes[writeContainer.parent].childrenNodes[writeContainer.child].nodeId, 
+                        NodeId = allNodes[writeContainer.parent].childrenNodes[writeContainer.child].nodeId,
                         AttributeId = Attributes.Value,
                         Value = writeContainer.writeValue
                     };
@@ -208,16 +209,16 @@ public class OPCUA_Client : MonoBehaviour
                 session.Read(null, 0, TimestampsToReturn.Both, nodesToRead, out DataValueCollection resultsValues, out DiagnosticInfoCollection diagnosticInfos);
                 int i = 0;
 
-                foreach(KeyValuePair<string, NodeData> parent in allNodes)
+                foreach (KeyValuePair<string, NodeData> parent in allNodes)
                 {
-                    foreach(KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
+                    foreach (KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
                     {
                         allNodes[parent.Key].childrenNodes[child.Key].result = resultsValues[i];
-                        i+=1;
+                        i += 1;
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.LogError("Error reading data: " + e.Message);
             }
@@ -226,27 +227,28 @@ public class OPCUA_Client : MonoBehaviour
 
     void startSubscription()
     {
-        if( subscription == null )
+        if (subscription == null)
         {
             subscription = new Subscription(session.DefaultSubscription);
-            subscription.PublishingEnabled=true;
-            subscription.PublishingInterval=10;
+            subscription.PublishingEnabled = true;
+            subscription.PublishingInterval = 10;
             session.AddSubscription(subscription);
             subscription.Create();
             Debug.Log("Subscrtiption initialized...");
         }
-        else{
+        else
+        {
             Debug.Log("Subscription existing...");
         }
     }
 
     void addMonitoredItems()
-    {   
+    {
         List<MonitoredItem> monitoredItems = new List<MonitoredItem>();
         Debug.Log("Adding Monitored Items...");
-        foreach(KeyValuePair<string, NodeData> parent in allNodes)
+        foreach (KeyValuePair<string, NodeData> parent in allNodes)
         {
-            foreach(KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
+            foreach (KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
             {
                 MonitoredItem monitoredItem = new MonitoredItem(subscription.DefaultItem);
                 monitoredItem.StartNodeId = allNodes[parent.Key].childrenNodes[child.Key].nodeId;
@@ -269,6 +271,6 @@ public class OPCUA_Client : MonoBehaviour
     {
         var value = item.DequeueValues()[0];
         string[] identifier = item.DisplayName.Split("/");
-        allNodes[identifier[0]].childrenNodes[identifier[1]].result=value;
+        allNodes[identifier[0]].childrenNodes[identifier[1]].result = value;
     }
 }
