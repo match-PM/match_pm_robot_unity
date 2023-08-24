@@ -23,9 +23,9 @@ public class OPCUA_Client : MonoBehaviour
     async void Awake()
     {
         await InitClient();
-        await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
+        // await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
         // await ConnectToServer("opc.tcp://pmlab-101:4840"); // Hiwi Raum Simulation - ML Rechner 
-        // await ConnectToServer("opc.tcp://pmlab-ros21:4840"); // Hiwi Raum - der zweite Rechner
+        await ConnectToServer("opc.tcp://pmlab-ros21:4840"); // Hiwi Raum - der zweite Rechner
         // await ConnectToServer("opc.tcp://pmlab-ROS2:4840"); // Klimaraum Simulation 
         allNodes = getAllNodes(session);
         startSubscription();

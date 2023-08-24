@@ -20,16 +20,27 @@ public class RobotAxisControl : MonoBehaviour
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
     double unitsPerIncrement;
+    private chooseMode.Mode mode;
+    private Dictionary<int, string> readNodeName = new Dictionary<int, string>() {{0, "TargetPosition"} , {1, "ActualPosition"}};
+    #nullable enable
+    private Dictionary<int, string?> writeNodeName = new Dictionary<int, string?>() {{0, "ActualPosition"} , {1, null}};
 
     void updateAxis()
     {
-        readTarget = (int) OPCUA_Client.allNodes[gameObject.name].childrenNodes["TargetPosition"].result.Value;
+        readTarget = (int) OPCUA_Client.allNodes[gameObject.name].childrenNodes[readNodeName[(int) mode]].result.Value;
         axis.move(readTarget, unitsPerIncrement);
-        float position = axis.articulationBody.jointPosition[0];
 
-        // IMPORTANT CHANGE TOLERANCE TO ACTUAL POSITION!!!
-        // OPCUAWriteContainer container = new OPCUAWriteContainer(gameObject.name, "Tolerance", new Variant((int) (position * (float) Math.Pow(10, 6))));
-        // await OPCUA_Client.WriteValues(new List<OPCUAWriteContainer> {container});
+        if(writeNodeName[(int) mode] != null)
+        {
+            writePosition();
+        }
+    }
+
+    async void writePosition()
+    {
+        float position = axis.articulationBody.jointPosition[0];
+        OPCUAWriteContainer container = new OPCUAWriteContainer(gameObject.name, writeNodeName[(int) mode], new Variant((int) (position / (float) unitsPerIncrement *  (float) Math.Pow(10, 6))));
+        await OPCUA_Client.WriteValues(new List<OPCUAWriteContainer> {container});
     }
     
     // Start is called before the first frame update
@@ -37,6 +48,7 @@ public class RobotAxisControl : MonoBehaviour
     {
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
+        mode = robotGameObject.GetComponent<chooseMode>().mode;
         axis = new ComponentClasses.AxisComponent(gameObject);  
     }
 
@@ -44,7 +56,7 @@ public class RobotAxisControl : MonoBehaviour
     void Update()
     {
 
-        if(OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["TargetPosition"].result.Value != null)
+        if(OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["TargetPosition"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["ActualPosition"].result.Value != null)
         {
             unitsPerIncrement = (double) OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value;
             updateAxis();
