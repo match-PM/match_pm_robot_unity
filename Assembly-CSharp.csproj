@@ -48,6 +48,7 @@
      <Compile Include="Assets/Ros2ForUnity/Scripts/Time/UnityTimeSource.cs" />
      <Compile Include="Assets/Scripts/Camera2LightControl.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2UnityCore.cs" />
+     <Compile Include="Assets/Scripts/chooseMode.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2Node.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ForUnity.cs" />
      <Compile Include="Assets/Scripts/Camera1LightControl.cs" />
@@ -65,7 +66,7 @@
      <Compile Include="Assets/Scripts/GetAxisName.cs" />
      <Compile Include="Assets/Scripts/OPCUA_Server.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
-     <Compile Include="Assets/Scripts/chooseMode.cs" />
+     <Compile Include="Assets/enableArticualtionBodies.cs" />
      <None Include="Assets/Ros2ForUnity/Plugins/metadata_ros2cs.xml" />
      <None Include="Assets/Scripts/nodeset_pm_server.xml" />
      <None Include="Assets/Ros2ForUnity/metadata_ros2_for_unity.xml" />

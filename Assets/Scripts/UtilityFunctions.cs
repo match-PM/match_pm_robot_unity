@@ -108,24 +108,39 @@ namespace UtilityFunctions
         {
             public ArticulationBody articulationBody;
             public ArticulationDrive newDrive;
-            
+            private Vector3 startPosition;
+            private Vector3 currentPosition;
 
             public AxisComponent(GameObject currentGameObject)
             {
                 this.name = currentGameObject.name;
                 this.parentObject = currentGameObject;
                 articulationBody = currentGameObject.GetComponent<ArticulationBody>();
+                startPosition = currentGameObject.transform.localPosition;
+                currentPosition = startPosition;
+                Debug.Log("Start Position: " + startPosition);
             }
 
             public void move(int readTarget,double unitsPerIncrement)
             {
                 float newTarget = doTargetConversion(readTarget, unitsPerIncrement);
-                if(newTarget != articulationBody.xDrive.target)
-                {
-                    newDrive = articulationBody.xDrive;
-                    newDrive.target = newTarget;
-                    articulationBody.xDrive = newDrive;
+                // if(newTarget != articulationBody.xDrive.target)
+                // {
+                //     newDrive = articulationBody.xDrive;
+                //     newDrive.target = newTarget;
+                //     articulationBody.xDrive = newDrive;
+                // }
+
+                Quaternion anchorRotation = articulationBody.anchorRotation;
+                Matrix4x4 rotationMatrix = Matrix4x4.Rotate(anchorRotation);
+                Vector3 newPosition = startPosition + rotationMatrix.MultiplyVector(new Vector3(newTarget, 0, 0));
+                if(newPosition != currentPosition){
+                    // parentObject.transform.localPosition = newPosition;
+                    parentObject.transform.Translate(new Vector3(newTarget, 0, 0) * Time.deltaTime);
+                    Debug.Log("Name: " + name + " Vector: " + rotationMatrix.MultiplyVector(newPosition) + " New position: " + newPosition);
+                    currentPosition = parentObject.transform.localPosition;
                 }
+                
             }
 
             float doTargetConversion(int readTarget, double unitsPerIncrement)
