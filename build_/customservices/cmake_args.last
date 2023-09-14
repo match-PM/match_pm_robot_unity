@@ -1,1 +1,0 @@
-['-DCMAKE_BUILD_TYPE=Release', '-DSTANDALONE_BUILD=OFF', '-DBUILD_TESTING=0', "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-rpath,'$ORIGIN',-rpath=.,--disable-new-dtags", '--no-warn-unused-cli']

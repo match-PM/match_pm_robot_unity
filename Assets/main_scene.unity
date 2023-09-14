@@ -32168,6 +32168,7 @@ GameObject:
   - component: {fileID: 1674386290}
   - component: {fileID: 1674386289}
   - component: {fileID: 1674386294}
+  - component: {fileID: 1674386296}
   m_Layer: 0
   m_Name: pm_robot
   m_TagString: robot
@@ -32266,6 +32267,18 @@ MonoBehaviour:
   torque: 5
   acceleration: 100
   highLightColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!114 &1674386296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674386288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 491cba0149420a751b346178443723e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1678484934
 GameObject:
   m_ObjectHideFlags: 8

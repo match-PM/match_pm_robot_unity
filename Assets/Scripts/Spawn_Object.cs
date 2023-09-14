@@ -4,13 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using ROS2;
 
-//using spawnObjReq = spawn_object_interfaces.msg.SpawnObject;
-//using spawnObjResp = spawn_object_interfaces.msg.SpawnObject_Response;
-//using spawnObjectBoth = spawn_object_interface.srv.Spawn_Object;
-
-using spawnObjReq = customservices.msg.SpawnObjectRequest;
-using spawnObjResp = customservices.msg.SpawnObjectResponse;
-
+using spawnObjReq = custom_service_interface.srv.SO_Request;
+using spawnObjResp = custom_service_interface.srv.SO_Response;
 
 /// <summary>
 /// This script subscribes to the /SpawnObject service and creates an object at the given position and rotation.
@@ -32,7 +27,6 @@ namespace ROS2
 {
 public class Spawn_Object : MonoBehaviour
 {
-    
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
     private IService<spawnObjReq, spawnObjResp> SpawnObjectService;
@@ -57,7 +51,8 @@ public class Spawn_Object : MonoBehaviour
                 
                 try
                 {
-                    SpawnObjectService = ros2Node.CreateService<spawnObjReq, spawnObjResp>("/object_manager/spawn_object", spawnObject);
+                    SpawnObjectService = ros2Node.CreateService<spawnObjReq, spawnObjResp>("/object_manager/so", spawnObject);///object_manager/spawn_object
+
                     Debug.Log("ich bin hier: 4.5");
                 }
                 catch(Exception ex)
@@ -66,18 +61,19 @@ public class Spawn_Object : MonoBehaviour
                 }
                 Debug.Log("ich bin hier: 5");
                 Debug.Log(SpawnObjectService.ToString());
+                Debug.Log("ich bin hier: 6");
                 
             }
         }
     }
 
-    public customservices.msg.SpawnObjectResponse spawnObject(customservices.msg.SpawnObjectRequest msg)
+    public custom_service_interface.srv.SO_Response spawnObject(custom_service_interface.srv.SO_Request msg)
     {
         Debug.Log("ich bin hier: " + msg);
-        // Debug.Log("Spawning Object with name:" + msg.obj_name + " and parent frame: " + msg.parent_frame +
-         //            ", at position: " + msg.translation + " and rotation: " + msg.rotation + ". CAD-Data: " + msg.cad_data);
-        customservices.msg.SpawnObjectResponse response = new customservices.msg.SpawnObjectResponse();
-        //response.success = true;
+        Debug.Log("Spawning Object with name:" + msg.Obj_name + " and parent frame: " + msg.Parent_frame +
+                    ", at position: " + msg.Translation + " and rotation: " + msg.Rotation + ". CAD-Data: " + msg.Cad_data);
+        custom_service_interface.srv.SO_Response response = new custom_service_interface.srv.SO_Response();
+        response.Success = true;
         return response;
     }
 }

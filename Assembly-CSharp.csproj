@@ -316,6 +316,9 @@
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
         <HintPath>/home/pmlab/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.visualscripting@1.8.0/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="customservices_assembly">
+        <HintPath>/home/pmlab/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/customservices_assembly.dll</HintPath>
+    </Reference>
     <Reference Include="sensor_msgs_assembly">
         <HintPath>/home/pmlab/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/sensor_msgs_assembly.dll</HintPath>
     </Reference>
@@ -379,17 +382,14 @@
     <Reference Include="trajectory_msgs_assembly">
         <HintPath>/home/pmlab/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/trajectory_msgs_assembly.dll</HintPath>
     </Reference>
+    <Reference Include="custom_service_interface_assembly">
+        <HintPath>/home/pmlab/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/custom_service_interface_assembly.dll</HintPath>
+    </Reference>
     <Reference Include="visualization_msgs_assembly">
         <HintPath>/home/pmlab/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/visualization_msgs_assembly.dll</HintPath>
     </Reference>
     <Reference Include="test_msgs_assembly">
         <HintPath>/home/pmlab/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/test_msgs_assembly.dll</HintPath>
-    </Reference>
-    <Reference Include="customservices_assembly">
-        <HintPath>/home/pmlab/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/customservices_assembly.dll</HintPath>
-    </Reference>
-    <Reference Include="spawn_object_interface_assembly">
-        <HintPath>/home/pmlab/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/spawn_object_interface_assembly.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
         <HintPath>/home/pmlab/Unity/Hub/Editor/2021.3.28f1/Editor/Data/NetStandard/ref/2.1.0/netstandard.dll</HintPath>

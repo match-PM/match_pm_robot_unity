@@ -1,6 +1,0 @@
-setup.py
-customservices/__init__.py
-customservices.egg-info/PKG-INFO
-customservices.egg-info/SOURCES.txt
-customservices.egg-info/dependency_links.txt
-customservices.egg-info/top_level.txt

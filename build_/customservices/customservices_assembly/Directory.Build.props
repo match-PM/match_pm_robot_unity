@@ -1,5 +1,0 @@
-<Project>
-  <PropertyGroup Condition="$(MSBuildProjectName.Contains('dotnetcore'))">
-    <BaseIntermediateOutputPath>customservices_assembly\</BaseIntermediateOutputPath>
-  </PropertyGroup>
-</Project>

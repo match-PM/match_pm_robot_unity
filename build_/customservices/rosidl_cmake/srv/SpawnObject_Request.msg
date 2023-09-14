@@ -1,5 +1,0 @@
-string obj_name
-string parent_frame
-float32[3] translation
-float32[4] rotation
-string cad_data
