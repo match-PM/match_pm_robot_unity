@@ -60,6 +60,8 @@
      <Compile Include="Assets/Scripts/GetAxisName.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
      <Compile Include="Assets/Scripts/Spawn_Object.cs" />
+     <Compile Include="Assets/Scripts/SpawnedGameObject.cs" />
+     <Compile Include="Assets/Scripts/SpawnSmallerObject.cs" />
      <None Include="Assets/Ros2ForUnity/Plugins/Linux/x86_64/metadata_ros2cs.xml" />
      <None Include="Assets/Ros2ForUnity/metadata_ros2_for_unity.xml" />
      <None Include="Assets/Ros2ForUnity/Plugins/metadata_ros2cs.xml" />

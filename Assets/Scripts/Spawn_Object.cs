@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ROS2;
 
+
 using spawnObjReq = custom_service_interface.srv.SO_Request;
 using spawnObjResp = custom_service_interface.srv.SO_Response;
 
@@ -30,51 +31,81 @@ public class Spawn_Object : MonoBehaviour
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
     private IService<spawnObjReq, spawnObjResp> SpawnObjectService;
+    //public GameObject spawnGameObject;
+
+    private bool NewData = false;
+    private custom_service_interface.srv.SO_Request recievedRequest;
+    
 
     // Start is called before the first frame update
     void Start()
-    {
-        Debug.Log("ich bin hier: 1 " + typeof(spawnObjReq));
-       
+    {             
         ros2Unity = GetComponent<ROS2UnityComponent>();
         if (ros2Unity.Ok())
         {
-            Debug.Log("ich bin hier: 2");
-            
+                        
             if (ros2Node == null)
             {
-                Debug.Log("ich bin hier: 3");
-                
                 ros2Node = ros2Unity.CreateNode("ROS2UnityService");
-                
-                Debug.Log("ich bin hier: 4");
-                
+
                 try
                 {
                     SpawnObjectService = ros2Node.CreateService<spawnObjReq, spawnObjResp>("/object_manager/so", spawnObject);///object_manager/spawn_object
-
-                    Debug.Log("ich bin hier: 4.5");
                 }
                 catch(Exception ex)
                 {
                     Debug.Log(ex.InnerException);
                 }
-                Debug.Log("ich bin hier: 5");
-                Debug.Log(SpawnObjectService.ToString());
-                Debug.Log("ich bin hier: 6");
-                
+                //Debug.Log(SpawnObjectService.ToString());
             }
         }
     }
 
     public custom_service_interface.srv.SO_Response spawnObject(custom_service_interface.srv.SO_Request msg)
     {
-        Debug.Log("ich bin hier: " + msg);
         Debug.Log("Spawning Object with name:" + msg.Obj_name + " and parent frame: " + msg.Parent_frame +
-                    ", at position: " + msg.Translation + " and rotation: " + msg.Rotation + ". CAD-Data: " + msg.Cad_data);
+                  ", at position: " + string.Join(", ", msg.Translation) + " and rotation: " + string.Join(", ", msg.Rotation) + ". CAD-Data: " + msg.Cad_data);
         custom_service_interface.srv.SO_Response response = new custom_service_interface.srv.SO_Response();
+       
+        NewData = true;
+        recievedRequest = msg;
+
         response.Success = true;
         return response;
+    }
+    
+    void Update()
+    {
+        if (NewData)
+        {
+            createGameObject();
+            NewData = false;
+        }   
+    }
+
+    private void createGameObject()
+    { 
+        ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>();
+
+        var foundParent = new GameObject().transform;
+
+        foreach ( ArticulationBody possibleParent in articulationBodies )
+        {
+            //Debug.Log(possibleParent.name);
+            if (possibleParent.name == recievedRequest.Parent_frame)
+            {                
+                foundParent = possibleParent.transform;
+            }
+        }
+        
+        Debug.Log("FoundParent: " + foundParent );
+        GameObject spawnedGameObject = Instantiate(new GameObject(),foundParent, false);
+
+        var sgo = spawnedGameObject.AddComponent<SpawnedGameObject>();
+        sgo.objectName = recievedRequest.Obj_name;
+        sgo.targetPosition = recievedRequest.Translation;
+        sgo.targetRotation = recievedRequest.Rotation;
+        sgo.cadDataPath = recievedRequest.Cad_data;
     }
 }
 }
