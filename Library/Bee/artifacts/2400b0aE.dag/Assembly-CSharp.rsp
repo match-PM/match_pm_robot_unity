@@ -389,9 +389,11 @@
 "Assets/Scripts/Cam1_Publisher.cs"
 "Assets/Scripts/GetAxisName.cs"
 "Assets/Scripts/Joint_States_To_Axis.cs"
-"Assets/Scripts/SpawnSmallerObject.cs"
-"Assets/Scripts/Spawn_Object.cs"
-"Assets/Scripts/SpawnedGameObject.cs"
+"Assets/Scripts/SpawnerService/Change_Parent_Frame.cs"
+"Assets/Scripts/SpawnerService/Delete_Object.cs"
+"Assets/Scripts/SpawnerService/SpawnGameObject.cs"
+"Assets/Scripts/SpawnerService/SpawnSmallerObject.cs"
+"Assets/Scripts/SpawnerService/Spawn_Object.cs"
 "Assets/Scripts/Update_Robot_URDF.cs"
 -langversion:9.0
 

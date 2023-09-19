@@ -32169,6 +32169,8 @@ GameObject:
   - component: {fileID: 1674386289}
   - component: {fileID: 1674386294}
   - component: {fileID: 1674386296}
+  - component: {fileID: 1674386297}
+  - component: {fileID: 1674386298}
   m_Layer: 0
   m_Name: pm_robot
   m_TagString: robot
@@ -32276,7 +32278,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 1674386288}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 491cba0149420a751b346178443723e0, type: 3}
+  m_Script: {fileID: 11500000, guid: b7cbb7ad08c6a122b92827a8bbd3c9c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1674386297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674386288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f517f782065174a3992549b840229439, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1674386298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674386288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4de545d1157291ce8143ee4b462524c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1678484934
