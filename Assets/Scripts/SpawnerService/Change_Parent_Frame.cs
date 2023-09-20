@@ -66,7 +66,7 @@ public class Change_Parent_Frame : MonoBehaviour
     // Callback function which is executed on incomming data
     public custom_service_interface.srv.CP_Response changeParentFrame(custom_service_interface.srv.CP_Request msg)
     {
-        Debug.Log("abaout to change parent frame of Object with name:" + msg.Obj_name + " to new parent frame: " + msg.New_parent_frame);
+        Debug.Log("about to change parent frame of Object with name:" + msg.Obj_name + " to new parent frame: " + msg.New_parent_frame);
 
         custom_service_interface.srv.CP_Response response = new custom_service_interface.srv.CP_Response();
        
