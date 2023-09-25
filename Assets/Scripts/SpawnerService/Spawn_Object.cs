@@ -113,7 +113,7 @@ public class Spawn_Object : MonoBehaviour
         ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>();
 
         var foundParent = new GameObject().transform;
-        Debug.Log(articulationBodies.Length);
+
         // Find the object with the given parent name
         foreach ( ArticulationBody possibleParent in articulationBodies )
         {
