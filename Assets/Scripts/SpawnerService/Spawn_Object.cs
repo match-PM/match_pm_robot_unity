@@ -5,8 +5,8 @@ using UnityEngine;
 using ROS2;
 
 
-using spawnObjReq = custom_service_interface.srv.SO_Request;
-using spawnObjResp = custom_service_interface.srv.SO_Response;
+using spawnObjReq = spawn_object_interfaces.srv.SpawnObject_Request;
+using spawnObjResp = spawn_object_interfaces.srv.SpawnObject_Response;
 
 /// <summary>
 /// This script subscribes to the /SpawnObject service and creates an object at the given position and rotation.
@@ -21,13 +21,28 @@ using spawnObjResp = custom_service_interface.srv.SO_Response;
 ///
 /// Step 1:
 ///         spwaw an object:
-///             ros2 service call /object_manager/so custom_service_interface/srv/SO "{obj_name: my_object_1, parent_frame: Y_Axis , translation:[0.0,0.0,0.0], rotation:[0.0,0.0,0.0,0.0], cad_data: //home/pmlab/Downloads/Tool_MPG_10_Base.STL}"
+///             ros2 service call /object_manager/so spawn_object_interfaces/srv/SpawnObject "{obj_name: my_object_1, parent_frame: Y_Axis , translation:[0.0,0.0,0.0], rotation:[0.0,0.0,0.0,0.0], cad_data: //home/pmlab/Downloads/Tool_MPG_10_Base.STL}"
 /// Step 2:
 ///         change the parent_frame:
-///             ros2 service call /object_manager/cp custom_service_interface/srv/CP "{obj_name: my_object_1, new_parent_frame: X_Axis}"
+///             ros2 service call /object_manager/cp spawn_object_interfaces/srv/ChangeParentFrame "{obj_name: my_object_1, parent_frame: X_Axis}"
 /// Step 3:
 ///         delete the object:
-///             ros2 service call /object_manager/do custom_service_interface/srv/DO "{obj_name: my_object_1}"
+///             ros2 service call /object_manager/do spawn_object_interfaces/srv/DestroyObject "{obj_name: my_object_1}"
+/// Step 4:
+///         create Ref frame:
+///             ros2 service call object_manager/crf spawn_object_interfaces/srv/CreateRefFrame "{frame_name: Ref_Frame_1, parent_frame: X_Axis , pose:{position: {x: -0.035, y: -0.02166, z: 0.00235}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}}}"
+/// Step 5:
+///         delete Ref frame:
+///             ros2 service call object_manager/drf spawn_object_interfaces/srv/DeleteRefFrame "{frame_name: Ref_Frame_1}"
+/// Step 6:
+///         disable object collision:
+///             ros2 service call object_manager/doc spawn_object_interfaces/srv/DisableObjCollision "{obj_name: my_object_1, link: Y_Axis}"
+/// Step 7:
+///         get informations:
+///             ros2 service call object_manager/gi spawn_object_interfaces/srv/GetInfo
+/// Step 8:
+///         modify pose:
+///             ros2 service call object_manager/mp spawn_object_interfaces/srv/ModifyPose "{frame_name: Ref_Frame_1, rel_pose:{position: {x: -0.035, y: -0.02166, z: 0.00235}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}}}"
 ///
 /// </summary>
 
@@ -35,13 +50,13 @@ namespace ROS2
 {
 public class Spawn_Object : MonoBehaviour
 {
-    // Initialize everython for service communication
+    // Initialize everythin for service communication
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
     private IService<spawnObjReq, spawnObjResp> SpawnObjectService;
 
     private bool NewData = false;
-    private custom_service_interface.srv.SO_Request recievedRequest;
+    private spawn_object_interfaces.srv.SpawnObject_Request recievedRequest;
     
     // Start is called before the first frame update
     void Start()
@@ -56,7 +71,7 @@ public class Spawn_Object : MonoBehaviour
 
                 try
                 {
-                    SpawnObjectService = ros2Node.CreateService<spawnObjReq, spawnObjResp>("/object_manager/so", spawnObject);///object_manager/spawn_object
+                    SpawnObjectService = ros2Node.CreateService<spawnObjReq, spawnObjResp>("/object_manager/so", spawnObject);
                 }
                 catch(Exception ex)
                 {
@@ -67,12 +82,12 @@ public class Spawn_Object : MonoBehaviour
     }
 
     // Callback function which is executed on incomming data
-    public custom_service_interface.srv.SO_Response spawnObject(custom_service_interface.srv.SO_Request msg)
+    public spawn_object_interfaces.srv.SpawnObject_Response spawnObject(spawn_object_interfaces.srv.SpawnObject_Request msg)
     {
         Debug.Log("About to spawn Object with name:" + msg.Obj_name + " and parent frame: " + msg.Parent_frame +
                   ", at position: " + string.Join(", ", msg.Translation) + " and rotation: " + string.Join(", ", msg.Rotation) + ". CAD-Data: " + msg.Cad_data);
 
-        custom_service_interface.srv.SO_Response response = new custom_service_interface.srv.SO_Response();
+        spawn_object_interfaces.srv.SpawnObject_Response response = new spawn_object_interfaces.srv.SpawnObject_Response();
        
         NewData = true;
         recievedRequest = msg;
@@ -98,7 +113,7 @@ public class Spawn_Object : MonoBehaviour
         ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>();
 
         var foundParent = new GameObject().transform;
-
+        Debug.Log(articulationBodies.Length);
         // Find the object with the given parent name
         foreach ( ArticulationBody possibleParent in articulationBodies )
         {
