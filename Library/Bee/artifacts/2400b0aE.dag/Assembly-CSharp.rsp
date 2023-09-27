@@ -397,6 +397,7 @@
 "Assets/Scripts/SpawnerService/Destroy_Object.cs"
 "Assets/Scripts/SpawnerService/Disable_Object_Collision.cs"
 "Assets/Scripts/SpawnerService/Get_Info.cs"
+"Assets/Scripts/SpawnerService/Hold_Info.cs"
 "Assets/Scripts/SpawnerService/Modify_Pose.cs"
 "Assets/Scripts/SpawnerService/SpawnGameObject.cs"
 "Assets/Scripts/SpawnerService/SpawnSmallerObject.cs"

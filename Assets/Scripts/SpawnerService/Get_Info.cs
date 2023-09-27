@@ -50,14 +50,16 @@ public class Get_Info : MonoBehaviour
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
     private IService<getInfoReq, getInfoResp> GetInfoService;
+      
+    private Hold_Info Info;
 
-    private bool NewData = false;
-    private spawn_object_interfaces.srv.GetInfo_Request recievedRequest;
-    
     // Start is called before the first frame update
     void Start()
     {
-        // Open a node for communication         
+        //Script holding Lists with the wanted Information
+        Info = GetComponentInChildren<Hold_Info>();
+
+        // Open a node for communication
         ros2Unity = GetComponent<ROS2UnityComponent>();
         if (ros2Unity.Ok())
         {                        
@@ -85,53 +87,10 @@ public class Get_Info : MonoBehaviour
 
         spawn_object_interfaces.srv.GetInfo_Response response = new spawn_object_interfaces.srv.GetInfo_Response();
        
-        NewData = true;
-        recievedRequest = msg;
-
-        response.Obj_names = new string[0];
-        response.Ref_frame_names = new string[0];
+        response.Obj_names = Info.getSpawnNamesList();
+        response.Ref_frame_names = Info.getFrameNamesList();
         return response;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (NewData)
-        {
-            createGameObject();
-            NewData = false;
-        }   
-    }
-
-        // Main function the gets the job done
-    private void createGameObject()
-    {
-        // // Get all possible parent objects/axes
-        // ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>();
-
-        // var foundParent = new GameObject().transform;
-
-        // // Find the object with the given parent name
-        // foreach ( ArticulationBody possibleParent in articulationBodies )
-        // {
-        //     //Debug.Log(possibleParent.name);
-        //     if (possibleParent.name == recievedRequest.Parent_frame)
-        //     {                
-        //         foundParent = possibleParent.transform;
-        //     }
-        // }
-        
-        // //Debug.Log("FoundParent: " + foundParent );
-        // // Instantiate new GameObject with the given parent frame
-        // GameObject spawnedGameObject = Instantiate(new GameObject(),foundParent, false);
-
-        // // Append "SpawndeGameObject" script to GameObject
-        // var sgo = spawnedGameObject.AddComponent<SpawnGameObject>();
-        // sgo.objectName = recievedRequest.Obj_name;
-        // sgo.targetPosition = recievedRequest.Translation;
-        // sgo.targetRotation = recievedRequest.Rotation;
-        // sgo.cadDataPath = recievedRequest.Cad_data;
-        // sgo.tag = "spawned"; //add tag for later recognition
-    }
 }
 }

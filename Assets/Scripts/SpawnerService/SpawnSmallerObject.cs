@@ -5,7 +5,6 @@ using ROS2;
 
 public class SpawnSmallerObject : MonoBehaviour
 {
-    public string objectName;    
     public Mesh meshPart;
   
     public MeshFilter mf;
@@ -14,8 +13,7 @@ public class SpawnSmallerObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Set internal parameter
-        name = objectName;
+
 
         // Add Material from Resources folder to MeshRenderer
         mr = GetComponent<MeshRenderer>();

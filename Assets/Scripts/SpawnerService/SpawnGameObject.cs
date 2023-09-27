@@ -7,7 +7,6 @@ using ROS2;
 
 public class SpawnGameObject : MonoBehaviour
 {
-    public string objectName;
     public float[] targetPosition;
     public float[] targetRotation;
     public string cadDataPath;
@@ -19,8 +18,6 @@ public class SpawnGameObject : MonoBehaviour
         // Set internal parameter
         transform.localPosition = transform.localPosition += new Vector3(targetPosition[0], targetPosition[1], targetPosition[2]);
         transform.rotation = new Quaternion(targetRotation[0],targetRotation[1],targetRotation[2],targetRotation[3]).Ros2Unity(); // Rotate from ROS to Unity
-        name = objectName;
-        
         
         // create Meshes from STL-File
         Meshes = GetMeshFromSTL(cadDataPath);
@@ -28,7 +25,7 @@ public class SpawnGameObject : MonoBehaviour
         // create multiple GameObjects for each incomming Object becaus of maximum num of vertices
         for (int i = 0;i < Meshes.Length; i++)
         {
-            createGameObject(Meshes[i], objectName + $"_{i}");
+            createGameObject(Meshes[i], name + $"_{i}");
         }            
     }
 
@@ -61,12 +58,12 @@ public class SpawnGameObject : MonoBehaviour
     private void createGameObject(Mesh mesh, string partName)
     {
         // Instantiate new GameObject with this as parent frame
-        GameObject spawnedSmallerObject = Instantiate(new GameObject(), transform, false);
-        
+        GameObject spawnedSmallerObject = new GameObject(partName); //Instantiate(new GameObject(), transform, false);
+        spawnedSmallerObject.transform.parent = transform;
+        spawnedSmallerObject.transform.position = transform.position;
+        spawnedSmallerObject.transform.rotation = transform.rotation;
         // Append "SpawnSmallerObject" script to GameObject
-        spawnedSmallerObject.name = partName;
         var sso = spawnedSmallerObject.AddComponent<SpawnSmallerObject>();
-        sso.objectName = partName;
         sso.meshPart = mesh;
 
         spawnedSmallerObject.AddComponent<MeshFilter>();

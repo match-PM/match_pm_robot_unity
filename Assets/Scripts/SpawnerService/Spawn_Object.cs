@@ -57,10 +57,15 @@ public class Spawn_Object : MonoBehaviour
 
     private bool NewData = false;
     private spawn_object_interfaces.srv.SpawnObject_Request recievedRequest;
+
+    private Hold_Info Info;
     
     // Start is called before the first frame update
     void Start()
-    {       
+    {
+        //Script holding Lists with the wanted Information
+        Info = GetComponentInChildren<Hold_Info>();
+
         // Open a node for communication         
         ros2Unity = GetComponent<ROS2UnityComponent>();
         if (ros2Unity.Ok())
@@ -84,7 +89,7 @@ public class Spawn_Object : MonoBehaviour
     // Callback function which is executed on incomming data
     public spawn_object_interfaces.srv.SpawnObject_Response spawnObject(spawn_object_interfaces.srv.SpawnObject_Request msg)
     {
-        Debug.Log("About to spawn Object with name:" + msg.Obj_name + " and parent frame: " + msg.Parent_frame +
+        Debug.Log("About to spawn Object with name: " + msg.Obj_name + " and parent frame: " + msg.Parent_frame +
                   ", at position: " + string.Join(", ", msg.Translation) + " and rotation: " + string.Join(", ", msg.Rotation) + ". CAD-Data: " + msg.Cad_data);
 
         spawn_object_interfaces.srv.SpawnObject_Response response = new spawn_object_interfaces.srv.SpawnObject_Response();
@@ -112,29 +117,31 @@ public class Spawn_Object : MonoBehaviour
         // Get all possible parent objects/axes
         ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>();
 
-        var foundParent = new GameObject().transform;
-
+        // New GameObject
+        GameObject spawnedGameObject = new GameObject(recievedRequest.Obj_name);
+        
         // Find the object with the given parent name
         foreach ( ArticulationBody possibleParent in articulationBodies )
         {
             //Debug.Log(possibleParent.name);
             if (possibleParent.name == recievedRequest.Parent_frame)
             {                
-                foundParent = possibleParent.transform;
+                spawnedGameObject.transform.parent = possibleParent.transform;
+                spawnedGameObject.transform.position = possibleParent.transform.position;
+                spawnedGameObject.transform.rotation = possibleParent.transform.rotation;
             }
         }
         
-        //Debug.Log("FoundParent: " + foundParent );
         // Instantiate new GameObject with the given parent frame
-        GameObject spawnedGameObject = Instantiate(new GameObject(),foundParent, false);
 
         // Append "SpawndeGameObject" script to GameObject
         var sgo = spawnedGameObject.AddComponent<SpawnGameObject>();
-        sgo.objectName = recievedRequest.Obj_name;
         sgo.targetPosition = recievedRequest.Translation;
         sgo.targetRotation = recievedRequest.Rotation;
         sgo.cadDataPath = recievedRequest.Cad_data;
         sgo.tag = "spawned"; //add tag for later recognition
+
+        Info.addToSpawnNamesList(recievedRequest.Obj_name); // Add to namelist
     }
 }
 }

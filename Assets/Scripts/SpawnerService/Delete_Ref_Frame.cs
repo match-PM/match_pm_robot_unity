@@ -53,9 +53,14 @@ public class Delete_Ref_Frame : MonoBehaviour
     private bool NewData = false;
     private spawn_object_interfaces.srv.DeleteRefFrame_Request recievedRequest;
     
+    private Hold_Info Info;
+
     // Start is called before the first frame update
     void Start()
     {
+        //Script holding Lists with the wanted Information
+        Info = GetComponentInChildren<Hold_Info>();
+        
         // Open a node for communication         
         ros2Unity = GetComponent<ROS2UnityComponent>();
         if (ros2Unity.Ok())
@@ -96,40 +101,26 @@ public class Delete_Ref_Frame : MonoBehaviour
     {
         if (NewData)
         {
-            createGameObject();
+            deleteGameObject();
             NewData = false;
         }   
     }
 
         // Main function the gets the job done
-    private void createGameObject()
+    private void deleteGameObject()
     {
-        // // Get all possible parent objects/axes
-        // ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>();
+        // Find all spawned object by tag
+        GameObject[] GameObjects = GameObject.FindGameObjectsWithTag("RefFrame");
 
-        // var foundParent = new GameObject().transform;
-
-        // // Find the object with the given parent name
-        // foreach ( ArticulationBody possibleParent in articulationBodies )
-        // {
-        //     //Debug.Log(possibleParent.name);
-        //     if (possibleParent.name == recievedRequest.Parent_frame)
-        //     {                
-        //         foundParent = possibleParent.transform;
-        //     }
-        // }
-        
-        // //Debug.Log("FoundParent: " + foundParent );
-        // // Instantiate new GameObject with the given parent frame
-        // GameObject spawnedGameObject = Instantiate(new GameObject(),foundParent, false);
-
-        // // Append "SpawndeGameObject" script to GameObject
-        // var sgo = spawnedGameObject.AddComponent<SpawnGameObject>();
-        // sgo.objectName = recievedRequest.Obj_name;
-        // sgo.targetPosition = recievedRequest.Translation;
-        // sgo.targetRotation = recievedRequest.Rotation;
-        // sgo.cadDataPath = recievedRequest.Cad_data;
-        // sgo.tag = "spawned"; //add tag for later recognition
+        //delete object with same name as given
+        foreach(GameObject Object in GameObjects)
+        {
+            if (recievedRequest.Frame_name == Object.name)
+            {
+                Destroy(Object);
+                Info.removeFromFrameNamesList(recievedRequest.Frame_name); // Remove from namelist
+            }
+        }
     }
 }
 }

@@ -75,7 +75,6 @@ public class Change_Parent_Frame : MonoBehaviour
                 }
             }
         }
-        
     }
 
     // Callback function which is executed on incomming data
@@ -99,8 +98,7 @@ public class Change_Parent_Frame : MonoBehaviour
         {
             changeParentFrameGameObject();
             NewData = false;
-        }   
-        
+        }        
     }
 
     // Main function the gets the job done
@@ -112,24 +110,20 @@ public class Change_Parent_Frame : MonoBehaviour
         // Get all possible parent objects/axes
         ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>();
         
-        var foundParent = new GameObject().transform;
-
         // Find the object with the given parent name
         foreach ( ArticulationBody possibleNewParent in articulationBodies )
         {
             //Debug.Log(possibleNewParent.name);
             if (possibleNewParent.name == recievedRequest.Parent_frame)
-            {                
-                foundParent = possibleNewParent.transform;
-            }
-        }
-
-        // Set the new parent to the object with the given name
-        foreach(GameObject gameObject in GameObjects)
-        {
-            if (gameObject.name == recievedRequest.Obj_name)
             {
-                gameObject.transform.SetParent(foundParent);
+                // Set the new parent to the object with the given name
+                foreach(GameObject gameObject in GameObjects)
+                {
+                    if (gameObject.name == recievedRequest.Obj_name)
+                    {
+                        gameObject.transform.SetParent(possibleNewParent.transform);
+                    }
+                }          
             }
         }
     }

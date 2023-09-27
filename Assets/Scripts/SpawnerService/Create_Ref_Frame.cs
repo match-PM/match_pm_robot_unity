@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ROS2;
+using Unity.Robotics.UrdfImporter;
 
 using createRefReq = spawn_object_interfaces.srv.CreateRefFrame_Request;
 using createRefResp = spawn_object_interfaces.srv.CreateRefFrame_Response;
@@ -55,9 +56,14 @@ public class Create_Ref_Frame : MonoBehaviour
     private bool NewData = false;
     private spawn_object_interfaces.srv.CreateRefFrame_Request recievedRequest;
     
+    private Hold_Info Info;
+
     // Start is called before the first frame update
     void Start()
     {
+        //Script holding Lists with the wanted Information
+        Info = GetComponentInChildren<Hold_Info>();
+
         // Open a node for communication         
         ros2Unity = GetComponent<ROS2UnityComponent>();
         if (ros2Unity.Ok())
@@ -108,32 +114,37 @@ public class Create_Ref_Frame : MonoBehaviour
         // Main function the gets the job done
     private void createGameObject()
     {
-        // // Get all possible parent objects/axes
-        // ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>();
+        // Get all possible parent objects/axes
+        ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>();
 
-        // var foundParent = new GameObject().transform;
+        Vector3 relPos = new Vector3((float)recievedRequest.Pose.Position.X, (float)recievedRequest.Pose.Position.Y, (float)recievedRequest.Pose.Position.Z);
+        Quaternion relQuat = new Quaternion((float)recievedRequest.Pose.Orientation.X, (float)recievedRequest.Pose.Orientation.Y, (float)recievedRequest.Pose.Orientation.Z, (float)recievedRequest.Pose.Orientation.W);
 
-        // // Find the object with the given parent name
-        // foreach ( ArticulationBody possibleParent in articulationBodies )
-        // {
-        //     //Debug.Log(possibleParent.name);
-        //     if (possibleParent.name == recievedRequest.Parent_frame)
-        //     {                
-        //         foundParent = possibleParent.transform;
-        //     }
-        // }
+
+        GameObject newRefFrame = new GameObject(recievedRequest.Frame_name);
         
-        // //Debug.Log("FoundParent: " + foundParent );
-        // // Instantiate new GameObject with the given parent frame
-        // GameObject spawnedGameObject = Instantiate(new GameObject(),foundParent, false);
+        // Find the object with the given parent name
+        foreach ( ArticulationBody possibleParent in articulationBodies )
+        {
+            //Debug.Log(possibleParent.name);
+            if (possibleParent.name == recievedRequest.Parent_frame)
+            {                
+                newRefFrame.transform.parent = possibleParent.transform;
+                newRefFrame.transform.position = possibleParent.transform.position;
+                newRefFrame.transform.rotation = possibleParent.transform.rotation;
+            }
+        }
 
-        // // Append "SpawndeGameObject" script to GameObject
-        // var sgo = spawnedGameObject.AddComponent<SpawnGameObject>();
-        // sgo.objectName = recievedRequest.Obj_name;
-        // sgo.targetPosition = recievedRequest.Translation;
-        // sgo.targetRotation = recievedRequest.Rotation;
-        // sgo.cadDataPath = recievedRequest.Cad_data;
-        // sgo.tag = "spawned"; //add tag for later recognition
+        // Apply relative position and rotation
+        newRefFrame.transform.localPosition += relPos;
+        newRefFrame.transform.rotation *= relQuat.Ros2Unity(); // Rotate from ROS to Unity
+        newRefFrame.tag = "RefFrame"; //add tag for later recognition
+        // newRefFrame.AddComponent<UrdfLink>();
+        // newRefFrame.AddComponent<ArticulationBody>();
+        // newRefFrame.AddComponent<UrdfInertial>();
+        // newRefFrame.AddComponent<UrdfJointPrismatic>();
+   
+        Info.addToFrameNamesList(recievedRequest.Frame_name);   // Add to namelist
     }
 }
 }

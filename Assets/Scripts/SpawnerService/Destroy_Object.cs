@@ -53,9 +53,13 @@ public class Destroy_Object : MonoBehaviour
     private bool NewData = false;
     private spawn_object_interfaces.srv.DestroyObject_Request recievedRequest;
 
+    private Hold_Info Info;
+
     // Start is called before the first frame update
     void Start()
     {
+        Info = GetComponentInChildren<Hold_Info>();
+
         // Open a node for communication
         ros2Unity = GetComponent<ROS2UnityComponent>();
         if (ros2Unity.Ok())
@@ -96,14 +100,14 @@ public class Destroy_Object : MonoBehaviour
     {
         if (NewData)
         {
-            deleteGameObject();
+            destroyGameObject();
             NewData = false;
         }   
         
     }
 
     // Main function the gets the job done
-    private void deleteGameObject()
+    private void destroyGameObject()
     {
         // Find all spawned object by tag
         GameObject[] GameObjects = GameObject.FindGameObjectsWithTag("spawned");
@@ -114,6 +118,7 @@ public class Destroy_Object : MonoBehaviour
             if (recievedRequest.Obj_name == Object.name)
             {
                 Destroy(Object);
+                Info.removeFromSpawnNamesList(recievedRequest.Obj_name); // Remove from namelist
             }
         }
     }
