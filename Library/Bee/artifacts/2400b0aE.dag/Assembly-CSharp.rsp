@@ -402,6 +402,7 @@
 "Assets/Scripts/SpawnerService/SpawnGameObject.cs"
 "Assets/Scripts/SpawnerService/SpawnSmallerObject.cs"
 "Assets/Scripts/SpawnerService/Spawn_Object.cs"
+"Assets/Scripts/SpawnerService/tf_Ref/DrawCoordinates.cs"
 "Assets/Scripts/Update_Robot_URDF.cs"
 -langversion:9.0
 

@@ -7,7 +7,6 @@ TagManager:
   - robot
   - spawned
   - RefFrame
-  - DeleteMe
   layers:
   - Default
   - TransparentFX

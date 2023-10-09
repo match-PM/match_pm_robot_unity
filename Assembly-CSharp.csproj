@@ -70,6 +70,7 @@
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ListenerExample.cs" />
      <Compile Include="Assets/Scripts/GetAxisName.cs" />
      <Compile Include="Assets/Scripts/SpawnerService/Hold_Info.cs" />
+     <Compile Include="Assets/Scripts/SpawnerService/tf_Ref/drawCoordinates.cs" />
      <None Include="Assets/Ros2ForUnity/Plugins/Linux/x86_64/metadata_ros2cs.xml" />
      <None Include="Assets/Ros2ForUnity/metadata_ros2_for_unity.xml" />
      <None Include="Assets/Ros2ForUnity/metadata_ros2cs.xml" />
