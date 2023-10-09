@@ -391,6 +391,8 @@
 "Assets/Scripts/Cam1_Publisher.cs"
 "Assets/Scripts/GetAxisName.cs"
 "Assets/Scripts/Joint_States_To_Axis.cs"
+"Assets/Scripts/RefFrames/UpdateRefFrames.cs"
+"Assets/Scripts/RefFrames/setName.cs"
 "Assets/Scripts/SpawnerService/Change_Parent_Frame.cs"
 "Assets/Scripts/SpawnerService/Create_Ref_Frame.cs"
 "Assets/Scripts/SpawnerService/Delete_Ref_Frame.cs"
