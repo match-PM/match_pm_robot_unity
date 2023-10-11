@@ -124,22 +124,22 @@ namespace UtilityFunctions
             public void move(int readTarget,double unitsPerIncrement)
             {
                 float newTarget = doTargetConversion(readTarget, unitsPerIncrement);
-                // if(newTarget != articulationBody.xDrive.target)
-                // {
-                //     newDrive = articulationBody.xDrive;
-                //     newDrive.target = newTarget;
-                //     articulationBody.xDrive = newDrive;
-                // }
-
-                Quaternion anchorRotation = articulationBody.anchorRotation;
-                Matrix4x4 rotationMatrix = Matrix4x4.Rotate(anchorRotation);
-                Vector3 newPosition = startPosition + rotationMatrix.MultiplyVector(new Vector3(newTarget, 0, 0));
-                if(newPosition != currentPosition){
-                    // parentObject.transform.localPosition = newPosition;
-                    parentObject.transform.Translate(new Vector3(newTarget, 0, 0) * Time.deltaTime);
-                    Debug.Log("Name: " + name + " Vector: " + rotationMatrix.MultiplyVector(newPosition) + " New position: " + newPosition);
-                    currentPosition = parentObject.transform.localPosition;
+                if(newTarget != articulationBody.xDrive.target)
+                {
+                    newDrive = articulationBody.xDrive;
+                    newDrive.target = newTarget;
+                    articulationBody.xDrive = newDrive;
                 }
+
+                // Quaternion anchorRotation = articulationBody.anchorRotation;
+                // Matrix4x4 rotationMatrix = Matrix4x4.Rotate(anchorRotation);
+                // Vector3 newPosition = startPosition + rotationMatrix.MultiplyVector(new Vector3(newTarget, 0, 0));
+                // if(newPosition != currentPosition){
+                //     // parentObject.transform.localPosition = newPosition;
+                //     parentObject.transform.Translate(new Vector3(newTarget, 0, 0) * Time.deltaTime);
+                //     Debug.Log("Name: " + name + " Vector: " + rotationMatrix.MultiplyVector(newPosition) + " New position: " + newPosition);
+                //     currentPosition = parentObject.transform.localPosition;
+                // }
                 
             }
 
