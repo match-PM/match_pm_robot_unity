@@ -122,7 +122,7 @@ public class Create_Ref_Frame : MonoBehaviour
 
 
         GameObject newRefFrame = new GameObject(recievedRequest.Frame_name);
-        Instantiate(Resources.Load<GameObject>("Prefabs/tf_RefFrame"), newRefFrame.transform);
+        Instantiate(Resources.Load<GameObject>("Prefabs/RefFrame"), newRefFrame.transform);
         // Find the object with the given parent name
         foreach ( ArticulationBody possibleParent in articulationBodies )
         {

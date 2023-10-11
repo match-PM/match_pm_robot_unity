@@ -27,7 +27,6 @@ public class UpdateRefFrames : MonoBehaviour
         
         if (ros2Node == null && ros2Unity.Ok())
         {
-            Debug.Log("subscribe");
             ros2Node = ros2Unity.CreateNode("ROS2UnityListenerRefFrames");
             chatter_sub = ros2Node.CreateSubscription<tf2_msgs.msg.TFMessage>("/tf", msg => newData(msg)/*, msg => drawNewRefFrames(msg)*/);
         }    
@@ -42,6 +41,8 @@ public class UpdateRefFrames : MonoBehaviour
         }
     }
 
+    //hier das ganze noch mal stabiler machen. eventuell aus start auslagern?
+
     // callback
     // is called, when /tf-data has been recieved
     void newData(tf2_msgs.msg.TFMessage incData)
@@ -52,7 +53,6 @@ public class UpdateRefFrames : MonoBehaviour
         {
             // remove subscription, since we only need one message
             ros2Node.RemoveSubscription<tf2_msgs.msg.TFMessage>(chatter_sub);
-            ros2Node = null;
         }
         catch(Exception ex)
         {
@@ -62,12 +62,13 @@ public class UpdateRefFrames : MonoBehaviour
     
     // Instatiates the refFrame Prefab at the given tf-Frame
     void drawNewRefFrames(tf2_msgs.msg.TFMessage incomming)
-    {
+    {        
+        done = true; // in case the first Message was broken
+        
         try{
-            done = true; // in case the first Message was broken
-            
+            Debug.Log("durchlauf");
             geometry_msgs.msg.TransformStamped[] transforms = incomming.Transforms;
-            
+          
             foreach (geometry_msgs.msg.TransformStamped ts in transforms)
             {            
                 if (!alreadyAdded.Contains(ts.Header.Frame_id))
@@ -81,7 +82,7 @@ public class UpdateRefFrames : MonoBehaviour
         }
         catch(Exception ex)
         {
-            Debug.Log("Exception in drawNewRefFrames: " + ex.Message);
+            Debug.Log("Exception in drawNewRefFrames: " + ex.Message + "; Trying again");
             // get next message and try again
             done = false;
             chatter_sub = ros2Node.CreateSubscription<tf2_msgs.msg.TFMessage>("/tf", msg => newData(msg));

@@ -133,7 +133,7 @@ public class Spawn_Object : MonoBehaviour
         }
         
         // Instantiate new GameObject with the given parent frame
-        Instantiate(Resources.Load<GameObject>("Prefabs/tf_RefFrame"), spawnedGameObject.transform);
+        Instantiate(Resources.Load<GameObject>("Prefabs/RefFrame"), spawnedGameObject.transform);
         // Append "SpawndeGameObject" script to GameObject
         var sgo = spawnedGameObject.AddComponent<SpawnGameObject>();
         sgo.targetPosition = recievedRequest.Translation;
