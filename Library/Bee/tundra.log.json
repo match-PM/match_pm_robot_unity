@@ -322,7 +322,7 @@
 {"msg":"enqueueNode","enqueuedNodeAnnotation":"CopyFiles Library/ScriptAssemblies/Assembly-CSharp.pdb","enqueuedNodeIndex":321,"enqueueingNodeAnnotation":"ScriptAssemblies","enqueueingNodeIndex":5}
 {"msg":"nodeRetryBuild","annotation":"Csc Library/Bee/artifacts/2400b0aE.dag/Assembly-CSharp.dll (+2 others)","index":252}
 {"msg":"runNodeAction","annotation":"Csc Library/Bee/artifacts/2400b0aE.dag/Assembly-CSharp.dll (+2 others)","index":252}
-{"msg":"noderesult","processed_node_count":317,"number_of_nodes_ever_queued":321,"annotation":"Csc Library/Bee/artifacts/2400b0aE.dag/Assembly-CSharp.dll (+2 others)","index":252,"exitcode":0,"outputfile":"Library/Bee/artifacts/2400b0aE.dag/Assembly-CSharp.dll","stdout":"Assets/Scripts/RefFrames/UpdateRefFrames.cs(16,18): warning CS0414: The field 'UpdateRefFrames.NewData' is assigned but its value is never used"}
+{"msg":"noderesult","processed_node_count":317,"number_of_nodes_ever_queued":321,"annotation":"Csc Library/Bee/artifacts/2400b0aE.dag/Assembly-CSharp.dll (+2 others)","index":252,"exitcode":0,"outputfile":"Library/Bee/artifacts/2400b0aE.dag/Assembly-CSharp.dll"}
 {"msg":"inputSignatureChanged","annotation":"CopyFiles Library/ScriptAssemblies/Assembly-CSharp.dll","index":320,"changes":[{"key":"InputFileList","value":["Library/Bee/artifacts/2400b0aE.dag/Assembly-CSharp.dll"],"oldvalue":[],"dependency":"explicit"}]}
 {"msg":"runNodeAction","annotation":"CopyFiles Library/ScriptAssemblies/Assembly-CSharp.dll","index":320}
 {"msg":"inputSignatureChanged","annotation":"CopyFiles Library/ScriptAssemblies/Assembly-CSharp.pdb","index":321,"changes":[{"key":"InputFileList","value":["Library/Bee/artifacts/2400b0aE.dag/Assembly-CSharp.pdb"],"oldvalue":[],"dependency":"explicit"}]}

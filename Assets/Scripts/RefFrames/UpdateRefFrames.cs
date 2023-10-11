@@ -13,12 +13,10 @@ public class UpdateRefFrames : MonoBehaviour
     private ISubscription<tf2_msgs.msg.TFMessage> chatter_sub;
     private tf2_msgs.msg.TFMessage recievedRequest;
 
-    bool done = false;
+    bool done = false;  // has everything worked?
 
-    List<string> alreadyAdded = new List<string>(); //to evade multiples RefFrames an TFs
+    List<string> alreadyAdded = new List<string>(); // to evade multiples RefFrames at TFs
     
-
-
     // Start is called before the first frame update
     void Start()
     {
@@ -41,13 +39,11 @@ public class UpdateRefFrames : MonoBehaviour
         }
     }
 
-    //hier das ganze noch mal stabiler machen. eventuell aus start auslagern?
-
     // callback
     // is called, when /tf-data has been recieved
     void newData(tf2_msgs.msg.TFMessage incData)
     {
-        // save, becaause Find in drawNewRefFrames can only be run on mainThread
+        // save, because "Find" in drawNewRefFrames can only be run on mainThread
         recievedRequest = incData;
         try
         {
@@ -66,7 +62,6 @@ public class UpdateRefFrames : MonoBehaviour
         done = true; // in case the first Message was broken
         
         try{
-            Debug.Log("durchlauf");
             geometry_msgs.msg.TransformStamped[] transforms = incomming.Transforms;
           
             foreach (geometry_msgs.msg.TransformStamped ts in transforms)
