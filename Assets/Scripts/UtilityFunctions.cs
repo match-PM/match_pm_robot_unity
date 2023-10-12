@@ -104,14 +104,14 @@ namespace UtilityFunctions
         };
 
 
-        public class AxisComponent:Component
+        public class DriveComponent:Component
         {
             public ArticulationBody articulationBody;
             public ArticulationDrive newDrive;
             private Vector3 startPosition;
             private Vector3 currentPosition;
 
-            public AxisComponent(GameObject currentGameObject)
+            public DriveComponent(GameObject currentGameObject)
             {
                 this.name = currentGameObject.name;
                 this.parentObject = currentGameObject;

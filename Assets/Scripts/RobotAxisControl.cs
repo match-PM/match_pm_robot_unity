@@ -14,7 +14,7 @@ using UtilityFunctions.OPCUA;
 
 public class RobotAxisControl : MonoBehaviour
 {
-    ComponentClasses.AxisComponent axis;
+    ComponentClasses.DriveComponent axis;
     float currentTarget;
     int readTarget;
     private OPCUA_Client OPCUA_Client;
@@ -49,7 +49,7 @@ public class RobotAxisControl : MonoBehaviour
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
-        axis = new ComponentClasses.AxisComponent(gameObject);  
+        axis = new ComponentClasses.DriveComponent(gameObject);  
     }
 
     // Update is called once per frame
