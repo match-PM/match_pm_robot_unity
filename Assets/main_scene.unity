@@ -33009,8 +33009,9 @@ GameObject:
   - component: {fileID: 1721344883}
   - component: {fileID: 1721344882}
   - component: {fileID: 1721344881}
+  - component: {fileID: 1721344885}
   m_Layer: 0
-  m_Name: 2K_Dispenser_Cartridge
+  m_Name: PneumaticModuleGlue2K
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33092,7 +33093,7 @@ ArticulationBody:
   m_Twist: 2
   m_XDrive:
     lowerLimit: 0
-    upperLimit: 0.02
+    upperLimit: 0.0468
     stiffness: 0
     damping: 0
     forceLimit: 100
@@ -33133,6 +33134,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &1721344885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721344879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83d1476cf790f6d1fb472ff460f29dba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1721433945
 GameObject:
   m_ObjectHideFlags: 8

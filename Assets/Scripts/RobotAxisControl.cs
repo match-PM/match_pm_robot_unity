@@ -17,9 +17,11 @@ public class RobotAxisControl : MonoBehaviour
     ComponentClasses.DriveComponent axis;
     float currentTarget;
     int readTarget;
+    private int lastRead = 0;
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
     double unitsPerIncrement;
+    private List<OPCUAWriteContainer> containerList;
     private chooseMode.Mode mode;
     private Dictionary<int, string> readNodeName = new Dictionary<int, string>() {{0, "TargetPosition"} , {1, "ActualPosition"}};
     #nullable enable
@@ -28,8 +30,13 @@ public class RobotAxisControl : MonoBehaviour
     void updateAxis()
     {
         readTarget = (int) OPCUA_Client.allNodes[gameObject.name].childrenNodes[readNodeName[(int) mode]].result.Value;
-        axis.move(readTarget, unitsPerIncrement);
-
+        
+        if(lastRead != readTarget)
+        {
+            axis.move(readTarget, unitsPerIncrement);
+            lastRead = readTarget;
+        }
+        
         if(writeNodeName[(int) mode] != null)
         {
             writePosition();
@@ -39,8 +46,8 @@ public class RobotAxisControl : MonoBehaviour
     async void writePosition()
     {
         float position = axis.articulationBody.jointPosition[0];
-        OPCUAWriteContainer container = new OPCUAWriteContainer(gameObject.name, writeNodeName[(int) mode], new Variant((int) (position / (float) unitsPerIncrement *  (float) Math.Pow(10, 6))));
-        await OPCUA_Client.WriteValues(new List<OPCUAWriteContainer> {container});
+        containerList[0].writeValue = new DataValue((int) (position / (float) unitsPerIncrement *  (float) Math.Pow(10, 6)));
+        await OPCUA_Client.WriteValues(containerList);
     }
     
     // Start is called before the first frame update
@@ -50,6 +57,10 @@ public class RobotAxisControl : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
         axis = new ComponentClasses.DriveComponent(gameObject);  
+        if (mode == 0)
+        {
+            containerList = new List<OPCUAWriteContainer> {new OPCUAWriteContainer(gameObject.name, writeNodeName[(int) mode], new Variant())};
+        }
     }
 
     // Update is called once per frame

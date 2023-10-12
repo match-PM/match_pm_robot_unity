@@ -110,49 +110,37 @@ namespace UtilityFunctions
             public ArticulationDrive newDrive;
             private Vector3 startPosition;
             private Vector3 currentPosition;
+            public float newTarget;
 
             public DriveComponent(GameObject currentGameObject)
             {
                 this.name = currentGameObject.name;
                 this.parentObject = currentGameObject;
                 articulationBody = currentGameObject.GetComponent<ArticulationBody>();
-                startPosition = currentGameObject.transform.localPosition;
-                currentPosition = startPosition;
-                Debug.Log("Start Position: " + startPosition);
             }
 
-            public void move(int readTarget,double unitsPerIncrement)
+            public void move(int readTarget,double? unitsPerIncrement)
             {
-                float newTarget = doTargetConversion(readTarget, unitsPerIncrement);
-                if(newTarget != articulationBody.xDrive.target)
-                {
-                    newDrive = articulationBody.xDrive;
-                    newDrive.target = newTarget;
-                    articulationBody.xDrive = newDrive;
-                }
+                newTarget = doTargetConversion(readTarget, unitsPerIncrement);
+                newDrive = articulationBody.xDrive;
+                newDrive.target = newTarget;
+                articulationBody.xDrive = newDrive;
 
-                // Quaternion anchorRotation = articulationBody.anchorRotation;
-                // Matrix4x4 rotationMatrix = Matrix4x4.Rotate(anchorRotation);
-                // Vector3 newPosition = startPosition + rotationMatrix.MultiplyVector(new Vector3(newTarget, 0, 0));
-                // if(newPosition != currentPosition){
-                //     // parentObject.transform.localPosition = newPosition;
-                //     parentObject.transform.Translate(new Vector3(newTarget, 0, 0) * Time.deltaTime);
-                //     Debug.Log("Name: " + name + " Vector: " + rotationMatrix.MultiplyVector(newPosition) + " New position: " + newPosition);
-                //     currentPosition = parentObject.transform.localPosition;
-                // }
-                
             }
 
-            float doTargetConversion(int readTarget, double unitsPerIncrement)
+            private float doTargetConversion(int readTarget, double? unitsPerIncrement)
             {
                 float newTarget = 0.0f;
+
+                if(unitsPerIncrement == null){
+                    unitsPerIncrement = articulationBody.xDrive.upperLimit * (float) Math.Pow(10, 6);
+                }
 
                 if(articulationBody.jointType == ArticulationJointType.PrismaticJoint)
                 {
                     newTarget = (float) readTarget * (float) unitsPerIncrement * (float) Math.Pow(10, -6);
                 }
-
-                if(articulationBody.jointType == ArticulationJointType.RevoluteJoint)
+                else if(articulationBody.jointType == ArticulationJointType.RevoluteJoint)
                 {
                     // newTarget = (float) readTarget * ((float) Math.PI/180.0f);
                     newTarget = (float) readTarget;
