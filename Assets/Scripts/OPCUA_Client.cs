@@ -254,7 +254,7 @@ public class OPCUA_Client : MonoBehaviour
                 monitoredItem.StartNodeId = allNodes[parent.Key].childrenNodes[child.Key].nodeId;
                 monitoredItem.AttributeId = Attributes.Value;
                 monitoredItem.MonitoringMode = MonitoringMode.Reporting;
-                monitoredItem.SamplingInterval = 10;
+                monitoredItem.SamplingInterval = -20;
                 monitoredItem.QueueSize = 1;
                 monitoredItem.DiscardOldest = true;
                 monitoredItem.DisplayName = parent.Key + "/" + child.Key;
