@@ -1,0 +1,65 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Threading.Tasks;
+using System.Threading;
+using Opc.Ua;
+using Opc.Ua.Client;
+using Opc.Ua.Configuration;
+using System.Linq;
+using UtilityFunctions;
+using UtilityFunctions.OPCUA;
+
+
+public class RobotAxisControl : MonoBehaviour
+{
+    ComponentClasses.AxisComponent axis;
+    float currentTarget;
+    int readTarget;
+    private OPCUA_Client OPCUA_Client;
+    private GameObject robotGameObject;
+    double unitsPerIncrement;
+    private chooseMode.Mode mode;
+    private Dictionary<int, string> readNodeName = new Dictionary<int, string>() {{0, "TargetPosition"} , {1, "ActualPosition"}};
+    #nullable enable
+    private Dictionary<int, string?> writeNodeName = new Dictionary<int, string?>() {{0, "ActualPosition"} , {1, null}};
+
+    void updateAxis()
+    {
+        readTarget = (int) OPCUA_Client.allNodes[gameObject.name].childrenNodes[readNodeName[(int) mode]].result.Value;
+        axis.move(readTarget, unitsPerIncrement);
+
+        if(writeNodeName[(int) mode] != null)
+        {
+            writePosition();
+        }
+    }
+
+    async void writePosition()
+    {
+        float position = axis.articulationBody.jointPosition[0];
+        OPCUAWriteContainer container = new OPCUAWriteContainer(gameObject.name, writeNodeName[(int) mode], new Variant((int) (position / (float) unitsPerIncrement *  (float) Math.Pow(10, 6))));
+        await OPCUA_Client.WriteValues(new List<OPCUAWriteContainer> {container});
+    }
+    
+    // Start is called before the first frame update
+    void Start()
+    {
+        robotGameObject = GameObject.Find("pm_robot");
+        OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
+        mode = robotGameObject.GetComponent<chooseMode>().mode;
+        axis = new ComponentClasses.AxisComponent(gameObject);  
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        if(OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["TargetPosition"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["ActualPosition"].result.Value != null)
+        {
+            unitsPerIncrement = (double) OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value;
+            updateAxis();
+        }
+    }
+}

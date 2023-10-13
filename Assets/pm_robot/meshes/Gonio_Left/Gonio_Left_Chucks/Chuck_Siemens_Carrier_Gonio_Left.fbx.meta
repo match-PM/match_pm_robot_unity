@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/pm_robot/meshes/Gonio_Left/Gonio_Left_Chucks/Chuck_Siemens_Carrier_Gonio_Left.fbx.meta
 guid: 46f48161ec38a8c6a8e15a8b18b1cb0f
+========
+guid: ff88acea7fdf3bb9c830680a382d3714
+>>>>>>>> Working-Rolf:Assets/pm_robot/meshes/Tools/Siemens_Vacuumtool/Array_Gripper.dae.meta
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
@@ -42,8 +46,13 @@ ModelImporter:
     sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
+<<<<<<<< HEAD:Assets/pm_robot/meshes/Gonio_Left/Gonio_Left_Chucks/Chuck_Siemens_Carrier_Gonio_Left.fbx.meta
     importCameras: 1
     importLights: 1
+========
+    importCameras: 0
+    importLights: 0
+>>>>>>>> Working-Rolf:Assets/pm_robot/meshes/Tools/Siemens_Vacuumtool/Array_Gripper.dae.meta
     nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
@@ -95,7 +104,7 @@ ModelImporter:
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1

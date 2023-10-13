@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Cam1LightListener.cs.meta
+guid: 3a4eba002b8b4c822980b652df361a5b
+========
+guid: eedc6a35b6751f23c8d47eea4340d907
+>>>>>>>> Working-Rolf:Assets/Scripts/Camera2LightControl.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
