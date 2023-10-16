@@ -104,40 +104,43 @@ namespace UtilityFunctions
         };
 
 
-        public class AxisComponent:Component
+        public class DriveComponent:Component
         {
             public ArticulationBody articulationBody;
             public ArticulationDrive newDrive;
-            
+            private Vector3 startPosition;
+            private Vector3 currentPosition;
+            public float newTarget;
 
-            public AxisComponent(GameObject currentGameObject)
+            public DriveComponent(GameObject currentGameObject)
             {
                 this.name = currentGameObject.name;
                 this.parentObject = currentGameObject;
                 articulationBody = currentGameObject.GetComponent<ArticulationBody>();
             }
 
-            public void move(int readTarget,double unitsPerIncrement)
+            public void move(int readTarget,double? unitsPerIncrement)
             {
-                float newTarget = doTargetConversion(readTarget, unitsPerIncrement);
-                if(newTarget != articulationBody.xDrive.target)
-                {
-                    newDrive = articulationBody.xDrive;
-                    newDrive.target = newTarget;
-                    articulationBody.xDrive = newDrive;
-                }
+                newTarget = doTargetConversion(readTarget, unitsPerIncrement);
+                newDrive = articulationBody.xDrive;
+                newDrive.target = newTarget;
+                articulationBody.xDrive = newDrive;
+
             }
 
-            float doTargetConversion(int readTarget, double unitsPerIncrement)
+            private float doTargetConversion(int readTarget, double? unitsPerIncrement)
             {
                 float newTarget = 0.0f;
+
+                if(unitsPerIncrement == null){
+                    unitsPerIncrement = articulationBody.xDrive.upperLimit * (float) Math.Pow(10, 6);
+                }
 
                 if(articulationBody.jointType == ArticulationJointType.PrismaticJoint)
                 {
                     newTarget = (float) readTarget * (float) unitsPerIncrement * (float) Math.Pow(10, -6);
                 }
-
-                if(articulationBody.jointType == ArticulationJointType.RevoluteJoint)
+                else if(articulationBody.jointType == ArticulationJointType.RevoluteJoint)
                 {
                     // newTarget = (float) readTarget * ((float) Math.PI/180.0f);
                     newTarget = (float) readTarget;
