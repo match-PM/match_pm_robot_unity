@@ -61,9 +61,8 @@
      <Compile Include="Assets/Scripts/OPCUA_Client.cs" />
      <Compile Include="Assets/Scripts/LaserRay.cs" />
      <Compile Include="Assets/Scripts/Joint_States_To_Axis.cs" />
-     <Compile Include="Assets/Cam1LightListener.cs" />
      <Compile Include="Assets/Scripts/DispenserControl.cs" />
-     <Compile Include="Assets/Scripts/DispenserFlapControl.cs" />
+     <Compile Include="Assets/Cam1LightListener.cs" />
      <Compile Include="Assets/Scripts/RobotAxisControl.cs" />
      <Compile Include="Assets/Scripts/UtilityFunctions.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/Transformations.cs" />
@@ -72,7 +71,6 @@
      <Compile Include="Assets/Scripts/OPCUA_Server.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
      <None Include="Assets/Ros2ForUnity/Plugins/Linux/x86_64/metadata_ros2cs.xml" />
-     <None Include="Assets/Ros2ForUnity/Plugins/metadata_ros2cs.xml" />
      <None Include="Assets/Scripts/nodeset_pm_server.xml" />
      <None Include="Assets/Ros2ForUnity/metadata_ros2_for_unity.xml" />
      <None Include="Assets/Ros2ForUnity/Plugins/metadata_ros2cs.xml" />
@@ -326,6 +324,9 @@
     <Reference Include="tf2_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/tf2_msgs_assembly.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.Analytics.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.analytics@3.6.12/Unity.Analytics.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Opc.Ua.Core">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Plugins/Opc.Ua.Core.dll</HintPath>
     </Reference>
@@ -361,6 +362,12 @@
     </Reference>
     <Reference Include="Opc.Ua.Server">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Plugins/Opc.Ua.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Analytics.Tracker">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.analytics@3.6.12/Unity.Analytics.Tracker.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.nuget.newtonsoft-json@3.2.1/Runtime/Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="stereo_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/stereo_msgs_assembly.dll</HintPath>
@@ -412,6 +419,9 @@
     </Reference>
     <Reference Include="trajectory_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/trajectory_msgs_assembly.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Analytics.StandardEvents">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/PackageCache/com.unity.analytics@3.6.12/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="visualization_msgs_assembly">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/visualization_msgs_assembly.dll</HintPath>
@@ -785,35 +795,71 @@
     <Reference Include="mscorlib">
         <HintPath>/home/match-mover/Unity/Hub/Editor/2021.3.28f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.VisualScripting.Flow.Editor">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.Flow.Editor.dll</HintPath>
+    <Reference Include="Purchasing.Common">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Purchasing.Common.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.VisualScripting.Shared.Editor">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.Shared.Editor.dll</HintPath>
+    <Reference Include="UnityEngine.Purchasing">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEngine.Purchasing.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.VisualStudio.Editor">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Robotics.UrdfImporter.Editor">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Robotics.UrdfImporter.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Sysroot.Linux_x86_64">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Sysroot.Linux_x86_64.dll</HintPath>
+    <Reference Include="Unity.VisualScripting.State.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.State.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.SecurityStub">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEngine.Purchasing.SecurityStub.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Advertisements">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEngine.Advertisements.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.UI">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Rider.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Analytics">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SpatialTracking">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEngine.SpatialTracking.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.EditorCoroutines.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.EditorCoroutines.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Analytics.DataPrivacy">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.Codeless">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEngine.Purchasing.Codeless.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Flow.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.Flow.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.2D.Tilemap.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.2D.Tilemap.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.VisualStudio.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll</HintPath>
     </Reference>
     <Reference Include="vhacd">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/vhacd.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Robotics.UrdfImporter">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Robotics.UrdfImporter.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Timeline.Editor">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
@@ -824,11 +870,11 @@
     <Reference Include="Unity.TextMeshPro">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.VisualScripting.State.Editor">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.State.Editor.dll</HintPath>
+    <Reference Include="Unity.Sysroot.Linux_x86_64">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Sysroot.Linux_x86_64.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
+    <Reference Include="Unity.2D.Sprite.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Toolchain.Linux-x86_64">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Toolchain.Linux-x86_64.dll</HintPath>
@@ -836,29 +882,53 @@
     <Reference Include="Unity.VisualScripting.Flow">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.Flow.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.UI">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.PlasticSCM.Editor">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.PlasticSCM.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Rider.Editor">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.VisualScripting.State">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.State.dll</HintPath>
+    <Reference Include="Unity.Services.Core">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Services.Core.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Core">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.Services.Core.Analytics">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Services.Core.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.SecurityCore">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEngine.Purchasing.SecurityCore.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.XR.LegacyInputHelpers">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEngine.XR.LegacyInputHelpers.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Shared.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.Shared.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Services.Core.Environments">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Services.Core.Environments.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Timeline.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.Stores">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEngine.Purchasing.Stores.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.XR.LegacyInputHelpers">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEditor.XR.LegacyInputHelpers.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.Purchasing">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEditor.Purchasing.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.SpatialTracking">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEditor.SpatialTracking.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Advertisements.Editor">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/UnityEngine.Advertisements.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.State">
+        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.VisualScripting.State.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.SysrootPackage.Editor">
         <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.SysrootPackage.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.EditorCoroutines.Editor">
-        <HintPath>/home/match-mover/Documents/match_pm_robot_unity/Library/ScriptAssemblies/Unity.EditorCoroutines.Editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
