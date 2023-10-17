@@ -67,7 +67,13 @@ public class RobotAxisControl : MonoBehaviour
     void Update()
     {
 
-        if(OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["TargetPosition"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["ActualPosition"].result.Value != null)
+        // if(OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["TargetPosition"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["ActualPosition"].result.Value != null)
+        // {
+        //     unitsPerIncrement = (double) OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value;
+        //     updateAxis();
+        // }
+
+        if(OPCUA_Client.startUpdate)
         {
             unitsPerIncrement = (double) OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value;
             updateAxis();

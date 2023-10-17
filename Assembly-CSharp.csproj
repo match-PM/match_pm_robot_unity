@@ -61,7 +61,6 @@
      <Compile Include="Assets/Scripts/LaserRay.cs" />
      <Compile Include="Assets/Scripts/Joint_States_To_Axis.cs" />
      <Compile Include="Assets/Scripts/DispenserControl.cs" />
-     <Compile Include="Assets/Scripts/DispenserFlapControl.cs" />
      <Compile Include="Assets/Scripts/RobotAxisControl.cs" />
      <Compile Include="Assets/Scripts/UtilityFunctions.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/Transformations.cs" />

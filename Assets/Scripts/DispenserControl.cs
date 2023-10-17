@@ -75,7 +75,7 @@ public class DispenserControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
-        if(mode == 0)
+        if(mode == 0 && OPCUA_Client.startUpdate)
         {
             writeState();
         }

@@ -6751,7 +6751,7 @@ ArticulationBody:
   m_Twist: 2
   m_XDrive:
     lowerLimit: -0.134
-    upperLimit: -0.0197
+    upperLimit: 0.0324
     stiffness: 0
     damping: 0
     forceLimit: 100
@@ -28054,7 +28054,7 @@ ArticulationBody:
   m_Twist: 2
   m_XDrive:
     lowerLimit: -0.05262
-    upperLimit: 0.1
+    upperLimit: 0.041
     stiffness: 0
     damping: 0
     forceLimit: 100
@@ -32410,6 +32410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4c2a4944b495b54f966aadebb88b5b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startUpdate: 0
 --- !u!114 &1674386297
 MonoBehaviour:
   m_ObjectHideFlags: 0

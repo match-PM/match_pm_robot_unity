@@ -19,6 +19,7 @@ public class OPCUA_Client : MonoBehaviour
     public CancellationTokenSource  cts;
     private Subscription subscription;
     private Dictionary<string, Tuple<string, string>> monitoredItems;
+    public bool startUpdate = false;
     
     async void Awake()
     {
@@ -30,6 +31,7 @@ public class OPCUA_Client : MonoBehaviour
         allNodes = getAllNodes(session);
         startSubscription();
         addMonitoredItems();
+        startUpdate = true;
     }
 
     void Update()

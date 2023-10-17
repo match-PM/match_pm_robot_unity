@@ -53,7 +53,11 @@ public class Camera1LightControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
-        if(GenericFunctions.checkForStart(gameObject.name, OPCUA_Client))
+        // if(GenericFunctions.checkForStart(gameObject.name, OPCUA_Client))
+        // {
+        //     updateLights();
+        // }
+        if(OPCUA_Client.startUpdate)
         {
             updateLights();
         }
