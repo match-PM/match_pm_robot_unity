@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using System.Threading.Tasks;
 using System.Threading;
@@ -20,6 +21,7 @@ public class OPCUA_Client : MonoBehaviour
     private Subscription subscription;
     private Dictionary<string, Tuple<string, string>> monitoredItems;
     public bool startUpdate = false;
+    private Dictionary<string, DataValue> nodesReady = new Dictionary<string, DataValue>();
     
     async void Awake()
     {
@@ -31,7 +33,6 @@ public class OPCUA_Client : MonoBehaviour
         allNodes = getAllNodes(session);
         startSubscription();
         addMonitoredItems();
-        startUpdate = true;
     }
 
     void Update()
@@ -41,6 +42,12 @@ public class OPCUA_Client : MonoBehaviour
         
         // CancellationTokenSource
         cts = new CancellationTokenSource();
+        
+        if(!startUpdate)
+        {
+            startUpdate = nodesReady.Values.All(item => item.Value != null);
+        }
+        
     }
 
     async void OnApplicationQuit()
@@ -260,6 +267,7 @@ public class OPCUA_Client : MonoBehaviour
                 monitoredItem.DisplayName = parent.Key + "/" + child.Key;
                 monitoredItem.Notification += new MonitoredItemNotificationEventHandler(updateNodeCallback);
                 monitoredItems.Add(monitoredItem);
+                nodesReady.Add(parent.Key + "/" + child.Key, new DataValue());
             }
         }
         subscription.AddItems(monitoredItems);
@@ -272,5 +280,6 @@ public class OPCUA_Client : MonoBehaviour
         var value = item.DequeueValues()[0];
         string[] identifier = item.DisplayName.Split("/");
         allNodes[identifier[0]].childrenNodes[identifier[1]].result=value;
+        nodesReady[item.DisplayName] = value;
     }
 }
