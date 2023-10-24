@@ -14,9 +14,13 @@ namespace UtilityFunctions
 {
     public static class ComponentClasses
     {
+        // The Component class represents a basic component.
         public class Component
         {
+            // The name of the component.
             public string name;
+
+            // The parent GameObject to which the component is attached.
             public GameObject parentObject;
 
             public Component() {}
@@ -28,12 +32,22 @@ namespace UtilityFunctions
             }
         }
 
+        // The LightComponent class specializes in handling light components and inherits from the Component class.
         public class LightComponent : Component
         {
-            public List<Light> lights;
+            // A list of Light components.
+            public List<Light> lights; 
+
+            // A reference to a single Light component.
             public Light light;
+
+            // A list to store the state of the lights.
             public List<bool> state;
+
+            // The intensity of the light.
             public double intensity;
+
+            // The color of the light.
             public Color color;
 
             public LightComponent(GameObject currentGameObject)
@@ -47,6 +61,7 @@ namespace UtilityFunctions
                 getLightComponentFormParent();
             }
 
+            // Method to update the state and color of the light component based on input parameters.
             public void UpdateValues(List<bool> currentState, float[] currentColor = null)
             {
                 if(!currentState.SequenceEqual(state))
@@ -70,7 +85,7 @@ namespace UtilityFunctions
                 };
             }
 
-
+            // Method to turn lights on or off based on the current activity.
             void turnLightsOnOff(bool currentActivity)
             {
             Dictionary <bool, string> message = new Dictionary<bool, string>(); 
@@ -82,6 +97,7 @@ namespace UtilityFunctions
             Debug.Log("The " + light.name + " is " + message[currentActivity]);
             }
 
+            // Method to retrieve the light components from the parent object.
             void getLightComponentFormParent()
             {
                 
@@ -142,7 +158,6 @@ namespace UtilityFunctions
                 }
                 else if(articulationBody.jointType == ArticulationJointType.RevoluteJoint)
                 {
-                    // newTarget = (float) readTarget * ((float) Math.PI/180.0f);
                     newTarget = (float) readTarget;
                 }
                 
@@ -158,10 +173,13 @@ namespace UtilityFunctions
     {
         public GenericFunctions () {}
 
+        // Static method to get the children GameObjects of a given GameObject.
         public static List<GameObject> getChildrenGameObjects(GameObject currentGameObject)
         {
             Transform transforms = currentGameObject.transform;
             List<GameObject> childrenGameObjects = new List <GameObject>();
+
+            // Iterate through the child transforms and add their GameObjects to the list.
             foreach(Transform t in transforms)
             {
                 if(t != null && t.gameObject != null && t.gameObject != currentGameObject)
@@ -172,10 +190,12 @@ namespace UtilityFunctions
             return childrenGameObjects;
         }
 
+        // Static method to convert an array of integer color values to an array of floats.
         public static float[] convertColor(int[] colorReading)
         {
             float[] currentColor = new float[colorReading.Length];
 
+            // Iterate through the integer color values and convert them to floats.
             for(int i = 0; i<colorReading.Length; i++)
             {
                 currentColor[i] = (float)colorReading[i] / 100.0f;
@@ -183,33 +203,31 @@ namespace UtilityFunctions
 
             return currentColor;
         } 
-
-        public static bool checkForStart(string parentName, OPCUA_Client OPCUA_Client)
-        {
-            return !OPCUA_Client.allNodes[parentName].childrenNodes.Values.Any(item => item.result.Value ==  null);
-        }
     }
 
 
     namespace OPCUA
     {
+
+        // NodeData class is used to store information about an OPC UA node.
         public class NodeData
         {
-            public NodeId nodeId {get; set;}
-            public Dictionary<string, ChildNode> childrenNodes {get; set;} 
+            public NodeId nodeId;    // The NodeId associated with the node.
+            public DataValue dataValue = new DataValue(); // The data value associated with the node.
+
+            public NodeData(){}
+            public NodeData(NodeId id)
+            {
+                nodeId = id;
+            }
         }
 
-        public class ChildNode
-        {
-            public NodeId nodeId {get; set;}
-            public DataValue result = new DataValue();
-        }  
-
+        // OPCUAWriteContainer class is used to store information for writing values to an OPC UA server.
         public class OPCUAWriteContainer
         {
-            public string parent; 
-            public string child;
-            public DataValue writeValue = new DataValue();
+            public string parent; // The parent node's name.
+            public string child;  // The child node's name.
+            public DataValue writeValue = new DataValue(); // The value to be written to the server.
 
             public OPCUAWriteContainer(string parentName, string childName, Variant value)
             {

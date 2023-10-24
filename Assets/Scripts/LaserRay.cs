@@ -23,7 +23,6 @@ public class LaserRay : MonoBehaviour
             if(hit.collider)
             {
                 lineRenderer.SetPosition(1, hit.point);
-                //Debug.Log(hit.distance);
             }
         }
         else

@@ -27,9 +27,9 @@ public class DispenserControl : MonoBehaviour
     private List<OPCUAWriteContainer> containerList;
 
     void updateDispenserPosition(){
-        moveForward = (bool) OPCUA_Client.allNodes[gameObject.name].childrenNodes["MoveForwardCmd"].result.Value;
+        moveForward = (bool) OPCUA_Client.allNodes[gameObject.name + "/" + "MoveForwardCmd"].dataValue.Value;
 
-        moveBackward = (bool) OPCUA_Client.allNodes[gameObject.name].childrenNodes["MoveBackwardCmd"].result.Value;
+        moveBackward = (bool) OPCUA_Client.allNodes[gameObject.name + "/" + "MoveBackwardCmd"].dataValue.Value;
 
         if((moveForward == true && lastMoveForward != moveForward) || (moveBackward == true && lastMoveBackward != moveBackward))
         {
@@ -75,10 +75,14 @@ public class DispenserControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
-        if(mode == 0 && OPCUA_Client.startUpdate)
+        if (OPCUA_Client.startUpdate)
         {
-            writeState();
+            if(mode == 0)
+            {
+                writeState();
+            }
+            updateDispenserPosition();
         }
-        updateDispenserPosition();
+            
     }   
 }

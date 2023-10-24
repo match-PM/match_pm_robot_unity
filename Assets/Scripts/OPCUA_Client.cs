@@ -14,14 +14,11 @@ public class OPCUA_Client : MonoBehaviour
 {
     private ApplicationConfiguration config;
     private Session session;
-    public Dictionary<string, NodeData> allNodes;
-    public List<(string, string)> nodeNames = new List<(string, string)>();
-    public ReadValueIdCollection nodesToRead = new ReadValueIdCollection();
+    public Dictionary<string, NodeData> allNodes = new Dictionary<string, NodeData>();
     public CancellationTokenSource  cts;
     private Subscription subscription;
     private Dictionary<string, Tuple<string, string>> monitoredItems;
     public bool startUpdate = false;
-    private Dictionary<string, DataValue> nodesReady = new Dictionary<string, DataValue>();
     
     async void Awake()
     {
@@ -30,7 +27,7 @@ public class OPCUA_Client : MonoBehaviour
         // await ConnectToServer("opc.tcp://pmlab-101:4840"); // Hiwi Raum Simulation - ML Rechner 
         await ConnectToServer("opc.tcp://pmlab-ros21:4840"); // Hiwi Raum - der zweite Rechner
         // await ConnectToServer("opc.tcp://pmlab-ROS2:4840"); // Klimaraum Simulation 
-        allNodes = getAllNodes(session);
+        getAllNodes(session);
         startSubscription();
         addMonitoredItems();
     }
@@ -45,9 +42,9 @@ public class OPCUA_Client : MonoBehaviour
         
         if(!startUpdate)
         {
-            startUpdate = nodesReady.Values.All(item => item.Value != null);
+            // Check if all the data values of nodes in the 'allNodes' collection are not null.
+            startUpdate = allNodes.Values.All(item => item.dataValue.Value != null);
         }
-        
     }
 
     async void OnApplicationQuit()
@@ -122,10 +119,10 @@ public class OPCUA_Client : MonoBehaviour
         Debug.Log("Connected to OPC UA server");
     }
 
-    public Dictionary<string, NodeData> getAllNodes(Session session)
+    public void getAllNodes(Session session)
     {  
-        Dictionary<string, NodeData> nodeDataDict = new Dictionary<string, NodeData>();
-        var browseDescription = new BrowseDescription
+        // Define a BrowseDescription for the top-level ObjectsFolder.
+        var parentBrowseDescription = new BrowseDescription
         {
             NodeId = ObjectIds.ObjectsFolder,
             BrowseDirection = BrowseDirection.Forward,
@@ -135,18 +132,19 @@ public class OPCUA_Client : MonoBehaviour
             ResultMask = (uint) BrowseResultMask.All
         };
 
-        BrowseResultCollection results;
-        DiagnosticInfoCollection diagnosticInfos;
-        session.Browse(null, null, 0, new BrowseDescriptionCollection {browseDescription}, out results, out diagnosticInfos);
-        foreach (var result in results[0].References)
+        BrowseResultCollection parentResults;
+        DiagnosticInfoCollection parentDiagnosticInfos;
+
+        // Perform a browse operation to retrieve information about child nodes of the Objec
+        session.Browse(null, null, 0, new BrowseDescriptionCollection {parentBrowseDescription}, out parentResults, out parentDiagnosticInfos);
+
+        foreach (var parentResult in parentResults[0].References)
         {
-            if(result.DisplayName.Text != "Server"){
-                NodeData parentNodeData = new NodeData();
-                NodeId parentNodeID =  ExpandedNodeId.ToNodeId(result.NodeId, session.NamespaceUris);
-                parentNodeData.nodeId = parentNodeID;
+            string currentParent = parentResult.DisplayName.Text;
 
-
-                Dictionary<string, ChildNode> childrenNodesDict = new Dictionary<string, ChildNode>();
+             // Check if the current node is not the "Server" node.
+            if(currentParent != "Server"){
+                NodeId parentNodeID =  ExpandedNodeId.ToNodeId(parentResult.NodeId, session.NamespaceUris);
                 var childBrowseDescription = new BrowseDescription
                 {
                     NodeId = parentNodeID,
@@ -156,23 +154,23 @@ public class OPCUA_Client : MonoBehaviour
                     NodeClassMask = (uint) NodeClass.Object | (uint) NodeClass.Variable,
                     ResultMask = (uint) BrowseResultMask.All
                 };
+
                 BrowseResultCollection childResults;
                 DiagnosticInfoCollection chidlDiagnosticInfos;
-                session.Browse(null, null, 0, new BrowseDescriptionCollection {childBrowseDescription}, out childResults, out chidlDiagnosticInfos);
 
+                // Perform a browse operation to retrieve information about child nodes of the current parent node.
+                session.Browse(null, null, 0, new BrowseDescriptionCollection {childBrowseDescription}, out childResults, out chidlDiagnosticInfos);
+                
                 foreach (var childResult in childResults[0].References)
                 {
-                    ChildNode childNode = new ChildNode() {nodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris)};  
-                    childrenNodesDict.Add(childResult.DisplayName.Text, childNode);
-                    nodesToRead.Add(new ReadValueId{NodeId = ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris), AttributeId = Attributes.Value});
+                    string currentChild = childResult.DisplayName.Text;
+
+                    // Add information about the current child node to a collection.
+                    allNodes.Add(currentParent+"/"+currentChild, new NodeData(ExpandedNodeId.ToNodeId(childResult.NodeId,session.NamespaceUris)));  
                 };
-                parentNodeData.childrenNodes = childrenNodesDict;
-                nodeDataDict.Add(result.DisplayName.Text, parentNodeData);
             } 
         }
-        return nodeDataDict;
     }
-
 
     async public Task WriteValues(List<OPCUAWriteContainer> writeContainers)
     {
@@ -184,51 +182,28 @@ public class OPCUA_Client : MonoBehaviour
         {
             try
             {
+                // Create a WriteValueCollection to store the values to be written.
                 WriteValueCollection nodesToWrite = new WriteValueCollection();
+
+                // Iterate through the OPC UA write containers provided in the list.
                 foreach(OPCUAWriteContainer writeContainer in writeContainers)
                 {
+                    // Create a WriteValue object for each node to write.
                     WriteValue writeValues = new WriteValue()
                     {
-                        NodeId = allNodes[writeContainer.parent].childrenNodes[writeContainer.child].nodeId, 
+                        NodeId = allNodes[writeContainer.parent + "/" + writeContainer.child].nodeId, 
                         AttributeId = Attributes.Value,
                         Value = writeContainer.writeValue
                     };
+                    // Add the WriteValue to the WriteValueCollection.
                     nodesToWrite.Add(writeValues);
                 }
+                // Perform the write operation asynchronously and store the response.
                 WriteResponse response = await session.WriteAsync(null, nodesToWrite, cts.Token);
             }
             catch (Exception e)
             {
                 Debug.LogError("Error writing data: " + e.Message);
-            }
-        }
-    }
-
-    void updateNodeValues()
-    {
-        if (session == null || session.Connected == false)
-        {
-            Debug.LogError("Not connected to a server");
-        }
-        else
-        {
-            try
-            {
-                session.Read(null, 0, TimestampsToReturn.Both, nodesToRead, out DataValueCollection resultsValues, out DiagnosticInfoCollection diagnosticInfos);
-                int i = 0;
-
-                foreach(KeyValuePair<string, NodeData> parent in allNodes)
-                {
-                    foreach(KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
-                    {
-                        allNodes[parent.Key].childrenNodes[child.Key].result = resultsValues[i];
-                        i+=1;
-                    }
-                }
-            }
-            catch(Exception e)
-            {
-                Debug.LogError("Error reading data: " + e.Message);
             }
         }
     }
@@ -253,33 +228,56 @@ public class OPCUA_Client : MonoBehaviour
     {   
         List<MonitoredItem> monitoredItems = new List<MonitoredItem>();
         Debug.Log("Adding Monitored Items...");
-        foreach(KeyValuePair<string, NodeData> parent in allNodes)
+
+        // Iterate through all the nodes in the 'allNodes' collection.
+        foreach(KeyValuePair<string, NodeData> node in allNodes)
         {
-            foreach(KeyValuePair<string, ChildNode> child in allNodes[parent.Key].childrenNodes)
-            {
-                MonitoredItem monitoredItem = new MonitoredItem(subscription.DefaultItem);
-                monitoredItem.StartNodeId = allNodes[parent.Key].childrenNodes[child.Key].nodeId;
-                monitoredItem.AttributeId = Attributes.Value;
-                monitoredItem.MonitoringMode = MonitoringMode.Reporting;
-                monitoredItem.SamplingInterval = 10;
-                monitoredItem.QueueSize = 1;
-                monitoredItem.DiscardOldest = true;
-                monitoredItem.DisplayName = parent.Key + "/" + child.Key;
-                monitoredItem.Notification += new MonitoredItemNotificationEventHandler(updateNodeCallback);
-                monitoredItems.Add(monitoredItem);
-                nodesReady.Add(parent.Key + "/" + child.Key, new DataValue());
-            }
+            // Create a new MonitoredItem for each node.
+            MonitoredItem monitoredItem = new MonitoredItem(subscription.DefaultItem);
+
+            // Set the StartNodeId for the MonitoredItem to the node's NodeId.
+            monitoredItem.StartNodeId = node.Value.nodeId;
+
+            // Set the AttributeId to Attributes.Value, indicating that it's monitoring the value of the node.
+            monitoredItem.AttributeId = Attributes.Value;
+
+            // Set the MonitoringMode to Reporting, indicating that updates will be reported.
+            monitoredItem.MonitoringMode = MonitoringMode.Reporting;
+
+            // Set the SamplingInterval to 10 milliseconds (the frequency of data sampling).
+            monitoredItem.SamplingInterval = 10;
+
+            // Set the QueueSize to 1, indicating that only the most recent value is stored.
+            monitoredItem.QueueSize = 1;
+
+            // Set DiscardOldest to true, meaning that if the queue is full, the oldest value is discarded.
+            monitoredItem.DiscardOldest = true;
+
+            // Set the DisplayName of the monitored item, typically used to identify it.
+            monitoredItem.DisplayName = node.Key;
+
+            // Attach the 'updateNodeCallback' method as a notification handler.
+            monitoredItem.Notification += new MonitoredItemNotificationEventHandler(updateNodeCallback);
+
+            // Add the MonitoredItem to the list of monitored items.
+            monitoredItems.Add(monitoredItem);
         }
+
+        // Add all monitored items to the OPC UA subscription.
         subscription.AddItems(monitoredItems);
+
+        // Apply changes to the subscription to finalize the configuration.
         subscription.ApplyChanges();
+
         Debug.Log("Monitored Items added!");
     }
 
     void updateNodeCallback(MonitoredItem item, MonitoredItemNotificationEventArgs e)
     {
+        // Dequeue the latest value update from the MonitoredItem.
         var value = item.DequeueValues()[0];
-        string[] identifier = item.DisplayName.Split("/");
-        allNodes[identifier[0]].childrenNodes[identifier[1]].result=value;
-        nodesReady[item.DisplayName] = value;
+
+        // Update the data value associated with the MonitoredItem's corresponding node.
+        allNodes[item.DisplayName].dataValue=value;
     }
 }

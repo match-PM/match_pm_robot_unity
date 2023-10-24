@@ -29,24 +29,33 @@ public class RobotAxisControl : MonoBehaviour
 
     void updateAxis()
     {
-        readTarget = (int) OPCUA_Client.allNodes[gameObject.name].childrenNodes[readNodeName[(int) mode]].result.Value;
+        // Read the target position from the OPC UA server.
+        readTarget = (int) OPCUA_Client.allNodes[gameObject.name + "/" + readNodeName[(int) mode]].dataValue.Value;
         
         if(lastRead != readTarget)
         {
+            // If the targets are different, move the axis to the new target position.
             axis.move(readTarget, unitsPerIncrement);
             lastRead = readTarget;
         }
         
+        // Check if a 'writeNodeName' is defined for the selected mode.
         if(writeNodeName[(int) mode] != null)
         {
+            // Write Positon to server.
             writePosition();
         }
     }
 
     async void writePosition()
     {
+        // Get the current position of the axis.
         float position = axis.articulationBody.jointPosition[0];
+
+        // Calculate a new position value.
         containerList[0].writeValue = new DataValue((int) (position / (float) unitsPerIncrement *  (float) Math.Pow(10, 6)));
+
+        // Write Positon to server.
         await OPCUA_Client.WriteValues(containerList);
     }
     
@@ -66,16 +75,9 @@ public class RobotAxisControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        // if(OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["TargetPosition"].result.Value != null && OPCUA_Client.allNodes[gameObject.name].childrenNodes["ActualPosition"].result.Value != null)
-        // {
-        //     unitsPerIncrement = (double) OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value;
-        //     updateAxis();
-        // }
-
         if(OPCUA_Client.startUpdate)
         {
-            unitsPerIncrement = (double) OPCUA_Client.allNodes[gameObject.name].childrenNodes["UnitsPerIncrement"].result.Value;
+            unitsPerIncrement = (double) OPCUA_Client.allNodes[gameObject.name + "/" + "UnitsPerIncrement"].dataValue.Value;
             updateAxis();
         }
     }
