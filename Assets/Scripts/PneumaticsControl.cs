@@ -11,7 +11,7 @@ using System.Linq;
 using UtilityFunctions;
 using UtilityFunctions.OPCUA;
 
-public class DispenserControl : MonoBehaviour
+public class PneumaticsControl : MonoBehaviour
 {
     ComponentClasses.DriveComponent dispenser;
     private OPCUA_Client OPCUA_Client;
@@ -42,12 +42,12 @@ public class DispenserControl : MonoBehaviour
     }
 
     async void writeState(){
-        if(dispenser.articulationBody.jointPosition[0] == dispenser.articulationBody.xDrive.upperLimit)
+        if(dispenser.articulationBody.jointPosition[0] != dispenser.articulationBody.xDrive.lowerLimit)
         {
             isForward = true;
             isBackward = false;
         }
-        else if(dispenser.articulationBody.jointPosition[0] != dispenser.articulationBody.xDrive.upperLimit)
+        else if(dispenser.articulationBody.jointPosition[0] == dispenser.articulationBody.xDrive.lowerLimit)
         {
             isForward = false;
             isBackward = true;
