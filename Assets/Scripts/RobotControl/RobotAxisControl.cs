@@ -51,7 +51,7 @@ public class RobotAxisControl : MonoBehaviour
     {
         // Get the current position of the axis.
         float position = axis.articulationBody.jointPosition[0];
-        Debug.Log(position);
+
         // Calculate a new position value.
         containerList[0].writeValue = new DataValue((int) (position / (float) unitsPerIncrement *  (float) Math.Pow(10, 6)));
 
