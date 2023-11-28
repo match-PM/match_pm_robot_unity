@@ -52,8 +52,6 @@ public class Cam1_Publisher : MonoBehaviour
         msg.Height = (uint) frame_height;
         msg.Step = image_step * (uint) frame_width;
         msg.Encoding = "rgba8";
-
-
     }
 
     void Update()
