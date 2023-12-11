@@ -13,49 +13,48 @@ using UtilityFunctions.OPCUA;
 
 public class PneumaticsControl : MonoBehaviour
 {
-    ComponentClasses.DriveComponent dispenser;
+    ComponentClasses.DriveComponent pneumaticComponent;
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
     private chooseMode.Mode mode;
-    private bool moveForward;
-    private bool lastMoveForward;
-    private bool moveBackward;
-    private bool readTarget;
-    private bool lastMoveBackward;
-    private bool isForward = false;
-    private bool isBackward = false;
+    private int readTarget;
+    private int lastMove;
+    private int move;
+    private int currentState = -1;
+    private int lastState = 0;
+
     private List<OPCUAWriteContainer> containerList;
 
     void updateDispenserPosition(){
-        moveForward = (bool) OPCUA_Client.allNodes[gameObject.name + "/" + "MoveForwardCmd"].dataValue.Value;
+        move = (int) OPCUA_Client.allNodes[gameObject.name + "/" + "MoveCommand"].dataValue.Value;
 
-        moveBackward = (bool) OPCUA_Client.allNodes[gameObject.name + "/" + "MoveBackwardCmd"].dataValue.Value;
-
-        if((moveForward == true && lastMoveForward != moveForward) || (moveBackward == true && lastMoveBackward != moveBackward))
+        if(lastMove != move)
         {
-            readTarget = moveForward == true ? true : false;
-            dispenser.move(Convert.ToInt32(readTarget), null);
+            if(move == 1){
+                readTarget = 1;
+            }else if(move == -1){
+                readTarget = 0;
+            }; // Überlegen
+            pneumaticComponent.move(readTarget, null);
         }
 
-        lastMoveForward = moveForward;
-        lastMoveBackward = moveBackward;
+        lastMove = move;
     }
 
     async void writeState(){
-        if(dispenser.articulationBody.jointPosition[0] != dispenser.articulationBody.xDrive.lowerLimit)
+        if(pneumaticComponent.articulationBody.xDrive.target == pneumaticComponent.articulationBody.xDrive.lowerLimit)
         {
-            isForward = true;
-            isBackward = false;
-        }
-        else if(dispenser.articulationBody.jointPosition[0] == dispenser.articulationBody.xDrive.lowerLimit)
-        {
-            isForward = false;
-            isBackward = true;
+            currentState = -1;
+        }else{
+            currentState = 1;
         }
 
-        containerList[0].writeValue = new DataValue(isForward);
-        containerList[1].writeValue = new DataValue (isBackward);
-        await OPCUA_Client.WriteValues(containerList);
+        if(lastState != currentState)
+        {
+            containerList[0].writeValue = new DataValue(currentState);
+            await OPCUA_Client.WriteValues(containerList);
+            lastState = currentState;
+        }
     }
 
 
@@ -65,10 +64,10 @@ public class PneumaticsControl : MonoBehaviour
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
-        dispenser = new ComponentClasses.DriveComponent(gameObject);
+        pneumaticComponent = new ComponentClasses.DriveComponent(gameObject);
         if(mode == 0)
         {
-            containerList = new List<OPCUAWriteContainer> {new OPCUAWriteContainer(gameObject.name, "IsForward", new Variant(isForward)), new OPCUAWriteContainer(gameObject.name, "IsBackward", new Variant(isBackward))};
+            containerList = new List<OPCUAWriteContainer> {new OPCUAWriteContainer(gameObject.name, "Position", new Variant())};
         } 
     }
 
@@ -77,11 +76,12 @@ public class PneumaticsControl : MonoBehaviour
     {   
         if (OPCUA_Client.startUpdate)
         {
+            updateDispenserPosition();
+            
             if(mode == 0)
             {
                 writeState();
             }
-            updateDispenserPosition();
         }
             
     }   
