@@ -41,6 +41,7 @@
      <Compile Include="Assets/Ros2ForUnity/Scripts/Sensor.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2UnityComponent.cs" />
      <Compile Include="Assets/Scripts/Update_Robot_URDF.cs" />
+     <Compile Include="Assets/Scripts/PneumaticsControl.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ITimeSource.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ClientExample.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2PerformanceTest.cs" />
@@ -67,7 +68,6 @@
      <Compile Include="Assets/Scripts/GetAxisName.cs" />
      <Compile Include="Assets/Scripts/OPCUA_Server.cs" />
      <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
-     <Compile Include="Assets/Scripts/PneumaticsControl.cs" />
      <None Include="Assets/Ros2ForUnity/Plugins/metadata_ros2cs.xml" />
      <None Include="Assets/Scripts/nodeset_pm_server.xml" />
      <None Include="Assets/Ros2ForUnity/metadata_ros2_for_unity.xml" />
@@ -414,18 +414,6 @@
     </Reference>
     <Reference Include="std_srvs_assembly">
         <HintPath>/home/pmlab/Documents/match_pm_robot_unity/Assets/Ros2ForUnity/Plugins/std_srvs_assembly.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
-        <HintPath>/home/pmlab/Unity/Hub/Editor/2021.3.28f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions.Common">
-        <HintPath>/home/pmlab/Unity/Hub/Editor/2021.3.28f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Android.Types">
-        <HintPath>/home/pmlab/Unity/Hub/Editor/2021.3.28f1/Editor/Data/PlaybackEngines/AndroidPlayer/Unity.Android.Types.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Android.Gradle">
-        <HintPath>/home/pmlab/Unity/Hub/Editor/2021.3.28f1/Editor/Data/PlaybackEngines/AndroidPlayer/Unity.Android.Gradle.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
         <HintPath>/home/pmlab/Unity/Hub/Editor/2021.3.28f1/Editor/Data/NetStandard/ref/2.1.0/netstandard.dll</HintPath>
