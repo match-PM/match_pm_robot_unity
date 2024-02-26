@@ -23756,7 +23756,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1011727260}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -26799,7 +26799,7 @@ ArticulationBody:
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_MatchAnchors: 1
   m_ArticulationJointType: 1
-  m_LinearX: 2
+  m_LinearX: 1
   m_LinearY: 0
   m_LinearZ: 0
   m_SwingY: 2
@@ -26808,7 +26808,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: 0
     upperLimit: 0
-    stiffness: 0
+    stiffness: 1e+25
     damping: 0
     forceLimit: 3.4028235e+38
     target: 0
