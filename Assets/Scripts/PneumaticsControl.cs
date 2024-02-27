@@ -65,6 +65,7 @@ public class PneumaticsControl : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
         pneumaticComponent = new ComponentClasses.DriveComponent(gameObject);
+        
         if(mode == 0)
         {
             containerList = new List<OPCUAWriteContainer> {new OPCUAWriteContainer(gameObject.name, "Position", new Variant())};
@@ -80,7 +81,7 @@ public class PneumaticsControl : MonoBehaviour
             
             if(mode == 0)
             {
-                writeState();
+                // writeState();
             }
         }
             

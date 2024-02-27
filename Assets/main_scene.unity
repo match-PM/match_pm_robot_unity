@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44658792, g: 0.49642283, b: 0.5748252, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657832, g: 0.49641222, b: 0.57481664, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8539,7 +8539,7 @@ ArticulationBody:
     forceLimit: 100
     target: 0
     targetVelocity: 0
-    driveType: 0
+    driveType: 2
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -23712,7 +23712,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1011727261
 Transform:
   m_ObjectHideFlags: 0
@@ -26869,7 +26869,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1090527830}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07e9415a2ffa6004b922b749f090f055, type: 3}
   m_Name: 
@@ -26980,10 +26980,10 @@ ArticulationBody:
     upperLimit: 0.055
     stiffness: 0
     damping: 0
-    forceLimit: 100
+    forceLimit: 1000
     target: 0
     targetVelocity: 0
-    driveType: 0
+    driveType: 2
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -27002,9 +27002,9 @@ ArticulationBody:
     target: 0
     targetVelocity: 0
     driveType: 0
-  m_LinearDamping: 0
+  m_LinearDamping: 10
   m_AngularDamping: 0
-  m_JointFriction: 0
+  m_JointFriction: 10
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -27017,7 +27017,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_CollisionDetectionMode: 0
 --- !u!114 &1096091861
 MonoBehaviour:
@@ -44116,7 +44116,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1674386288}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d607ea46a579d44c4b19a6322ce4b9b2, type: 3}
   m_Name: 
@@ -44143,7 +44143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4c2a4944b495b54f966aadebb88b5b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startUpdate: 0
+  startUpdate: 1
 --- !u!114 &1674386297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44156,7 +44156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02c6cb8628702edfc814a2ed77c7d188, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mode: 1
+  mode: 0
 --- !u!1 &1678484934
 GameObject:
   m_ObjectHideFlags: 8
