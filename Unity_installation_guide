@@ -9,8 +9,18 @@
 	4. Update libss	
 		echo "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc/apt/sources.list.d/focal-security.list
 		sudo apt-get update
-		sudo apt-get install libssl1.1 
+		sudo apt-get install libssl1.1 		
+	3. If Unity does not respond after opening, the selected graphics drivers of your Unbutu distro are probably not from Nvidia:
+		1. Open 'Additional Drivers' and select "Nvidia driver metapackage from nvidia-driver-- (proprietary, tested)". 
+		2. If you are unable to connect to the local network after installing the drivers, restart the computer: 
+			1. When starting, select the option "Advanced options for ubuntu" in the GRUB menu. 
+			2. Then select the "Recovery mode" of your latest kernel (second Option in the Menu) or last stable kernel version. 
+			3. After booting in recovery mode, start the terminal and run apt-get update.
+			4. Restart your computer.   
+
+		
 	
+################################################################################################################################################################	
 2. Installation of ros_2cs:
 	1. Get all prerequisites:
 		1. sudo apt install -y ros-${ROS_DISTRO}-test-msgs
@@ -43,7 +53,10 @@
 	       	7. sudo apt update
 	       	8. sudo apt install dotnet-sdk-6.0
 	       	
-	
+	       	
+	       	
+	       	
+######################################################################################################################################################################	
 3. Building environment:
 	1. Navigate to your workspace 
 	2. Run: colcon build 
@@ -65,6 +78,8 @@
 	Solution: DO NOT delete Build, Log and Install folders from step 1. Instead run following command in terminal (make sure you are still in your workspace):
 		  1. source ./install/setup.bash
 		  2. colcon build
+
+
 
 	
 
