@@ -151,7 +151,6 @@ namespace UtilityFunctions
                 if(unitsPerIncrement == null){
                     unitsPerIncrement = articulationBody.xDrive.upperLimit * (float) Math.Pow(10, 6);
                 }
-
                 if(articulationBody.jointType == ArticulationJointType.PrismaticJoint)
                 {
                     newTarget = (float) readTarget * (float) unitsPerIncrement * (float) Math.Pow(10, -6);

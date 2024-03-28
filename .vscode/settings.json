@@ -51,5 +51,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "match_pm_robot_unity.sln"
+    "dotnet.defaultSolution": "match_pm_robot_unity.sln",
+    "ros.distro": "humble"
 }

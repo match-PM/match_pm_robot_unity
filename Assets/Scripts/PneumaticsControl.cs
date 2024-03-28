@@ -18,7 +18,7 @@ public class PneumaticsControl : MonoBehaviour
     private GameObject robotGameObject;
     private chooseMode.Mode mode;
     private int readTarget;
-    private int lastMove;
+    private int lastMove = 0;
     private int move;
     private int currentState = -1;
     private int lastState = 0;
@@ -27,18 +27,16 @@ public class PneumaticsControl : MonoBehaviour
 
     void updateDispenserPosition(){
         move = (int) OPCUA_Client.allNodes[gameObject.name + "/" + "MoveCommand"].dataValue.Value;
-
         if(lastMove != move)
         {
             if(move == 1){
                 readTarget = 1;
             }else if(move == -1){
                 readTarget = 0;
-            }; // Überlegen
+            }
             pneumaticComponent.move(readTarget, null);
+            lastMove = move;
         }
-
-        lastMove = move;
     }
 
     async void writeState(){
@@ -50,7 +48,7 @@ public class PneumaticsControl : MonoBehaviour
         }
 
         if(lastState != currentState)
-        {
+        { 
             containerList[0].writeValue = new DataValue(currentState);
             await OPCUA_Client.WriteValues(containerList);
             lastState = currentState;
@@ -65,7 +63,6 @@ public class PneumaticsControl : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
         pneumaticComponent = new ComponentClasses.DriveComponent(gameObject);
-        
         if(mode == 0)
         {
             containerList = new List<OPCUAWriteContainer> {new OPCUAWriteContainer(gameObject.name, "Position", new Variant())};
@@ -81,7 +78,7 @@ public class PneumaticsControl : MonoBehaviour
             
             if(mode == 0)
             {
-                // writeState();
+                writeState();
             }
         }
             

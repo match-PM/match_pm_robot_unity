@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657832, g: 0.49641222, b: 0.57481664, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2222,7 +2222,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: 0
     upperLimit: 0.01
-    stiffness: 0
+    stiffness: 0.05
     damping: 0
     forceLimit: 100
     target: 0
@@ -2677,7 +2677,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: 0
     upperLimit: 0.01
-    stiffness: 0
+    stiffness: 0.05
     damping: 0
     forceLimit: 100
     target: 0
@@ -31532,7 +31532,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: 0
     upperLimit: 0.02
-    stiffness: 0
+    stiffness: 0.05
     damping: 0
     forceLimit: 100
     target: 0
@@ -33179,7 +33179,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: 0
     upperLimit: 0.04
-    stiffness: 0
+    stiffness: 0.05
     damping: 0
     forceLimit: 100
     target: -0.1
@@ -45149,7 +45149,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: 0
     upperLimit: 0.0468
-    stiffness: 0
+    stiffness: 0.05
     damping: 0
     forceLimit: 100
     target: 0
@@ -46417,7 +46417,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: 0
     upperLimit: 0.04
-    stiffness: 0
+    stiffness: 0.05
     damping: 0
     forceLimit: 100
     target: 0

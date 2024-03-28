@@ -42,6 +42,7 @@ public class OPCUA_Client : MonoBehaviour
         {
             // Check if all the data values of nodes in the 'allNodes' collection are not null.
             startUpdate = allNodes.Values.All(item => item.dataValue.Value != null);
+            Debug.Log("Start Update...");
         }
     }
 
