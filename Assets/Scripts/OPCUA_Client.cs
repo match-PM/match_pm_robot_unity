@@ -15,11 +15,11 @@ public class OPCUA_Client : MonoBehaviour
     private ApplicationConfiguration config;
     private Session session;
     public Dictionary<string, NodeData> allNodes = new Dictionary<string, NodeData>();
-    public CancellationTokenSource  cts;
+    public CancellationTokenSource cts;
     private Subscription subscription;
     private Dictionary<string, Tuple<string, string>> monitoredItems;
-    public bool startUpdate = false;
-    
+    public bool updateReady = false;
+
     async void Awake()
     {
         await InitClient();
@@ -34,15 +34,14 @@ public class OPCUA_Client : MonoBehaviour
     {
         // New value you want to write
         object newValue = 100;
-        
+
         // CancellationTokenSource
         cts = new CancellationTokenSource();
-        
-        if(!startUpdate)
+
+        if (!updateReady)
         {
             // Check if all the data values of nodes in the 'allNodes' collection are not null.
-            startUpdate = allNodes.Values.All(item => item.dataValue.Value != null);
-            Debug.Log("Start Update...");
+            updateReady = allNodes.Values.All(item => item.dataValue.Value != null);
         }
     }
 
@@ -119,7 +118,7 @@ public class OPCUA_Client : MonoBehaviour
     }
 
     public void getAllNodes(Session session)
-    {  
+    {
         // Define a BrowseDescription for the top-level ObjectsFolder.
         var parentBrowseDescription = new BrowseDescription
         {
@@ -127,47 +126,48 @@ public class OPCUA_Client : MonoBehaviour
             BrowseDirection = BrowseDirection.Forward,
             ReferenceTypeId = ReferenceTypeIds.HierarchicalReferences,
             IncludeSubtypes = true,
-            NodeClassMask = (uint) NodeClass.Object | (uint) NodeClass.Variable,
-            ResultMask = (uint) BrowseResultMask.All
+            NodeClassMask = (uint)NodeClass.Object | (uint)NodeClass.Variable,
+            ResultMask = (uint)BrowseResultMask.All
         };
 
         BrowseResultCollection parentResults;
         DiagnosticInfoCollection parentDiagnosticInfos;
 
-        // Perform a browse operation to retrieve information about child nodes of the Objec
-        session.Browse(null, null, 0, new BrowseDescriptionCollection {parentBrowseDescription}, out parentResults, out parentDiagnosticInfos);
+        // Perform a browse operation to retrieve information about child nodes of the Object
+        session.Browse(null, null, 0, new BrowseDescriptionCollection { parentBrowseDescription }, out parentResults, out parentDiagnosticInfos);
 
         foreach (var parentResult in parentResults[0].References)
         {
             string currentParent = parentResult.DisplayName.Text;
 
-             // Check if the current node is not the "Server" node.
-            if(currentParent != "Server"){
-                NodeId parentNodeID =  ExpandedNodeId.ToNodeId(parentResult.NodeId, session.NamespaceUris);
+            // Check if the current node is not the "Server" node.
+            if (currentParent != "Server")
+            {
+                NodeId parentNodeID = ExpandedNodeId.ToNodeId(parentResult.NodeId, session.NamespaceUris);
                 var childBrowseDescription = new BrowseDescription
                 {
                     NodeId = parentNodeID,
                     BrowseDirection = BrowseDirection.Forward,
                     ReferenceTypeId = ReferenceTypeIds.HierarchicalReferences,
                     IncludeSubtypes = true,
-                    NodeClassMask = (uint) NodeClass.Object | (uint) NodeClass.Variable,
-                    ResultMask = (uint) BrowseResultMask.All
+                    NodeClassMask = (uint)NodeClass.Object | (uint)NodeClass.Variable,
+                    ResultMask = (uint)BrowseResultMask.All
                 };
 
                 BrowseResultCollection childResults;
                 DiagnosticInfoCollection chidlDiagnosticInfos;
 
                 // Perform a browse operation to retrieve information about child nodes of the current parent node.
-                session.Browse(null, null, 0, new BrowseDescriptionCollection {childBrowseDescription}, out childResults, out chidlDiagnosticInfos);
-                
+                session.Browse(null, null, 0, new BrowseDescriptionCollection { childBrowseDescription }, out childResults, out chidlDiagnosticInfos);
+
                 foreach (var childResult in childResults[0].References)
                 {
                     string currentChild = childResult.DisplayName.Text;
 
                     // Add information about the current child node to a collection.
-                    allNodes.Add(currentParent+"/"+currentChild, new NodeData(ExpandedNodeId.ToNodeId(childResult.NodeId,session.NamespaceUris)));  
+                    allNodes.Add(currentParent + "/" + currentChild, new NodeData(ExpandedNodeId.ToNodeId(childResult.NodeId, session.NamespaceUris)));
                 };
-            } 
+            }
         }
     }
 
@@ -185,12 +185,12 @@ public class OPCUA_Client : MonoBehaviour
                 WriteValueCollection nodesToWrite = new WriteValueCollection();
 
                 // Iterate through the OPC UA write containers provided in the list.
-                foreach(OPCUAWriteContainer writeContainer in writeContainers)
+                foreach (OPCUAWriteContainer writeContainer in writeContainers)
                 {
                     // Create a WriteValue object for each node to write.
                     WriteValue writeValues = new WriteValue()
                     {
-                        NodeId = allNodes[writeContainer.parent + "/" + writeContainer.child].nodeId, 
+                        NodeId = allNodes[writeContainer.parent + "/" + writeContainer.child].nodeId,
                         AttributeId = Attributes.Value,
                         Value = writeContainer.writeValue
                     };
@@ -209,27 +209,28 @@ public class OPCUA_Client : MonoBehaviour
 
     void startSubscription()
     {
-        if( subscription == null )
+        if (subscription == null)
         {
             subscription = new Subscription(session.DefaultSubscription);
-            subscription.PublishingEnabled=true;
-            subscription.PublishingInterval=10;
+            subscription.PublishingEnabled = true;
+            subscription.PublishingInterval = 10;
             session.AddSubscription(subscription);
             subscription.Create();
             Debug.Log("Subscrtiption initialized...");
         }
-        else{
+        else
+        {
             Debug.Log("Subscription existing...");
         }
     }
 
     void addMonitoredItems()
-    {   
+    {
         List<MonitoredItem> monitoredItems = new List<MonitoredItem>();
         Debug.Log("Adding Monitored Items...");
 
         // Iterate through all the nodes in the 'allNodes' collection.
-        foreach(KeyValuePair<string, NodeData> node in allNodes)
+        foreach (KeyValuePair<string, NodeData> node in allNodes)
         {
             // Create a new MonitoredItem for each node.
             MonitoredItem monitoredItem = new MonitoredItem(subscription.DefaultItem);
@@ -277,6 +278,6 @@ public class OPCUA_Client : MonoBehaviour
         var value = item.DequeueValues()[0];
 
         // Update the data value associated with the MonitoredItem's corresponding node.
-        allNodes[item.DisplayName].dataValue=value;
+        allNodes[item.DisplayName].dataValue = value;
     }
 }

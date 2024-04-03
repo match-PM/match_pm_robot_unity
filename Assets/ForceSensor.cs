@@ -15,7 +15,7 @@ using UtilityFunctions.OPCUA;
 public class ForceSensor : MonoBehaviour
 {
     private ArticulationBody forceSensor;
-    private double[] forceData = {0,0,0,0,0,0};
+    private double[] forceData = { 0, 0, 0, 0, 0, 0 };
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
     private List<OPCUAWriteContainer> containerList;
@@ -25,13 +25,14 @@ public class ForceSensor : MonoBehaviour
     {
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
-        forceSensor = GetComponent<ArticulationBody>();   
+        forceSensor = GetComponent<ArticulationBody>();
         forceSensor.useGravity = false;
-        containerList = new List<OPCUAWriteContainer> {new OPCUAWriteContainer("ForceSensor", "Measurements", new Variant())};
+        containerList = new List<OPCUAWriteContainer> { new OPCUAWriteContainer("ForceSensor", "Measurements", new Variant()) };
     }
 
-    async void writeForceValues(){
-        forceData[2] = (double) forceSensor.driveForce[0];
+    async void writeForceValues()
+    {
+        forceData[2] = (double)forceSensor.driveForce[0];
         Debug.Log(forceData[2]);
         containerList[0].writeValue = new DataValue(forceData);
         await OPCUA_Client.WriteValues(containerList);
@@ -40,7 +41,8 @@ public class ForceSensor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(OPCUA_Client.startUpdate){
+        if (OPCUA_Client.updateReady)
+        {
             writeForceValues();
         }
     }

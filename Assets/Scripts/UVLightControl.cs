@@ -26,18 +26,20 @@ public class UVLightControl : MonoBehaviour
     private double elapsedTime = 0.0;
     int[] power;
     // Start is called before the first frame update
-    void updateUVLight(){
-        
-        stateReading = (bool[]) OPCUA_Client.allNodes["HoenleUV/OnOff"].dataValue.Value;
-        time = (double[]) OPCUA_Client.allNodes["HoenleUV/Time"].dataValue.Value;
-        power = (int[]) OPCUA_Client.allNodes["HoenleUV/Power"].dataValue.Value;
+    void updateUVLight()
+    {
 
-        if(currentState == true && elapsedTime >= time[ArrayIndex])
+        stateReading = (bool[])OPCUA_Client.allNodes["HoenleUV/OnOff"].dataValue.Value;
+        time = (double[])OPCUA_Client.allNodes["HoenleUV/Time"].dataValue.Value;
+        power = (int[])OPCUA_Client.allNodes["HoenleUV/Power"].dataValue.Value;
+
+        if (currentState == true && elapsedTime >= time[ArrayIndex])
         {
             currentState = !currentState;
             UVLight.enabled = currentState;
             writeUVValues();
-        }else if(currentState == false && stateReading[ArrayIndex] == true)
+        }
+        else if (currentState == false && stateReading[ArrayIndex] == true)
         {
             currentState = stateReading[ArrayIndex];
             UVLight.enabled = currentState;
@@ -46,7 +48,8 @@ public class UVLightControl : MonoBehaviour
         }
     }
 
-    async void writeUVValues(){
+    async void writeUVValues()
+    {
         stateReading[ArrayIndex] = currentState;
         containerList[0].writeValue = new DataValue(stateReading);
         await OPCUA_Client.WriteValues(containerList);
@@ -58,13 +61,14 @@ public class UVLightControl : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         UVLight = GetComponent<Light>();
         UVLight.enabled = false;
-        containerList = new List<OPCUAWriteContainer> {new OPCUAWriteContainer("HoenleUV", "OnOff", new Variant())};
+        containerList = new List<OPCUAWriteContainer> { new OPCUAWriteContainer("HoenleUV", "OnOff", new Variant()) };
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(OPCUA_Client.startUpdate){
+        if (OPCUA_Client.updateReady)
+        {
             elapsedTime += Time.deltaTime;
             updateUVLight();
         }

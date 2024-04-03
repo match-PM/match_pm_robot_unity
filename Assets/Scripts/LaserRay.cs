@@ -21,30 +21,30 @@ public class LaserRay : MonoBehaviour
     private GameObject robotGameObject;
     private chooseMode.Mode mode;
     private RaycastHit hit;
-    
-    
+
+
     void renderLine()
     {
         lineRenderer.SetPosition(0, transform.position);
         RaycastHit hit;
 
-        if(Physics.Raycast(transform.position, -transform.up, out hit))
+        if (Physics.Raycast(transform.position, -transform.up, out hit))
         {
-            if(hit.collider)
+            if (hit.collider)
             {
                 lineRenderer.SetPosition(1, hit.point);
             }
         }
         else
         {
-            lineRenderer.SetPosition(1, -transform.up*5000);
+            lineRenderer.SetPosition(1, -transform.up * 5000);
         }
     }
 
     async void writeLaserDistance()
     {
         distance = hit.point[0] - transform.position[0];
-        if(distance != distance_prev)
+        if (distance != distance_prev)
         {
             containerList[0].writeValue = new DataValue(distance);
             distance_prev = distance;
@@ -61,7 +61,7 @@ public class LaserRay : MonoBehaviour
         mode = robotGameObject.GetComponent<chooseMode>().mode;
         if (mode == 0)
         {
-            containerList = new List<OPCUAWriteContainer> {new OPCUAWriteContainer(gameObject.name, "Measurement", new Variant())};
+            containerList = new List<OPCUAWriteContainer> { new OPCUAWriteContainer(gameObject.name, "Measurement", new Variant()) };
         }
     }
 
@@ -69,8 +69,8 @@ public class LaserRay : MonoBehaviour
     void Update()
     {
         renderLine();
-        
-        if(mode == 0 && OPCUA_Client.startUpdate)
+
+        if (mode == 0 && OPCUA_Client.updateReady)
         {
             writeLaserDistance();
         }

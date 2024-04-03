@@ -14,26 +14,26 @@ public class Camera2LightControl : MonoBehaviour
 {
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
-    private List <ComponentClasses.LightComponent> lightComponents = new List<ComponentClasses.LightComponent>();
+    private List<ComponentClasses.LightComponent> lightComponents = new List<ComponentClasses.LightComponent>();
 
     void updateLights()
     {
-        foreach(ComponentClasses.LightComponent lightComponent in lightComponents)
-            {
-                // Create a list to store the current state of the light component.
-                List <bool> currentState = new List<bool>();
+        foreach (ComponentClasses.LightComponent lightComponent in lightComponents)
+        {
+            // Create a list to store the current state of the light component.
+            List<bool> currentState = new List<bool>();
 
-                // Initialize a variable for the current color (but it remains null).
-                float[] currentColor = null; 
+            // Initialize a variable for the current color (but it remains null).
+            float[] currentColor = null;
 
-                // Determine the state based on the state reading.
-                // If the state reading is not 0, it's considered as 'true' (on); otherwise, it's 'false' (off).
-                int stateReading = (int) OPCUA_Client.allNodes["Camera2" + "/" +lightComponent.name].dataValue.Value;
-                currentState.Add(stateReading != 0);
+            // Determine the state based on the state reading.
+            // If the state reading is not 0, it's considered as 'true' (on); otherwise, it's 'false' (off).
+            int stateReading = (int)OPCUA_Client.allNodes["Camera2" + "/" + lightComponent.name].dataValue.Value;
+            currentState.Add(stateReading != 0);
 
-                // Update the light component with the current state and color (which is null).
-                lightComponent.UpdateValues(currentState, currentColor);
-            }
+            // Update the light component with the current state and color (which is null).
+            lightComponent.UpdateValues(currentState, currentColor);
+        }
     }
 
     // Start is called before the first frame update
@@ -43,19 +43,20 @@ public class Camera2LightControl : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
 
         // List to store child GameObjects of the current GameObject.
-        List<GameObject> childrenGameObjects = GenericFunctions.getChildrenGameObjects(gameObject); 
+        List<GameObject> childrenGameObjects = GenericFunctions.getChildrenGameObjects(gameObject);
 
         // Iterate through the child GameObjects and create LightComponent objects for each.
-        foreach(GameObject childGameObject in childrenGameObjects)
+        foreach (GameObject childGameObject in childrenGameObjects)
         {
             lightComponents.Add(new ComponentClasses.LightComponent(childGameObject));
-        }  
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(OPCUA_Client.startUpdate){
+        if (OPCUA_Client.updateReady)
+        {
             updateLights();
         }
     }

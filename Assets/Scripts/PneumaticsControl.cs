@@ -25,13 +25,17 @@ public class PneumaticsControl : MonoBehaviour
 
     private List<OPCUAWriteContainer> containerList;
 
-    void updateDispenserPosition(){
-        move = (int) OPCUA_Client.allNodes[gameObject.name + "/" + "MoveCommand"].dataValue.Value;
-        if(lastMove != move)
+    void updateDispenserPosition()
+    {
+        move = (int)OPCUA_Client.allNodes[gameObject.name + "/" + "MoveCommand"].dataValue.Value;
+        if (lastMove != move)
         {
-            if(move == 1){
+            if (move == 1)
+            {
                 readTarget = 1;
-            }else if(move == -1){
+            }
+            else if (move == -1)
+            {
                 readTarget = 0;
             }
             pneumaticComponent.move(readTarget, null);
@@ -39,16 +43,19 @@ public class PneumaticsControl : MonoBehaviour
         }
     }
 
-    async void writeState(){
-        if(pneumaticComponent.articulationBody.xDrive.target == pneumaticComponent.articulationBody.xDrive.lowerLimit)
+    async void writeState()
+    {
+        if (pneumaticComponent.articulationBody.xDrive.target == pneumaticComponent.articulationBody.xDrive.lowerLimit)
         {
             currentState = -1;
-        }else{
+        }
+        else
+        {
             currentState = 1;
         }
 
-        if(lastState != currentState)
-        { 
+        if (lastState != currentState)
+        {
             containerList[0].writeValue = new DataValue(currentState);
             await OPCUA_Client.WriteValues(containerList);
             lastState = currentState;
@@ -63,24 +70,24 @@ public class PneumaticsControl : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
         pneumaticComponent = new ComponentClasses.DriveComponent(gameObject);
-        if(mode == 0)
+        if (mode == 0)
         {
-            containerList = new List<OPCUAWriteContainer> {new OPCUAWriteContainer(gameObject.name, "Position", new Variant())};
-        } 
+            containerList = new List<OPCUAWriteContainer> { new OPCUAWriteContainer(gameObject.name, "Position", new Variant()) };
+        }
     }
 
     // Update is called once per frame
     void Update()
-    {   
-        if (OPCUA_Client.startUpdate)
+    {
+        if (OPCUA_Client.updateReady)
         {
             updateDispenserPosition();
-            
-            if(mode == 0)
+
+            if (mode == 0)
             {
                 writeState();
             }
         }
-            
-    }   
+
+    }
 }
