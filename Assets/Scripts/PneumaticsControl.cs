@@ -11,6 +11,7 @@ using System.Linq;
 using UtilityFunctions;
 using UtilityFunctions.OPCUA;
 
+
 public class PneumaticsControl : MonoBehaviour
 {
     ComponentClasses.DriveComponent pneumaticComponent;
@@ -45,13 +46,14 @@ public class PneumaticsControl : MonoBehaviour
 
     async void writeState()
     {
-        if (pneumaticComponent.articulationBody.xDrive.target == pneumaticComponent.articulationBody.xDrive.lowerLimit)
-        {
-            currentState = -1;
-        }
-        else
+
+        if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.upperLimit) < 0.001)
         {
             currentState = 1;
+        }
+        else if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.lowerLimit) < 0.001)
+        {
+            currentState = -1;
         }
 
         if (lastState != currentState)
@@ -61,7 +63,6 @@ public class PneumaticsControl : MonoBehaviour
             lastState = currentState;
         }
     }
-
 
     // Start is called before the first frame update
     void Start()

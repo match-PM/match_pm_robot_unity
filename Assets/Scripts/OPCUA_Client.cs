@@ -133,7 +133,7 @@ public class OPCUA_Client : MonoBehaviour
         BrowseResultCollection parentResults;
         DiagnosticInfoCollection parentDiagnosticInfos;
 
-        // Perform a browse operation to retrieve information about child nodes of the Object
+        // Perform a browse operation to retrieve information about child nodes of the Object.
         session.Browse(null, null, 0, new BrowseDescriptionCollection { parentBrowseDescription }, out parentResults, out parentDiagnosticInfos);
 
         foreach (var parentResult in parentResults[0].References)
