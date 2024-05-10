@@ -44,25 +44,25 @@ public class PneumaticsControl : MonoBehaviour
         }
     }
 
-    async void writeState()
-    {
+    // async void writeState()
+    // {
 
-        if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.upperLimit) < 0.001)
-        {
-            currentState = 1;
-        }
-        else if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.lowerLimit) < 0.001)
-        {
-            currentState = -1;
-        }
+    //     if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.upperLimit) < 0.001)
+    //     {
+    //         currentState = 1;
+    //     }
+    //     else if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.lowerLimit) < 0.001)
+    //     {
+    //         currentState = -1;
+    //     }
 
-        if (lastState != currentState)
-        {
-            containerList[0].writeValue = new DataValue(currentState);
-            await OPCUA_Client.WriteValues(containerList);
-            lastState = currentState;
-        }
-    }
+    //     if (lastState != currentState)
+    //     {
+    //         containerList[0].writeValue = new DataValue(currentState);
+    //         await OPCUA_Client.WriteValues(containerList);
+    //         lastState = currentState;
+    //     }
+    // }
 
     // Start is called before the first frame update
     void Start()
@@ -73,7 +73,7 @@ public class PneumaticsControl : MonoBehaviour
         pneumaticComponent = new ComponentClasses.DriveComponent(gameObject);
         if (mode == 0)
         {
-            containerList = new List<OPCUAWriteContainer> { new OPCUAWriteContainer(gameObject.name, "Position", new Variant()) };
+            OPCUA_Client.addToWriteContainer(gameObject.name, "Position");
         }
     }
 
@@ -86,7 +86,7 @@ public class PneumaticsControl : MonoBehaviour
 
             if (mode == 0)
             {
-                writeState();
+                // writeState();
             }
         }
 

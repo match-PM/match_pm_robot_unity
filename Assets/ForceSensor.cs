@@ -27,23 +27,23 @@ public class ForceSensor : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         forceSensor = GetComponent<ArticulationBody>();
         forceSensor.useGravity = false;
-        containerList = new List<OPCUAWriteContainer> { new OPCUAWriteContainer("ForceSensor", "Measurements", new Variant()) };
+        OPCUA_Client.addToWriteContainer("ForceSensor", "Measurements");
     }
 
-    async void writeForceValues()
-    {
-        forceData[2] = (double)forceSensor.driveForce[0];
-        Debug.Log(forceData[2]);
-        containerList[0].writeValue = new DataValue(forceData);
-        await OPCUA_Client.WriteValues(containerList);
-    }
+    // async void writeForceValues()
+    // {
+    //     forceData[2] = (double)forceSensor.driveForce[0];
+    //     Debug.Log(forceData[2]);
+    //     containerList[0].writeValue = new DataValue(forceData);
+    //     await OPCUA_Client.WriteValues(containerList);
+    // }
 
     // Update is called once per frame
     void Update()
     {
-        if (OPCUA_Client.updateReady)
-        {
-            writeForceValues();
-        }
+        // if (OPCUA_Client.updateReady)
+        // {
+        //     writeForceValues();
+        // }
     }
 }

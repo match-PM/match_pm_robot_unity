@@ -9,6 +9,8 @@ using Opc.Ua;
 using Opc.Ua.Client;
 using Opc.Ua.Configuration;
 using UtilityFunctions.OPCUA;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 public class OPCUA_Client : MonoBehaviour
 {
@@ -20,6 +22,8 @@ public class OPCUA_Client : MonoBehaviour
     private Dictionary<string, Tuple<string, string>> monitoredItems;
     public bool updateReady = false;
 
+    public OPCUAWriteContainer writeContainer = new OPCUAWriteContainer();
+
     async void Awake()
     {
         await InitClient();
@@ -30,7 +34,21 @@ public class OPCUA_Client : MonoBehaviour
         addMonitoredItems();
     }
 
-    void Update()
+    public void addToWriteContainer(string parentName, string childName)
+    {
+        Debug.Log("Adding: " + parentName + "/" + childName);
+        NodeId nId = allNodes[parentName + "/" + childName].nodeId;
+        Variant initalValue = allNodes[parentName + "/" + childName].dataValue.WrappedValue;
+        Debug.Log(initalValue);
+        writeContainer.addToCollection(nId, parentName, childName, initalValue);
+    }
+
+    public void writeToServer(string nodeName, Variant value)
+    {
+        writeContainer.container[nodeName].Value.WrappedValue = value;
+    }
+
+    async void Update()
     {
         // New value you want to write
         object newValue = 100;
@@ -43,6 +61,7 @@ public class OPCUA_Client : MonoBehaviour
             // Check if all the data values of nodes in the 'allNodes' collection are not null.
             updateReady = allNodes.Values.All(item => item.dataValue.Value != null);
         }
+        await WriteValues();
     }
 
     async void OnApplicationQuit()
@@ -171,7 +190,7 @@ public class OPCUA_Client : MonoBehaviour
         }
     }
 
-    async public Task WriteValues(List<OPCUAWriteContainer> writeContainers)
+    async public Task WriteValues()
     {
         if (session == null || session.Connected == false)
         {
@@ -181,24 +200,7 @@ public class OPCUA_Client : MonoBehaviour
         {
             try
             {
-                // Create a WriteValueCollection to store the values to be written.
-                WriteValueCollection nodesToWrite = new WriteValueCollection();
-
-                // Iterate through the OPC UA write containers provided in the list.
-                foreach (OPCUAWriteContainer writeContainer in writeContainers)
-                {
-                    // Create a WriteValue object for each node to write.
-                    WriteValue writeValues = new WriteValue()
-                    {
-                        NodeId = allNodes[writeContainer.parent + "/" + writeContainer.child].nodeId,
-                        AttributeId = Attributes.Value,
-                        Value = writeContainer.writeValue
-                    };
-                    // Add the WriteValue to the WriteValueCollection.
-                    nodesToWrite.Add(writeValues);
-                }
-                // Perform the write operation asynchronously and store the response.
-                WriteResponse response = await session.WriteAsync(null, nodesToWrite, cts.Token);
+                WriteResponse response = await session.WriteAsync(null, writeContainer.nodesToWrite, cts.Token);
             }
             catch (Exception e)
             {
@@ -206,6 +208,7 @@ public class OPCUA_Client : MonoBehaviour
             }
         }
     }
+
 
     void startSubscription()
     {

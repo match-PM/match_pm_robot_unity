@@ -41,16 +41,16 @@ public class LaserRay : MonoBehaviour
         }
     }
 
-    async void writeLaserDistance()
-    {
-        distance = hit.point[0] - transform.position[0];
-        if (distance != distance_prev)
-        {
-            containerList[0].writeValue = new DataValue(distance);
-            distance_prev = distance;
-            await OPCUA_Client.WriteValues(containerList);
-        }
-    }
+    // async void writeLaserDistance()
+    // {
+    //     distance = hit.point[0] - transform.position[0];
+    //     if (distance != distance_prev)
+    //     {
+    //         containerList[0].writeValue = new DataValue(distance);
+    //         distance_prev = distance;
+    //         await OPCUA_Client.WriteValues(containerList);
+    //     }
+    // }
 
     void Start()
     {
@@ -61,7 +61,7 @@ public class LaserRay : MonoBehaviour
         mode = robotGameObject.GetComponent<chooseMode>().mode;
         if (mode == 0)
         {
-            containerList = new List<OPCUAWriteContainer> { new OPCUAWriteContainer(gameObject.name, "Measurement", new Variant()) };
+            OPCUA_Client.addToWriteContainer(gameObject.name, "Measurement");
         }
     }
 
@@ -72,7 +72,7 @@ public class LaserRay : MonoBehaviour
 
         if (mode == 0 && OPCUA_Client.updateReady)
         {
-            writeLaserDistance();
+            // writeLaserDistance();
         }
     }
 }

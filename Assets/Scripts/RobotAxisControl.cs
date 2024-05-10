@@ -47,16 +47,20 @@ public class RobotAxisControl : MonoBehaviour
         }
     }
 
-    async void writePosition()
+    void writePosition()
     {
         // Get the current position of the axis.
         float position = axis.articulationBody.jointPosition[0];
 
-        // Calculate a new position value.
-        containerList[0].writeValue = new DataValue((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
+        Variant value = new Variant((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
 
-        // Write Positon to server.
-        await OPCUA_Client.WriteValues(containerList);
+        OPCUA_Client.writeToServer(gameObject.name + "/" + writeNodeName[(int)mode], value);
+
+        // // Calculate a new position value.
+        // containerList[0].writeValue = new DataValue((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
+
+        // // Write Positon to server.
+        // await OPCUA_Client.WriteValues(containerList);
     }
 
     // Start is called before the first frame update
@@ -68,7 +72,7 @@ public class RobotAxisControl : MonoBehaviour
         axis = new ComponentClasses.DriveComponent(gameObject);
         if (mode == 0)
         {
-            containerList = new List<OPCUAWriteContainer> { new OPCUAWriteContainer(gameObject.name, writeNodeName[(int)mode], new Variant()) };
+            OPCUA_Client.addToWriteContainer(gameObject.name, writeNodeName[(int)mode]);
         }
     }
 

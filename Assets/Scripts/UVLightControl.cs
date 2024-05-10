@@ -28,8 +28,9 @@ public class UVLightControl : MonoBehaviour
     // Start is called before the first frame update
     void updateUVLight()
     {
-
+        Debug.Log(elapsedTime);
         stateReading = (bool[])OPCUA_Client.allNodes["HoenleUV/OnOff"].dataValue.Value;
+        writeUVValues();
         time = (double[])OPCUA_Client.allNodes["HoenleUV/Time"].dataValue.Value;
         power = (int[])OPCUA_Client.allNodes["HoenleUV/Power"].dataValue.Value;
 
@@ -37,7 +38,6 @@ public class UVLightControl : MonoBehaviour
         {
             currentState = !currentState;
             UVLight.enabled = currentState;
-            writeUVValues();
         }
         else if (currentState == false && stateReading[ArrayIndex] == true)
         {
@@ -48,11 +48,11 @@ public class UVLightControl : MonoBehaviour
         }
     }
 
-    async void writeUVValues()
+    void writeUVValues()
     {
         stateReading[ArrayIndex] = currentState;
-        containerList[0].writeValue = new DataValue(stateReading);
-        await OPCUA_Client.WriteValues(containerList);
+        Variant value = new Variant(stateReading);
+        OPCUA_Client.writeToServer("HoenleUV" + "/" + "OnOff", value);
     }
 
     void Start()
@@ -61,7 +61,7 @@ public class UVLightControl : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         UVLight = GetComponent<Light>();
         UVLight.enabled = false;
-        containerList = new List<OPCUAWriteContainer> { new OPCUAWriteContainer("HoenleUV", "OnOff", new Variant()) };
+        OPCUA_Client.addToWriteContainer("HoenleUV", "OnOff");
     }
 
     // Update is called once per frame

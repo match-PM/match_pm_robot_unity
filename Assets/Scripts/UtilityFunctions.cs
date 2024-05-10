@@ -23,7 +23,7 @@ namespace UtilityFunctions
             // The parent GameObject to which the component is attached.
             public GameObject parentObject;
 
-            public Component() {}
+            public Component() { }
 
             public Component(string componentName, GameObject parentGameObject)
             {
@@ -36,7 +36,7 @@ namespace UtilityFunctions
         public class LightComponent : Component
         {
             // A list of Light components.
-            public List<Light> lights; 
+            public List<Light> lights;
 
             // A reference to a single Light component.
             public Light light;
@@ -51,10 +51,10 @@ namespace UtilityFunctions
             public Color color;
 
             public LightComponent(GameObject currentGameObject)
-            {   
+            {
                 this.name = currentGameObject.name;
                 this.parentObject = currentGameObject;
-                lights =  new List<Light>();
+                lights = new List<Light>();
                 state = new List<bool>();
                 intensity = 1.0;
                 color = Color.white;
@@ -64,9 +64,9 @@ namespace UtilityFunctions
             // Method to update the state and color of the light component based on input parameters.
             public void UpdateValues(List<bool> currentState, float[] currentColor = null)
             {
-                if(!currentState.SequenceEqual(state))
-                {   
-                    for(int i = 0; i<currentState.Count; i++)
+                if (!currentState.SequenceEqual(state))
+                {
+                    for (int i = 0; i < currentState.Count; i++)
                     {
                         light = lights[i];
                         turnLightsOnOff(currentState[i]);
@@ -74,12 +74,12 @@ namespace UtilityFunctions
                     state = currentState;
                 };
 
-                if(currentColor != null && !color.Equals(new Color((float) currentColor[0], (float) currentColor[1], (float) currentColor[2], 1.0f)))
+                if (currentColor != null && !color.Equals(new Color((float)currentColor[0], (float)currentColor[1], (float)currentColor[2], 1.0f)))
                 {
                     foreach (Light light in lights)
                     {
                         Debug.Log("Changing Color!");
-                        light.color = new Color((float) currentColor[0], (float) currentColor[1], (float) currentColor[2], 1.0f);
+                        light.color = new Color((float)currentColor[0], (float)currentColor[1], (float)currentColor[2], 1.0f);
                     }
                     color = light.color;
                 };
@@ -88,25 +88,25 @@ namespace UtilityFunctions
             // Method to turn lights on or off based on the current activity.
             void turnLightsOnOff(bool currentActivity)
             {
-            Dictionary <bool, string> message = new Dictionary<bool, string>(); 
-            message.Add(true, "on!"); 
-            message.Add(false, "off!"); 
+                Dictionary<bool, string> message = new Dictionary<bool, string>();
+                message.Add(true, "on!");
+                message.Add(false, "off!");
 
-            light.enabled = currentActivity;
+                light.enabled = currentActivity;
 
-            Debug.Log("The " + light.name + " is " + message[currentActivity]);
+                Debug.Log("The " + light.name + " is " + message[currentActivity]);
             }
 
             // Method to retrieve the light components from the parent object.
             void getLightComponentFormParent()
             {
-                
-                if(parentObject.GetComponent<Light>() == null)
+
+                if (parentObject.GetComponent<Light>() == null)
                 {
                     Transform transforms = parentObject.transform;
-                    foreach(Transform t in transforms)
+                    foreach (Transform t in transforms)
                     {
-                        if(t != null && t.gameObject != null && t.gameObject != parentObject)
+                        if (t != null && t.gameObject != null && t.gameObject != parentObject)
                         {
                             lights.Add(t.gameObject.GetComponent<Light>());
                         }
@@ -120,7 +120,7 @@ namespace UtilityFunctions
         };
 
 
-        public class DriveComponent:Component
+        public class DriveComponent : Component
         {
             public ArticulationBody articulationBody;
             public ArticulationDrive newDrive;
@@ -135,7 +135,7 @@ namespace UtilityFunctions
                 articulationBody = currentGameObject.GetComponent<ArticulationBody>();
             }
 
-            public void move(int readTarget,double? unitsPerIncrement)
+            public void move(int readTarget, double? unitsPerIncrement)
             {
                 newTarget = doTargetConversion(readTarget, unitsPerIncrement);
                 newDrive = articulationBody.xDrive;
@@ -148,40 +148,41 @@ namespace UtilityFunctions
             {
                 float newTarget = 0.0f;
 
-                if(unitsPerIncrement == null){
-                    unitsPerIncrement = articulationBody.xDrive.upperLimit * (float) Math.Pow(10, 6);
-                }
-                if(articulationBody.jointType == ArticulationJointType.PrismaticJoint)
+                if (unitsPerIncrement == null)
                 {
-                    newTarget = (float) readTarget * (float) unitsPerIncrement * (float) Math.Pow(10, -6);
+                    unitsPerIncrement = articulationBody.xDrive.upperLimit * (float)Math.Pow(10, 6);
                 }
-                else if(articulationBody.jointType == ArticulationJointType.RevoluteJoint)
+                if (articulationBody.jointType == ArticulationJointType.PrismaticJoint)
                 {
-                    newTarget = (float) readTarget;
+                    newTarget = (float)readTarget * (float)unitsPerIncrement * (float)Math.Pow(10, -6);
                 }
-                
+                else if (articulationBody.jointType == ArticulationJointType.RevoluteJoint)
+                {
+                    newTarget = (float)readTarget;
+                }
+
                 return newTarget;
             }
 
         }
     }
-    
+
 
 
     public class GenericFunctions
     {
-        public GenericFunctions () {}
+        public GenericFunctions() { }
 
         // Static method to get the children GameObjects of a given GameObject.
         public static List<GameObject> getChildrenGameObjects(GameObject currentGameObject)
         {
             Transform transforms = currentGameObject.transform;
-            List<GameObject> childrenGameObjects = new List <GameObject>();
+            List<GameObject> childrenGameObjects = new List<GameObject>();
 
             // Iterate through the child transforms and add their GameObjects to the list.
-            foreach(Transform t in transforms)
+            foreach (Transform t in transforms)
             {
-                if(t != null && t.gameObject != null && t.gameObject != currentGameObject)
+                if (t != null && t.gameObject != null && t.gameObject != currentGameObject)
                 {
                     childrenGameObjects.Add(t.gameObject);
                 }
@@ -195,13 +196,13 @@ namespace UtilityFunctions
             float[] currentColor = new float[colorReading.Length];
 
             // Iterate through the integer color values and convert them to floats.
-            for(int i = 0; i<colorReading.Length; i++)
+            for (int i = 0; i < colorReading.Length; i++)
             {
                 currentColor[i] = (float)colorReading[i] / 100.0f;
             }
 
             return currentColor;
-        } 
+        }
     }
 
 
@@ -214,26 +215,38 @@ namespace UtilityFunctions
             public NodeId nodeId;    // The NodeId associated with the node.
             public DataValue dataValue = new DataValue(); // The data value associated with the node.
 
-            public NodeData(){}
+            public NodeData() { }
             public NodeData(NodeId id)
             {
                 nodeId = id;
             }
         }
 
-        // OPCUAWriteContainer class is used to store information for writing values to an OPC UA server.
         public class OPCUAWriteContainer
         {
-            public string parent; // The parent node's name.
-            public string child;  // The child node's name.
-            public DataValue writeValue = new DataValue(); // The value to be written to the server.
+            public Dictionary<string, WriteValue> container = new Dictionary<string, WriteValue>();
 
-            public OPCUAWriteContainer(string parentName, string childName, Variant value)
+            public WriteValueCollection nodesToWrite = new WriteValueCollection();
+            private WriteValue nodeValue;
+
+            public OPCUAWriteContainer() { }
+
+            public void addToCollection(NodeId nodeId, string parentName, string childName, Variant initialValue)
             {
-                parent = parentName; 
-                child = childName;
-                writeValue = new DataValue(value);
-            }  
+                if (!container.ContainsKey(parentName + "/" + childName))
+                {
+                    WriteValue nodeValue = new WriteValue()
+                    {
+                        NodeId = nodeId,
+                        AttributeId = Attributes.Value,
+                        Value = new DataValue(initialValue)
+                    };
+
+                    container.Add(parentName + "/" + childName, nodeValue);
+
+                    nodesToWrite.Add(nodeValue);
+                }
+            }
         }
     }
 }
