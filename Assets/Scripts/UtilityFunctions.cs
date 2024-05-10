@@ -224,19 +224,29 @@ namespace UtilityFunctions
 
         public class OPCUAWriteContainer
         {
+            // Dictionary to store WriteValues with a string key.
             public Dictionary<string, WriteValue> container = new Dictionary<string, WriteValue>();
-
-            public WriteValueCollection nodesToWrite = new WriteValueCollection();
+            // Collection to hold WriteValues.
+            public WriteValueCollection nodesToWrite;
+            // WriteValue object to hold a single node value.
             private WriteValue nodeValue;
 
             public OPCUAWriteContainer() { }
 
+            // Method to convert the container dictionary to a WriteValueCollection.
+            void convertToValueCollection(){
+                // Converting the dictionary values to a list and initializing the WriteValueCollection.
+                nodesToWrite = new WriteValueCollection(container.Values.ToList());
+            }
+
+            // Method to add a node to the container.
             public void addToCollection(NodeId nodeId, string parentName, string childName, Variant initialValue)
             {
                 if (!container.ContainsKey(parentName + "/" + childName))
                 {
                     WriteValue nodeValue = new WriteValue()
                     {
+                        // Creating a new WriteValue object for the node.
                         NodeId = nodeId,
                         AttributeId = Attributes.Value,
                         Value = new DataValue(initialValue)
@@ -244,8 +254,14 @@ namespace UtilityFunctions
 
                     container.Add(parentName + "/" + childName, nodeValue);
 
-                    nodesToWrite.Add(nodeValue);
+                    convertToValueCollection();
                 }
+            }
+
+            // Method to remove a node from the container.
+            public void removeFromColection(string parentName, string childName){
+                container.Remove(parentName + "/" + childName);
+                convertToValueCollection();
             }
         }
     }

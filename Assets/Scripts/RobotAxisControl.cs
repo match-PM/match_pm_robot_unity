@@ -54,13 +54,7 @@ public class RobotAxisControl : MonoBehaviour
 
         Variant value = new Variant((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
 
-        OPCUA_Client.writeToServer(gameObject.name + "/" + writeNodeName[(int)mode], value);
-
-        // // Calculate a new position value.
-        // containerList[0].writeValue = new DataValue((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
-
-        // // Write Positon to server.
-        // await OPCUA_Client.WriteValues(containerList);
+        OPCUA_Client.writeToServer(gameObject.name,  writeNodeName[(int)mode], value);
     }
 
     // Start is called before the first frame update

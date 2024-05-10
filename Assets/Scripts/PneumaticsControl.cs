@@ -28,41 +28,47 @@ public class PneumaticsControl : MonoBehaviour
 
     void updateDispenserPosition()
     {
+        // Retrieve the move command value from the OPC UA client
         move = (int)OPCUA_Client.allNodes[gameObject.name + "/" + "MoveCommand"].dataValue.Value;
         if (lastMove != move)
         {
             if (move == 1)
             {
-                readTarget = 1;
+                readTarget = 1; // Move forward
             }
             else if (move == -1)
             {
-                readTarget = 0;
+                readTarget = 0; // Move backward
             }
             pneumaticComponent.move(readTarget, null);
             lastMove = move;
         }
     }
 
-    // async void writeState()
-    // {
+    // Function to write the current state (position) of the dispenser to the OPC UA server
+    void writeState()
+    {
+        // Check if the dispenser is at the upper limit position
+        if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.upperLimit) < 0.001)
+        {
+            currentState = 1; // Set the current state to 1 (upper limit reached)
+        }
+        // Check if the dispenser is at the lower limit position
+        else if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.lowerLimit) < 0.001)
+        {
+            currentState = -1; // Set the current state to -1 (lower limit reached)
+        }
 
-    //     if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.upperLimit) < 0.001)
-    //     {
-    //         currentState = 1;
-    //     }
-    //     else if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.lowerLimit) < 0.001)
-    //     {
-    //         currentState = -1;
-    //     }
-
-    //     if (lastState != currentState)
-    //     {
-    //         containerList[0].writeValue = new DataValue(currentState);
-    //         await OPCUA_Client.WriteValues(containerList);
-    //         lastState = currentState;
-    //     }
-    // }
+        // Check if there is a change in the current state
+        if (lastState != currentState)
+        {
+            Variant value = new Variant(currentState);
+            // Write the current state to the OPC UA server
+            OPCUA_Client.writeToServer(gameObject.name, "Position", value);
+            // Update the last state
+            lastState = currentState;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -71,6 +77,7 @@ public class PneumaticsControl : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
         pneumaticComponent = new ComponentClasses.DriveComponent(gameObject);
+        // If the mode is 0, add the dispenser's position to the write container of the OPC UA client
         if (mode == 0)
         {
             OPCUA_Client.addToWriteContainer(gameObject.name, "Position");
@@ -80,13 +87,16 @@ public class PneumaticsControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Check if the OPC UA client has new data ready
         if (OPCUA_Client.updateReady)
         {
+            // Update the dispenser's position
             updateDispenserPosition();
-
+            
+            // If the mode is 0, write the current state of the dispenser
             if (mode == 0)
             {
-                // writeState();
+                writeState();
             }
         }
 

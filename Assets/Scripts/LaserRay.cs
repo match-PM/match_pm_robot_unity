@@ -28,8 +28,10 @@ public class LaserRay : MonoBehaviour
         lineRenderer.SetPosition(0, transform.position);
         RaycastHit hit;
 
+        // Set the start position of the line renderer to the transform position
         if (Physics.Raycast(transform.position, -transform.up, out hit))
         {
+            // If a collider is hit, set the end position of the line renderer to the hit point
             if (hit.collider)
             {
                 lineRenderer.SetPosition(1, hit.point);
@@ -41,16 +43,23 @@ public class LaserRay : MonoBehaviour
         }
     }
 
-    // async void writeLaserDistance()
-    // {
-    //     distance = hit.point[0] - transform.position[0];
-    //     if (distance != distance_prev)
-    //     {
-    //         containerList[0].writeValue = new DataValue(distance);
-    //         distance_prev = distance;
-    //         await OPCUA_Client.WriteValues(containerList);
-    //     }
-    // }
+    void writeLaserDistance()
+    {
+        // Calculate the distance between the hit point and the transform position
+        distance = hit.point[0] - transform.position[0];
+        // Check if the distance has changed since the previous measurement
+        if (distance != distance_prev)
+        {
+            // Create a variant to hold the distance value
+            Variant value = new Variant(distance);
+
+            // Update the previous distance with the current distance
+            distance_prev = distance;
+
+            // Write the distance measurement to the OPC UA server
+            OPCUA_Client.writeToServer(gameObject.name, "Measurement", value);
+        }
+    }
 
     void Start()
     {
@@ -72,7 +81,7 @@ public class LaserRay : MonoBehaviour
 
         if (mode == 0 && OPCUA_Client.updateReady)
         {
-            // writeLaserDistance();
+            writeLaserDistance();
         }
     }
 }

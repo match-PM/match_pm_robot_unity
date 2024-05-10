@@ -28,7 +28,8 @@ public class OPCUA_Client : MonoBehaviour
     {
         await InitClient();
         // await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
-        await ConnectToServer("opc.tcp://localhost"); // localhost
+        // await ConnectToServer("opc.tcp://localhost"); // localhost
+        await ConnectToServer("opc.tcp://pmlab-ros21:4840"); // HiWi Raum
         getAllNodes(session);
         startSubscription();
         addMonitoredItems();
@@ -38,17 +39,28 @@ public class OPCUA_Client : MonoBehaviour
     {
         Debug.Log("Adding: " + parentName + "/" + childName);
         NodeId nId = allNodes[parentName + "/" + childName].nodeId;
+        
+        // Retrieve the initial value associated with the provided parentName and childName from the allNodes dictionary
         Variant initalValue = allNodes[parentName + "/" + childName].dataValue.WrappedValue;
-        Debug.Log(initalValue);
+        // Add the node to the write container.
         writeContainer.addToCollection(nId, parentName, childName, initalValue);
     }
 
-    public void writeToServer(string nodeName, Variant value)
+    public void removeFromWriteContainer(string parentName, string childName)
     {
-        writeContainer.container[nodeName].Value.WrappedValue = value;
+        Debug.Log("Removing: " + parentName + "/" + childName + " from write container.");
+        // Remove the node from the write container.
+        writeContainer.removeFromColection(parentName, childName);
     }
 
-    async void Update()
+    public async void writeToServer(string parentName, string childName, Variant value)
+    {
+        // Set the value of the node in the write container.
+        writeContainer.container[parentName + "/" + childName].Value.WrappedValue = value;
+        await WriteValues();
+    }
+
+    void Update()
     {
         // New value you want to write
         object newValue = 100;
@@ -60,8 +72,8 @@ public class OPCUA_Client : MonoBehaviour
         {
             // Check if all the data values of nodes in the 'allNodes' collection are not null.
             updateReady = allNodes.Values.All(item => item.dataValue.Value != null);
-        }
-        await WriteValues();
+        };
+        
     }
 
     async void OnApplicationQuit()
