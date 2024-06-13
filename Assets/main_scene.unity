@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44658792, g: 0.49642283, b: 0.5748252, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657832, g: 0.49641222, b: 0.57481664, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8322,9 +8322,9 @@ GameObject:
   m_Component:
   - component: {fileID: 360218747}
   - component: {fileID: 360218748}
-  - component: {fileID: 360218749}
   - component: {fileID: 360218750}
   - component: {fileID: 360218751}
+  - component: {fileID: 360218752}
   m_Layer: 0
   m_Name: Camera1
   m_TagString: Untagged
@@ -8400,18 +8400,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &360218749
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 360218746}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 326f37c968eeba5faaf97ee99e4015e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &360218750
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8419,7 +8407,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 360218746}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: feab04ad06492965492b3edc6423aa53, type: 3}
   m_Name: 
@@ -8436,6 +8424,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ca7a6953acc378e38e884841b130671, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &360218752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360218746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 326f37c968eeba5faaf97ee99e4015e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeName: ROS2UnityCam1Publisher
+  topicName: Image_Cam1_raw
 --- !u!1 &361350886
 GameObject:
   m_ObjectHideFlags: 0
@@ -8518,7 +8520,7 @@ ArticulationBody:
   m_GameObject: {fileID: 361350886}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 5.648471
+  m_Mass: 17.662
   m_ParentAnchorPosition: {x: -0.25835, y: 0.06524998, z: 0.15860003}
   m_ParentAnchorRotation: {x: 0, y: 1, z: 0, w: 0}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
@@ -8534,12 +8536,12 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -0.134
     upperLimit: 0.0324
-    stiffness: 0
-    damping: 0
-    forceLimit: 100
+    stiffness: 1000
+    damping: 10
+    forceLimit: 10000
     target: 0
     targetVelocity: 0
-    driveType: 2
+    driveType: 0
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -26892,7 +26894,6 @@ GameObject:
   - component: {fileID: 1096091860}
   - component: {fileID: 1096091859}
   - component: {fileID: 1096091858}
-  - component: {fileID: 1096091862}
   - component: {fileID: 1096091863}
   m_Layer: 0
   m_Name: RobotAxisX
@@ -26962,7 +26963,7 @@ ArticulationBody:
   m_GameObject: {fileID: 1096091856}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 3.4665186
+  m_Mass: 11.025
   m_ParentAnchorPosition: {x: -0.11774999, y: 0.47499007, z: 0.64699}
   m_ParentAnchorRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
@@ -26978,12 +26979,12 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -0.745
     upperLimit: 0.055
-    stiffness: 0
-    damping: 0
-    forceLimit: 1000
+    stiffness: 5000
+    damping: 1000
+    forceLimit: 30
     target: 0
     targetVelocity: 0
-    driveType: 2
+    driveType: 0
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -27004,7 +27005,7 @@ ArticulationBody:
     driveType: 0
   m_LinearDamping: 10
   m_AngularDamping: 0
-  m_JointFriction: 10
+  m_JointFriction: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -27017,7 +27018,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1096091861
 MonoBehaviour:
@@ -27032,18 +27033,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
---- !u!114 &1096091862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1096091856}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4567c3f5865c2083907eafcb26d48aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1096091863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37665,7 +37654,7 @@ ArticulationBody:
   m_GameObject: {fileID: 1461858367}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 2.6438847
+  m_Mass: 7.683
   m_ParentAnchorPosition: {x: 0.499, y: 0.33875006, z: -0.0036500394}
   m_ParentAnchorRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
@@ -37681,9 +37670,9 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -0.05262
     upperLimit: 0.041
-    stiffness: 0
-    damping: 0
-    forceLimit: 100
+    stiffness: 1000
+    damping: 10
+    forceLimit: 10000
     target: 0
     targetVelocity: 0
     driveType: 0
@@ -39305,6 +39294,8 @@ GameObject:
   - component: {fileID: 1469834262}
   - component: {fileID: 1469834261}
   - component: {fileID: 1469834263}
+  - component: {fileID: 1469834265}
+  - component: {fileID: 1469834264}
   m_Layer: 0
   m_Name: Camera2
   m_TagString: Untagged
@@ -39399,6 +39390,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eedc6a35b6751f23c8d47eea4340d907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1469834264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469834259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feab04ad06492965492b3edc6423aa53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1469834265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469834259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 326f37c968eeba5faaf97ee99e4015e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeName: ROS2UnityCam2Publisher
+  topicName: Image_Cam2_raw
 --- !u!1 &1472138787
 GameObject:
   m_ObjectHideFlags: 8
@@ -40843,7 +40860,7 @@ ArticulationBody:
   m_GameObject: {fileID: 1558001012}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 0.22220203
+  m_Mass: 0.4
   m_ParentAnchorPosition: {x: 0.058000028, y: -0.5153386, z: -0.031999975}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}

@@ -9,14 +9,17 @@ namespace ROS2
 /// <summary>
 /// This script publishes the camera image to a ros2 topic
 /// </summary>
-public class Cam1_Publisher : MonoBehaviour
+public class CamPublisher : MonoBehaviour
 {
     // Start is called before the first frame update
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
-    private IPublisher<sensor_msgs.msg.Image> cam1_pub;
+    private IPublisher<sensor_msgs.msg.Image> cam_pub;
  
     private Camera cam_1;
+
+    public string nodeName = "ROS2UnityCam1Publisher";
+    public string topicName = "Image_Cam1_raw";
 
     private RenderTexture renderTexture;
     private RenderTexture lastTexture;
@@ -60,8 +63,8 @@ public class Cam1_Publisher : MonoBehaviour
         {
             if (ros2Node == null)
             {
-                ros2Node = ros2Unity.CreateNode("ROS2UnityCam1Publisher");
-                cam1_pub = ros2Node.CreatePublisher<sensor_msgs.msg.Image>("Image_Cam1_raw");
+                ros2Node = ros2Unity.CreateNode(nodeName);
+                cam_pub = ros2Node.CreatePublisher<sensor_msgs.msg.Image>(topicName);
             }
 
         }
@@ -91,7 +94,7 @@ public class Cam1_Publisher : MonoBehaviour
         // File.WriteAllBytes(path, mainCameraTexture.EncodeToPNG());
 
         msg.Data = mainCameraTexture.GetRawTextureData();
-        cam1_pub.Publish(msg);
+        cam_pub.Publish(msg);
 
     }
 

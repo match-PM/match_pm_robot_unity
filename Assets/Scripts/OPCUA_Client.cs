@@ -28,8 +28,8 @@ public class OPCUA_Client : MonoBehaviour
     {
         await InitClient();
         // await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
-        // await ConnectToServer("opc.tcp://localhost"); // localhost
-        await ConnectToServer("opc.tcp://pmlab-ros21:4840"); // HiWi Raum
+        await ConnectToServer("opc.tcp://localhost"); // localhost
+        // await ConnectToServer("opc.tcp://pmlab-ros21:4840"); // HiWi Raum
         getAllNodes(session);
         startSubscription();
         addMonitoredItems();
