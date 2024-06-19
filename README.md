@@ -10,24 +10,35 @@ Make sure you have Unity installed.
 ### Unity
 1. Run in the terminal: 
 
-    wget -qO - https://hub.unity3d.com/linux/keys/public | gpg --dearmor | sudo tee /usr/share/keyrings/Unity_Technologies_ApS.gpg > /dev/null
+```
+wget -qO - https://hub.unity3d.com/linux/keys/public | gpg --dearmor | sudo tee /usr/share/keyrings/Unity_Technologies_ApS.gpg > /dev/null
+```
+```
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/Unity_Technologies_ApS.gpg] https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt/sources.list.d/unityhub.list'
+```
+```
+sudo apt update
+```
+```
+sudo apt-get install unityhub
+```
 
-    sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/Unity_Technologies_ApS.gpg] https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt/sources.list.d/unityhub.list'
-
-    sudo apt update
-
-    sudo apt-get install unityhub
 
 2. After installation log into Unity account in browser. If after login you browser doesn't respond (white screen is shown -> no redirection and no change in unity hub app.), press Ctr + U on your browser in the unity login tab. Copy the string which contains: "unityhub:xxx". Close Unity Hub. Open a new treminal and run: "unityhub {copied string}".
 3. After logging in into Unity Hub install Unity Editor. 
 4. Update libss	
 
-    echo "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc/apt/sources.list.d/focal-security.list
+```
+echo "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc/apt/sources.list.d/focal-security.list
+```
+```
+sudo apt-get update
+```
+```
+sudo apt-get install libssl1.1
+```
+     	
 
-    sudo apt-get update
-
-    sudo apt-get install libssl1.1 	
-    	
 3. If Unity does not respond after opening, the selected graphics drivers of your Unbutu distro are probably not from Nvidia:
     1. Open 'Additional Drivers' and select "Nvidia driver metapackage from nvidia-driver-- (proprietary, tested)". 
     2. If you are unable to connect to the local network after installing the drivers, restart the computer: 
@@ -102,15 +113,6 @@ sudo apt update
 ```
 ```
 sudo apt install dotnet-sdk-6.0
-```
-```
-
-```
-```
-
-```
-```
-
 ```
 
 
