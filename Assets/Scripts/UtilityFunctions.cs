@@ -158,7 +158,7 @@ namespace UtilityFunctions
                 }
                 else if (articulationBody.jointType == ArticulationJointType.RevoluteJoint)
                 {
-                    newTarget = (float)readTarget;
+                    newTarget = (float)readTarget * (float)unitsPerIncrement;
                 }
 
                 return newTarget;

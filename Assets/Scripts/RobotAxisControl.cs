@@ -51,8 +51,16 @@ public class RobotAxisControl : MonoBehaviour
     {
         // Get the current position of the axis.
         float position = axis.articulationBody.jointPosition[0];
+        Variant value;
 
-        Variant value = new Variant((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
+        if (axis.articulationBody.jointType == ArticulationJointType.RevoluteJoint)
+        {
+            value = new Variant((int)(position * 180 / Math.PI / (float)unitsPerIncrement));
+        }
+        else
+        {
+            value = new Variant((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
+        }
 
         OPCUA_Client.writeToServer(gameObject.name,  writeNodeName[(int)mode], value);
     }

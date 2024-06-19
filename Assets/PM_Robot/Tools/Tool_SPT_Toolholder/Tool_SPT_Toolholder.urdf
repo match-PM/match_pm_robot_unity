@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Tool_SPT_Toolholder">
+  <link
+    name="Tool_SPT_Toolholder">
+    <inertial>
+      <origin
+        xyz="-5.23913406004772E-05 3.02196159816615E-05 0.0222290213656595"
+        rpy="0 0 0" />
+      <mass
+        value="0.0172841989183379" />
+      <inertia
+        ixx="2.36936382759198E-06"
+        ixy="-3.04243937216881E-08"
+        ixz="1.38870161435576E-09"
+        iyy="1.72449851250158E-06"
+        iyz="1.08147681550024E-08"
+        izz="3.7514341592057E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://meshes/Tool_SPT_Toolholder.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://meshes/Tool_SPT_Toolholder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="Tip">
+    <inertial>
+      <origin
+        xyz="0 0 0.00881061215391388"
+        rpy="0 0 0" />
+      <mass
+        value="0.000106303297474693" />
+      <inertia
+        ixx="2.11600644479187E-09"
+        ixy="7.15365364217919E-27"
+        ixz="-9.69654651158971E-27"
+        iyy="2.11600644479187E-09"
+        iyz="-1.726297033629E-26"
+        izz="1.3734100235101E-10" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://meshes/Tip.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://meshes/Tip.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Tip"
+    type="continuous">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="Tool_SPT_Toolholder" />
+    <child
+      link="Tip" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+</robot>
