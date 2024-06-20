@@ -64,6 +64,7 @@
     <Analyzer Include="/home/match-mover/Unity/Hub/Editor/2022.3.18f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets/Scripts/MainCamController.cs" />
     <Compile Include="Assets/Scripts/LaserRay.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ListenerExample.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2PerformanceTest.cs" />
