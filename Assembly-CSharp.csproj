@@ -550,6 +550,10 @@
       <HintPath>Assets/Plugins/Opc.Ua.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library/PackageCache/com.unity.nuget.newtonsoft-json@3.0.1/Runtime/Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="tf2_msgs_assembly">
       <HintPath>Assets/Ros2ForUnity/Plugins/tf2_msgs_assembly.dll</HintPath>
       <Private>False</Private>
