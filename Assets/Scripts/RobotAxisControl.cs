@@ -53,15 +53,15 @@ public class RobotAxisControl : MonoBehaviour
         float position = axis.articulationBody.jointPosition[0];
         Variant value;
 
-        if (axis.articulationBody.jointType == ArticulationJointType.RevoluteJoint)
-        {
-            value = new Variant((int)(position * 180 / Math.PI / (float)unitsPerIncrement));
-        }
-        else
-        {
-            value = new Variant((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
-        }
-
+        // if (axis.articulationBody.jointType == ArticulationJointType.RevoluteJoint)
+        // {
+        //     value = new Variant((int)(position * 180 / Math.PI / (float)unitsPerIncrement));
+        // }
+        // else
+        // {
+        //     value = new Variant((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
+        // }
+        value = new Variant((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
         OPCUA_Client.writeToServer(gameObject.name,  writeNodeName[(int)mode], value);
     }
 
