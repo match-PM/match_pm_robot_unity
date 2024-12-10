@@ -158,7 +158,7 @@ namespace UtilityFunctions
                 }
                 else if (articulationBody.jointType == ArticulationJointType.RevoluteJoint)
                 {
-                    newTarget = (float)readTarget;
+                    newTarget = (float)readTarget * (float)unitsPerIncrement;
                 }
 
                 return newTarget;
@@ -234,7 +234,8 @@ namespace UtilityFunctions
             public OPCUAWriteContainer() { }
 
             // Method to convert the container dictionary to a WriteValueCollection.
-            void convertToValueCollection(){
+            void convertToValueCollection()
+            {
                 // Converting the dictionary values to a list and initializing the WriteValueCollection.
                 nodesToWrite = new WriteValueCollection(container.Values.ToList());
             }
@@ -259,7 +260,8 @@ namespace UtilityFunctions
             }
 
             // Method to remove a node from the container.
-            public void removeFromColection(string parentName, string childName){
+            public void removeFromColection(string parentName, string childName)
+            {
                 container.Remove(parentName + "/" + childName);
                 convertToValueCollection();
             }

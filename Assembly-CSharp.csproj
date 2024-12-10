@@ -549,6 +549,10 @@
       <HintPath>Assets/Plugins/Opc.Ua.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library/PackageCache/com.unity.nuget.newtonsoft-json@3.0.1/Runtime/Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="tf2_msgs_assembly">
       <HintPath>Assets/Ros2ForUnity/Plugins/tf2_msgs_assembly.dll</HintPath>
       <Private>False</Private>
@@ -587,30 +591,6 @@
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
       <HintPath>Assets/Plugins/Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>Library/PackageCache/com.unity.nuget.newtonsoft-json@3.0.1/Runtime/Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
-      <HintPath>/home/pmlab/Unity/Hub/Editor/2022.3.18f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions.Common">
-      <HintPath>/home/pmlab/Unity/Hub/Editor/2022.3.18f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Common.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Android.Types">
-      <HintPath>/home/pmlab/Unity/Hub/Editor/2022.3.18f1/Editor/Data/PlaybackEngines/AndroidPlayer/Unity.Android.Types.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Android.Gradle">
-      <HintPath>/home/pmlab/Unity/Hub/Editor/2022.3.18f1/Editor/Data/PlaybackEngines/AndroidPlayer/Unity.Android.Gradle.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Android.GradleProject">
-      <HintPath>/home/pmlab/Unity/Hub/Editor/2022.3.18f1/Editor/Data/PlaybackEngines/AndroidPlayer/Unity.Android.GradleProject.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">
