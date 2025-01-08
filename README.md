@@ -114,6 +114,10 @@ sudo apt update
 sudo apt install dotnet-sdk-6.0
 ```
 
+### Urdf-Importer
+Add the urdf-importer
+
+Go to https://github.com/Unity-Technologies/URDF-Importer and follow the install instructions.
 
 ### Building environment
 1. Navigate to your workspace 
@@ -144,7 +148,20 @@ In the asset folder contains the main files of the project.
 * `pm_robot`: Contains the robot.urdf, meshes and materials of the robot. The robot in Unity is build with an URDF-Importer(https://github.com/Unity-Technologies/URDF-Importer)
 * `Scripts`: Contains the scripts to control the robot.
 
-### 4. Build the Project
+### 4. Update the pm_robot
+If new tools, chucks, sensors etc. have been added to the robot, the simulation model has to be updated.
+To do so, a new pm_robot_unity.urdf can be generated using the script genereate_unity_urdf.py which you can find in the match_pm_robot repro.
+    1. Run the script.
+    2. Add the generated pm_robot_unity.urdf to the Asset folder. 
+    3. Delete the old pm_robot in the unity scene.
+    4. Right click on the pm_robot_unity.urdf and choose 'Import Robot from selected urdf-file'
+
+Add scripts to objects.
+
+pm_robot: OPCUA_Client, Choose Mode, Spawn_Object, Create_Ref_Frame
+
+
+### 5. Build the Project
 - To build the project using OPC UA Newtonsoft.jason package for Unity is required.
 - Installation:
 	1. Open Unity

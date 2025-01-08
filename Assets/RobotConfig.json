@@ -1,0 +1,1883 @@
+{
+    "components": [
+        {
+            "componentName": "pm_robot",
+            "attachedScripts": [
+                "UrdfRobot",
+                "Controller",
+                "ROS2UnityComponent",
+                "OPCUA_Client",
+                "chooseMode",
+                "Spawn_Object",
+                "Create_Ref_Frame"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "Cube",
+            "attachedScripts": [],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "Plugins",
+            "attachedScripts": [
+                "UrdfPlugins",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin",
+                "UrdfPlugin"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "world",
+            "attachedScripts": [
+                "UrdfLink"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "base_link_empthy",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 1.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "housing",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.10000000149011612,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "housing_hl",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 15.755635261535645,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "housing_hr",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 15.755635261535645,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "housing_vr",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 15.755635261535645,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "housing_vl",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 15.755635261535645,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "pm_robot_base_link",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 143.43341064453126,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Camera_Station",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 2.944162607192993,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Station_Laser_Bottom_TCP",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.18731799721717835,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Calibration_Qube",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0007941857329569757,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Camera_Calibration_Platelet",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.03340163454413414,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Camera_Station_TCP",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 2.944162607192993,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Camera2",
+            "attachedScripts": [
+                "Camera2LightControl",
+                "CamPublisher",
+                "ROS2UnityComponent"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "Light",
+            "attachedScripts": [],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Left_Base",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 4.833186626434326,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "UV_Slider_X_Back",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.12308161705732346,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.04500000178813934,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.05000000074505806,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "PneumaticModuleUV1",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic",
+                "PneumaticsControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.11991523206233978,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.009999999776482582,
+                    "stiffness": 0.05000000074505806,
+                    "damping": 0.0,
+                    "forceLimit": 100.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "UV_Light_1",
+            "attachedScripts": [
+                "UVLightControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "UV_Light_2",
+            "attachedScripts": [
+                "UVLightControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "UV_Slider_X_Front",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.12308161705732346,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0949999988079071,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 100.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "PneumaticModuleUV2",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic",
+                "PneumaticsControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.11991523206233978,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.009999999776482582,
+                    "stiffness": 0.05000000074505806,
+                    "damping": 0.0,
+                    "forceLimit": 100.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "UV_Light_4",
+            "attachedScripts": [
+                "UVLightControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "UV_Light_3",
+            "attachedScripts": [
+                "UVLightControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Left_Stage_1_Top",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointRevolute"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.5787988305091858,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": -9.999832153320313,
+                    "upperLimit": 9.999832153320313,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 100.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Left_Stage_2_Bottom",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointRevolute"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.02706266939640045,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": -9.999832153320313,
+                    "upperLimit": 9.999832153320313,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 100.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Left_Chuck",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 1.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Left_Example_Chuck",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.19385918974876405,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Left_Part_Origin",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 1.0,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Left_Part_Base",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.1153097003698349,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Base_Right",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.7351497411727905,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Right_Stage_1_Bottom",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.07063494622707367,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Right_Stage_1_Top",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointRevolute"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.13548582792282105,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": -4.999973773956299,
+                    "upperLimit": 4.999973773956299,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 100.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Target"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Right_Stage_2_Bottom",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointRevolute"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.054639752954244617,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": -9.999832153320313,
+                    "upperLimit": 9.999832153320313,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 100.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Target"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Right_Chuck",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 1.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Right_Example_Chuck",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.13393481075763703,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Gonio_Right_Part_Origin",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 1.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Test_Station",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 1.3909952640533448,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "axis_base",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 43.610260009765628,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "RobotAxisX",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic",
+                "RobotAxisControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 10.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.20000000298023225,
+                "mass": 11.024999618530274,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": -0.7450000047683716,
+                    "upperLimit": 0.054999999701976779,
+                    "stiffness": 1000000.0,
+                    "damping": 36000.0,
+                    "forceLimit": 180.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Target"
+                }
+            }
+        },
+        {
+            "componentName": "RobotAxisY",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic",
+                "RobotAxisControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 10.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 17.66200065612793,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": -0.1340000033378601,
+                    "upperLimit": 0.03240000084042549,
+                    "stiffness": 1000000.0,
+                    "damping": 24000.0,
+                    "forceLimit": 10000.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Target"
+                }
+            }
+        },
+        {
+            "componentName": "RobotAxisZ",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic",
+                "RobotAxisControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 7.683000087738037,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": -0.05262000113725662,
+                    "upperLimit": 0.04100000113248825,
+                    "stiffness": 1000.0,
+                    "damping": 10.0,
+                    "forceLimit": 10000.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Target"
+                }
+            }
+        },
+        {
+            "componentName": "Laser",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed",
+                "LaserRay"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.18563278019428254,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Cam1_Toolhead_TCP",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.4000000059604645,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Camera1",
+            "attachedScripts": [
+                "ROS2UnityComponent",
+                "Camera1LightControl",
+                "CamPublisher"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "CoaxLight",
+            "attachedScripts": [],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "RingLight",
+            "attachedScripts": [],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "ringLightFirstQuadrant",
+            "attachedScripts": [],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "ringLightSecondQuadrant",
+            "attachedScripts": [],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "ringLightThirdQuadrant",
+            "attachedScripts": [],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "ringLightFourthQuadrant",
+            "attachedScripts": [],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "PneumaticModuleGlue2K",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic",
+                "PneumaticsControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.4101111888885498,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.046799998730421069,
+                    "stiffness": 0.05000000074505806,
+                    "damping": 0.0,
+                    "forceLimit": 100.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Target"
+                }
+            }
+        },
+        {
+            "componentName": "2K_Dispenser_TCP",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 1.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "PneumaticModuleGlue",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic",
+                "PneumaticsControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.07412920147180557,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.03999999910593033,
+                    "stiffness": 0.05000000074505806,
+                    "damping": 0.0,
+                    "forceLimit": 100.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Target"
+                }
+            }
+        },
+        {
+            "componentName": "1K_Dispenser_TCP",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 1.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "PneumaticProtectDoseur",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic",
+                "PneumaticsControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.017907559871673585,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.019999999552965165,
+                    "stiffness": 0.05000000074505806,
+                    "damping": 0.0,
+                    "forceLimit": 100.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Target"
+                }
+            }
+        },
+        {
+            "componentName": "RobotAxisT",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointRevolute",
+                "RobotAxisControl"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 5.0,
+                "angularDamping": 5.0,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.11029725521802902,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 687.5493774414063,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 1000.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Target"
+                }
+            }
+        },
+        {
+            "componentName": "PM_Robot_Tool_TCP",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 1.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Tool_SPT_changeable",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed",
+                "ForceSensor"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "ContinuousDynamic",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.00010630329779814929,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 9.999999562023527e24,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Tool_Schunk_SPT_Toolholder",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.00010630329779814929,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Tool_Gripper_MPG_10_Body",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.01806429959833622,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Tool_Gripper_MPG_10_Jaw_2",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.00012569974933285266,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0010000000474974514,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 20.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Tool_Gripper_MPG_10_Jaw_2_Point",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 1.0,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Tool_Gripper_MPG_10_Jaw_2_changeable",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.00011782699584728107,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Tool_Gripper_MPG_10_Jaw_1",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointPrismatic"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.00012569974933285266,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0010000000474974514,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 20.0,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Tool_Gripper_MPG_10_Jaw_1_Point",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 1.0,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Tool_Gripper_MPG_10_Jaw_1_changeable",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.00011847628775285557,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Tool_SPT_Toolholder",
+            "attachedScripts": [
+                "UrdfRobot",
+                "Controller"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "Plugins",
+            "attachedScripts": [
+                "UrdfPlugins"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.0,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 0.0,
+                    "targetVelocity": 0.0,
+                    "driveType": ""
+                }
+            }
+        },
+        {
+            "componentName": "Tool_SPT_Toolholder",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.017284199595451356,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "Tip",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointContinuous"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 0.00010630329779814929,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "t_axis_toolchanger",
+            "attachedScripts": [
+                "UrdfLink",
+                "UrdfInertial",
+                "UrdfJointFixed"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.05000000074505806,
+                "angularDamping": 0.05000000074505806,
+                "jointFriction": 0.05000000074505806,
+                "mass": 0.07701663672924042,
+                "useGravity": false,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        },
+        {
+            "componentName": "ForceSensor",
+            "attachedScripts": [
+                "ForceSensor"
+            ],
+            "articulationBodyConfig": {
+                "collisionDetection": "Discrete",
+                "linearDamping": 0.0,
+                "angularDamping": 0.0,
+                "jointFriction": 0.0,
+                "mass": 1.0,
+                "useGravity": true,
+                "xDrive": {
+                    "lowerLimit": 0.0,
+                    "upperLimit": 0.0,
+                    "stiffness": 0.0,
+                    "damping": 0.0,
+                    "forceLimit": 3.4028234663852887e38,
+                    "targetVelocity": 0.0,
+                    "driveType": "Force"
+                }
+            }
+        }
+    ]
+}

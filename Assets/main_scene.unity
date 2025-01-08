@@ -4715,7 +4715,7 @@ GameObject:
   - component: {fileID: 201923401}
   - component: {fileID: 201923405}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: ForceSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
