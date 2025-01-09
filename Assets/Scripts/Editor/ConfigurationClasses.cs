@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// Configuration class for a component in the model
+/// </summary>
+
 [System.Serializable]
 public class ComponentConfig
 {

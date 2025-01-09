@@ -2,10 +2,14 @@ using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 
+/// <summary>
+/// Class to save a configuration of a model to a JSON file
+/// Scripts and settings of ArticulationBody settings are saved for each component
+/// </summary>
 public class SaveConfiguration
 {
 
-    public void SaveConfig(string modelName)
+    public void SaveConfig(string modelName, string configName)
     {
         //find the root object by modelName
         GameObject root = GameObject.Find(modelName);
@@ -17,10 +21,10 @@ public class SaveConfiguration
         var components = new List<ComponentConfig>();
         Transform[] children = root.GetComponentsInChildren<Transform>(true);
 
-        // components with the name 'Collision' or 'Visuals' and their children are ignored
+        // components with the name 'Collisions' or 'Visuals' and their children are ignored
         foreach (var child in children)
         {
-            // Skip GameObjects named "Collision" or "Visuals" and their children
+            // Skip GameObjects named "Collisions" or "Visuals" and their children
             if (IsIgnored(child))
                 continue;
             var attachedScripts = new List<string>();
@@ -64,15 +68,15 @@ public class SaveConfiguration
         // Save to JSON
         ConfigData data = new ConfigData { components = components };
         string json = JsonUtility.ToJson(data, true);
-        File.WriteAllText(Application.dataPath + "/RobotConfig.json", json);
-        Debug.Log("Configuration (including ArticulationBody settings) saved to RobotConfig.json");
+        File.WriteAllText(Application.dataPath + "/" + configName +".json", json);
+        Debug.Log("Configuration (including ArticulationBody settings) saved to " + configName + ".json");
     }
 
     private ArticulationDriveConfig ConvertDrive(ArticulationDrive drive)
     {
         return new ArticulationDriveConfig
         {
-            driveType = drive.driveType.ToString(), // Save the DriveType as string
+            driveType = drive.driveType.ToString(), 
             lowerLimit = drive.lowerLimit,
             upperLimit = drive.upperLimit,
             stiffness = drive.stiffness,
