@@ -94,7 +94,7 @@ public class ApplyConfiguration
         return null; // Script not found
     }
 
-    private Transform FindClosestMatchingChildRecursive(Transform parent, string targetName, float similarityThreshold = 0.2f)
+    private Transform FindClosestMatchingChildRecursive(Transform parent, string targetName, float similarityThreshold = 0.8f)
     {
         Transform bestMatch = null;
         float highestSimilarity = 0f;

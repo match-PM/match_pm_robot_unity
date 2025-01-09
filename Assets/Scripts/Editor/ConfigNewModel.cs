@@ -39,12 +39,17 @@ public class ConfigNewModelScript : EditorWindow
             saveConfig.SaveConfig(model_name, config_name);
         }
 
+        if (GUILayout.Button("Rename Links"))
+        {
+            applyGeneralSettings.RenameLinks(model_name);
+        }
+
         if (GUILayout.Button("Apply General Seeting"))
         {
             applyGeneralSettings.ApplySettings(model_name, config_name);
         }
 
-        if (GUILayout.Button("Apply Settings of AticulationBody and add scripts"))
+        if (GUILayout.Button("Apply Settings of ArticulationBody and add scripts"))
         {
             applyConfig.ApplyConfig(model_name, config_name);
         }

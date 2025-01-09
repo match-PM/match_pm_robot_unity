@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using System.IO;
 using System.Collections.Generic;
 
 /// <summary>
@@ -23,8 +24,74 @@ public class ApplyGeneralSettings
         
     }
 
-}
+    public void RenameLinks(string modelName)
+    {
+        GameObject root = GameObject.Find(modelName);
+        if (root == null)
+        {
+            Debug.LogError("Model not found: " + modelName);
+            return;
+        }
+
+        string path = Application.dataPath + "/OpcUaAxisNames.json";
+        if (!File.Exists(path))
+        {
+            Debug.LogError("Configuration file not found: " + path);
+            return;
+        }
+
+        string jsonContent = File.ReadAllText(path);
+        LinkMappings linkMappings = JsonUtility.FromJson<LinkMappings>(jsonContent);
+
+        if (linkMappings == null || linkMappings.mappings == null || linkMappings.mappings.Length == 0)
+        {
+            Debug.LogError("Failed to load link mappings or no mappings defined.");
+            return;
+        }
+
+        Dictionary<string, string> mappingDict = new Dictionary<string, string>();
+        foreach (var mapping in linkMappings.mappings)
+        {
+            if (!string.IsNullOrEmpty(mapping.original) && !string.IsNullOrEmpty(mapping.newName))
+            {
+                mappingDict[mapping.original.ToLower()] = mapping.newName;
+            }
+        }
+
+        RenameLinkRecursively(root.transform, mappingDict);
+
+        Debug.Log("Link renaming finished.");
+    }
+
+    private void RenameLinkRecursively(Transform current, Dictionary<string, string> mappingDict)
+    {
+        if (mappingDict.TryGetValue(current.name.ToLower(), out string newName) && current.parent.name != "unnamed")
+        {
+            Debug.Log($"Renaming link: {current.name} -> {newName}");
+            current.name = newName;
+        }
+
+        foreach (Transform child in current)
+        {
+            RenameLinkRecursively(child, mappingDict);
+        }
+    }
     
+}
+
+[System.Serializable]
+public class LinkMapping
+{
+    public string original;
+    public string newName;
+}
+
+[System.Serializable]
+public class LinkMappings
+{
+    public LinkMapping[] mappings;
+}
+
 public static class TransformExtensions
 {
     public static Transform FindChildByPattern(this Transform parent, string pattern)
