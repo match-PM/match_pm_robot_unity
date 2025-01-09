@@ -1,0 +1,18 @@
+{
+    "Axis_X": "RobotAxisX",
+    "Axis_Y": "RobotAxisY",
+    "Axis_Z": "RobotAxisZ",
+    "Gripper_Rot_Plate": "RobotAxisT",
+    "Gonio_Right_Stage_1_Upper": "RobotAxisQ",
+    "Gonio_Right_Stage_2_Upper": "RobotAxisR",
+    "Gonio_Left_Stage_1": "RobotAxisU",
+    "Gonio_Left_Stage_2": "RobotAxisV",
+    "UV_Cart_X_Back": "PneumaticModuleUV1",
+    "UV_Cart_X_Front": "PneumaticModuleUV2",
+    "1K_Dispenser": "PneumaticModuleGlue",
+    "Glue_Cartridge_Flap": "PneumaticProtectDoseur",
+    "2K_Glue_Cartridge": "PneumaticModuleGlue2K",
+    "Calibration_Qube": "ReferenceCube",
+    "Camera_Calibration_Platelet": "PneumaticModuleCameraMire"
+
+}

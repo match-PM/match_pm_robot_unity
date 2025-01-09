@@ -9,6 +9,8 @@ public class ConfigNewModelScript : EditorWindow
     private SaveConfiguration saveConfig = new SaveConfiguration();
     private ApplyConfiguration applyConfig = new ApplyConfiguration();
 
+    private ApplyGeneralSettings applyGeneralSettings = new ApplyGeneralSettings();
+
     private string model_name = "pm_robot";
 
     private string config_name = "RobotConfig";
@@ -37,7 +39,12 @@ public class ConfigNewModelScript : EditorWindow
             saveConfig.SaveConfig(model_name, config_name);
         }
 
-        if (GUILayout.Button("Apply Configuration"))
+        if (GUILayout.Button("Apply General Seeting"))
+        {
+            applyGeneralSettings.ApplySettings(model_name, config_name);
+        }
+
+        if (GUILayout.Button("Apply Settings of AticulationBody and add scripts"))
         {
             applyConfig.ApplyConfig(model_name, config_name);
         }
