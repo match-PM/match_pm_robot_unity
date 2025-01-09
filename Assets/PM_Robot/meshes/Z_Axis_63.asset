@@ -7,18 +7,18 @@ Mesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Z_Axis_63
-  serializedVersion: 10
+  serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 66
+    indexCount: 72
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 13
+    vertexCount: 14
     localAABB:
-      m_Center: {x: 0.016172012, y: -0.39031994, z: 0.03320098}
-      m_Extent: {x: 0.009805821, y: 0.010819927, z: 0.01960972}
+      m_Center: {x: -0.06564285, y: -0.19960715, z: 0.007053569}
+      m_Extent: {x: 0.018799886, y: 0.0072321445, z: 0.03760714}
   m_Shapes:
     vertices: []
     shapes: []
@@ -35,10 +35,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 090004000c00020001000300010002000400000004000500030001000600040000000700000006000800070000000800070008000900010004000900060001000900080006000900020003000a00040002000a00050004000a00030005000a00050003000b00000005000b00060000000b00030006000b00040007000c00070009000c00
+  m_IndexBuffer: 040007000d00010003000400020000000500000002000600020001000600040003000700030005000700010004000800060001000800040006000800050000000900000007000900070005000900010002000a00020005000a00050003000a00030001000b0001000a000b000a0003000b00040000000c00000006000c00060004000c00000004000d00070000000d00
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 13
+    m_VertexCount: 14
     m_Channels:
     - stream: 0
       offset: 0
@@ -96,8 +96,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 156
-    _typelessdata: bc7a083cff59c5be0850583d82b4483c3462cdbedead5e3c159ca43c3462cdbedead5e3c28a3943cd34dc2be0d067d3c77cfd43c3462cdbe49bbcf3c77cfd43c425cc7be49bbcf3c4a4e483cd34dc2be0d067d3c7c9bd03baf5dc9bef942503d7c9bd03bff59c5bec407183d9f97283c3462cdbe02d27e3c77cfd43c425cc7be228d9f3c28a3943cd34dc2beeb05af3c2b7b843c3462cdbe5acddf3c
+    m_DataSize: 168
+    _typelessdata: 50f0acbdaecd53be9e21e73b68de3fbdf4fd44be26ee363d68de3fbdaecd53be26ee363dca1e7bbdf4fd44be7c4bfabc50f0acbdf4fd44be442db03cca1e7bbdaecd53be7c4bfabc1f508fbdaecd53be26ee363df63c95bdf4fd44be7c4bfabc1f508fbdf4fd44be26ee363df63c95bdaecd53be7c4bfabc68de3fbdaecd53be8e58f73c68de3fbdf4fd44be8e58f73c50f0acbdaecd53be442db03c50f0acbdf4fd44be9e21e73b
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -151,9 +151,10 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 0.016172012, y: -0.39031994, z: 0.03320098}
-    m_Extent: {x: 0.009805821, y: 0.010819927, z: 0.01960972}
+    m_Center: {x: -0.06564285, y: -0.19960715, z: 0.007053569}
+    m_Extent: {x: 0.018799886, y: 0.0072321445, z: 0.03760714}
   m_MeshUsageFlags: 0
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshMetrics[0]: 1

@@ -34,6 +34,11 @@ public class SaveConfiguration
             {
                 if (script != null)
                 {
+                    // Skip scripts that have the name 'urdf' in their name
+                    if (script.GetType().Name.Contains("Urdf"))
+                    {
+                        continue;
+                    }
                     attachedScripts.Add(script.GetType().Name);
                 }
             }

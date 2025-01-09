@@ -7,7 +7,7 @@ Mesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Gonio_Left_Base_60
-  serializedVersion: 10
+  serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -17,8 +17,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 8
     localAABB:
-      m_Center: {x: -0.26365513, y: 0.0400808, z: 0.17389508}
-      m_Extent: {x: 0.0020044446, y: 0.020040426, z: 0.011133909}
+      m_Center: {x: 0.035, y: 0.06383333, z: 0.18919016}
+      m_Extent: {x: 0.007285714, y: 0.010523811, z: 0.001618728}
   m_Shapes:
     vertices: []
     shapes: []
@@ -35,7 +35,7 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 040005000700010002000300020001000400010003000400030000000500040003000500020000000600030002000600000003000600000002000700020004000700050000000700
+  m_IndexBuffer: 040003000700010002000300020001000400010003000400000002000500040000000500020004000500020000000600030002000600000003000600030000000700000004000700
   m_VertexData:
     serializedVersion: 3
     m_VertexCount: 8
@@ -97,7 +97,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 96
-    _typelessdata: 880488be95cbb13c6f93273ee20c86bead41763dab8f3c3e880488bead41763dab8f3c3e14f785beb72ba43c3d783d3ee20c86bead41763d6f93273e14f785beb72ba43cddaa263e880488be95cbb13cab8f3c3e880488bead41763d6f93273e
+    _typelessdata: c9332d3d8f48983d6863433e1209e33c165b5a3dba12403e1209e33c165b5a3d6863433e1209e33c8f48983dba12403ec9332d3d165b5a3dba12403ec9332d3d165b5a3d6863433e1209e33c8f48983d6863433ec9332d3d8f48983dba12403e
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -151,9 +151,10 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: -0.26365513, y: 0.0400808, z: 0.17389508}
-    m_Extent: {x: 0.0020044446, y: 0.020040426, z: 0.011133909}
+    m_Center: {x: 0.035, y: 0.06383333, z: 0.18919016}
+    m_Extent: {x: 0.007285714, y: 0.010523811, z: 0.001618728}
   m_MeshUsageFlags: 0
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshMetrics[0]: 1

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.IO;
 using System;
+using UnityEditor;
 
 /// <summary>
 /// Class to apply a configuration to a new model.
@@ -41,9 +42,22 @@ public class ApplyConfiguration
             // Attach scripts
             foreach (var scriptName in config.attachedScripts)
             {
-                Type scriptType = Type.GetType(scriptName);
+                // Check if the script is already attached
+                if (target.GetComponent(scriptName) != null)
+                {
+                    Debug.LogWarning(target.name + $" Script {scriptName} already attached.");
+                    continue;
+                }
+                
+                Type scriptType = FindScriptType(scriptName);
                 if (scriptType != null && target.GetComponent(scriptType) == null)
+                {
                     target.gameObject.AddComponent(scriptType);
+                }
+                else if (scriptType == null)
+                {
+                    Debug.LogError(target.name + $" Script {scriptName} not found in Assets folder.");
+                }
             }
 
             // Update ArticulationBody settings
@@ -63,11 +77,28 @@ public class ApplyConfiguration
         Debug.Log("Configuration applied successfully.");
     }
 
-    private Transform FindClosestMatchingChildRecursive(Transform parent, string targetName, float similarityThreshold = 0.8f)
+    private Type FindScriptType(string scriptName)
+    {
+        string[] guids = AssetDatabase.FindAssets($"{scriptName} t:MonoScript", new[] { "Assets" });
+
+        foreach (string guid in guids)
+        {
+            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+            MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(assetPath);
+            if (script != null && script.name == scriptName)
+            {
+                return script.GetClass(); // Returns the Type of the script
+            }
+        }
+
+        return null; // Script not found
+    }
+
+    private Transform FindClosestMatchingChildRecursive(Transform parent, string targetName, float similarityThreshold = 0.2f)
     {
         Transform bestMatch = null;
         float highestSimilarity = 0f;
-
+        
         if(parent.name == targetName)
         {
             return parent;
@@ -75,6 +106,11 @@ public class ApplyConfiguration
 
         foreach (Transform child in parent)
         {
+            // Skip if the parent name is 'unnamed'
+            if (child.parent.name == "unnamed" || child.name == "unnamed")
+            {
+                continue;
+            }
             float similarity = CalculateNameSimilarity(child.name, targetName);
             if (similarity > highestSimilarity && similarity >= similarityThreshold)
             {
@@ -130,7 +166,19 @@ public class ApplyConfiguration
 
     private void ApplyArticulationBodyConfig(ArticulationBody articulationBody, ArticulationBodyConfig config)
     {
-        articulationBody.collisionDetectionMode = (CollisionDetectionMode)Enum.Parse(typeof(CollisionDetectionMode), config.collisionDetection);
+        try
+        {
+            articulationBody.collisionDetectionMode = Enum.TryParse<CollisionDetectionMode>(
+                config.collisionDetection, true, out var mode)
+                ? mode
+                : CollisionDetectionMode.Discrete; // Default fallback value
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to parse collision detection mode: {config.collisionDetection}. Error: {ex.Message}");
+            articulationBody.collisionDetectionMode = CollisionDetectionMode.Discrete; // Default fallback value
+        }
+
         articulationBody.linearDamping = config.linearDamping;
         articulationBody.angularDamping = config.angularDamping;
         articulationBody.jointFriction = config.jointFriction;
@@ -139,19 +187,31 @@ public class ApplyConfiguration
 
         ApplyDrive(articulationBody, config.xDrive);
     }
-
     private void ApplyDrive(ArticulationBody articulationBody, ArticulationDriveConfig driveConfig)
     {
-        var drive = new ArticulationDrive
+        if (articulationBody.jointType == ArticulationJointType.FixedJoint)
         {
-            driveType = (ArticulationDriveType)Enum.Parse(typeof(ArticulationDriveType), driveConfig.driveType),
-            lowerLimit = driveConfig.lowerLimit,
-            upperLimit = driveConfig.upperLimit,
-            stiffness = driveConfig.stiffness,
-            damping = driveConfig.damping,
-            forceLimit = driveConfig.forceLimit,
-            targetVelocity = driveConfig.targetVelocity
-        };
+            return;
+        }
+
+        var drive = new ArticulationDrive();
+
+        if (Enum.TryParse(driveConfig.driveType, true, out ArticulationDriveType driveType))
+        {
+            drive.driveType = driveType;
+        }
+        else
+        {
+            Debug.LogWarning(articulationBody.transform.name + $" Invalid drive type: {driveConfig.driveType} for. Defaulting to Target drive type.");
+            drive.driveType = ArticulationDriveType.Target; // Default fallback value
+        }
+
+        drive.lowerLimit = driveConfig.lowerLimit;
+        drive.upperLimit = driveConfig.upperLimit;
+        drive.stiffness = driveConfig.stiffness;
+        drive.damping = driveConfig.damping;
+        drive.forceLimit = driveConfig.forceLimit;
+        drive.targetVelocity = driveConfig.targetVelocity;
 
         articulationBody.xDrive = drive;
     }
