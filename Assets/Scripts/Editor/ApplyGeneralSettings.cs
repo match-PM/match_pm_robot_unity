@@ -6,9 +6,12 @@ using System.Collections.Generic;
 /// <summary>
 /// Apply general settings to a new model
 /// </summary>
-/// 
+
 public class ApplyGeneralSettings
 {
+    public string path_config = Application.dataPath + "/PM_Robot/Configs/";
+
+    // Apply general settings to a new model
     public void ApplySettings(string modelName, string configName)
     {
         //find the root object by modelName
@@ -24,6 +27,7 @@ public class ApplyGeneralSettings
         
     }
 
+    // Rename links in a model to match the names in the opcua server
     public void RenameLinks(string modelName)
     {
         GameObject root = GameObject.Find(modelName);
@@ -33,7 +37,7 @@ public class ApplyGeneralSettings
             return;
         }
 
-        string path = Application.dataPath + "/OpcUaAxisNames.json";
+        string path = path_config + "/OpcUaAxisNames.json";
         if (!File.Exists(path))
         {
             Debug.LogError("Configuration file not found: " + path);
@@ -63,6 +67,7 @@ public class ApplyGeneralSettings
         Debug.Log("Link renaming finished.");
     }
 
+    // Recursively rename links in a model
     private void RenameLinkRecursively(Transform current, Dictionary<string, string> mappingDict)
     {
         if (mappingDict.TryGetValue(current.name.ToLower(), out string newName) && current.parent.name != "unnamed")

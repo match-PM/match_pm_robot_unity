@@ -1,13 +1,13 @@
 # match_pm_robot_unity
-Simulation of match_pm_robot in Unity
+Simulation of match_pm_robot in Unity. 
 
-## 1. Repository overview
+The simulation encompasses all relevant functionalities of the real robot and therefore enables offline-programming.
 
 
-## 2. Installation 
+# 1. Installation 
 Make sure you have Unity installed.
 
-### Unity
+## Unity
 1. Run in the terminal: 
 
 ```
@@ -46,7 +46,7 @@ sudo apt-get install libssl1.1
         3. After booting in recovery mode, start the terminal and run apt-get update.
         4. Restart your computer.   
 
-### ROS2-for-Unity
+## ROS2-for-Unity
 1. Get all prerequisites:
 ```
 sudo apt install -y ros-${ROS_DISTRO}-test-msgs
@@ -114,12 +114,12 @@ sudo apt update
 sudo apt install dotnet-sdk-6.0
 ```
 
-### Urdf-Importer
+## Urdf-Importer
 Add the urdf-importer
 
 Go to https://github.com/Unity-Technologies/URDF-Importer and follow the install instructions.
 
-### Building environment
+## Building environment
 1. Navigate to your workspace 
 2. Run: colcon build 
 3. If there are no previous installation files you might get this error:
@@ -142,36 +142,69 @@ Solution: DO NOT delete Build, Log and Install folders from step 1. Instead run 
         source ./install/setup.bash
         colcon build
 
-### 3. Usage
+# 2. Usage
 Open the project in Unity. 
-In the asset folder contains the main files of the project.
-* `pm_robot`: Contains the robot.urdf, meshes and materials of the robot. The robot in Unity is build with an URDF-Importer(https://github.com/Unity-Technologies/URDF-Importer)
-* `Scripts`: Contains the scripts to control the robot.
+The simulation is for simulating the real robot and can be controlled the same way. 
 
-### 4. Update the pm_robot
+# 3. Update pm_robot
 If new tools, chucks, sensors etc. have been added to the robot, the simulation model has to be updated.
-To do so, a new pm_robot_unity.urdf can be generated using the script genereate_unity_urdf.py which you can find in the match_pm_robot repro.
-    1. Run the script.
-    2. Add the generated pm_robot_unity.urdf to the Asset folder. 
-    3. Delete the old pm_robot in the unity scene.
-    4. Right click on the pm_robot_unity.urdf and choose 'Import Robot from selected urdf-file'
 
-Add scripts to objects.
+## Generate new pm_robot_urdf and generate model in unity
+A new `pm_robot_unity.urdf` can be generated using the script `genereate_unity_urdf.py` which you can find in the match_pm_robot repro.
+1. Run the script. 
 
-pm_robot: OPCUA_Client, Choose Mode, Spawn_Object, Create_Ref_Frame
+## Save Config of old pm_robot
+Before you delete the old pm_robot, you can save the configuration. These can be applied to the new model to reduce manual configuration effort.
 
+1. Click on `Config Tools` on the Menu Bar and open the menu.
+2. Enter a name for the configuration.
+3. Click on `Save Configuration`.
 
-### 5. Build the Project
-- To build the project using OPC UA Newtonsoft.jason package for Unity is required.
+A JSON is generated containing the config of the ArticulationBodys and all which script was attached to each GameObject.
+
+## Build new pm_robot
+1. Delete the old pm_robot in the unity scene.
+2. Delete the folder `meshes` at `Assets/PM_Robot'
+3. Delele the old `pm_robot_unity.urdf`
+4. Copy the new generated `pm_robot_unity.urdf` and the folder `meshes` from `ros2_ws/install/pm_robot_description/share/pm_robot_description` 
+2. Right click on the `pm_robot_unity.urdf` and choose 'Import Robot from selected urdf-file'
+
+Now, the model can be configured using the `Config Tools`.
+
+### Rename Links
+The links have to be renamed, because the names from the urdf differ from the naming in the opcua-server.
+
+The links that have to be renamed are defined in the `OpcUaAxisNames.json`.
+
+1. Click on `Rename Links`.
+
+### Apply General Settings
+Some general setting have to be set. For example the base_link has to be set to inmovable.
+
+1. Click on `Apply General Setting`
+
+### Configuration of links and objects
+The config saved form the old model can be applied to the new one. 
+
+1. Click on `Apply Settings of ArticulationBody and add scripts`
+
+### Add sensors
+Cameras, lasers and other sensors are not included in the urdf. They are prefabs and can be manually added to the model.
+
+The prefabs can be found at `Assets/Resources/Prefabs`
+ 
+
+# 4. Build the Project
+To build the project using OPC UA Newtonsoft.json package for Unity is required.
 - Installation:
 	1. Open Unity
-	2. Open "Window" dorpdown menu and open "Package Manager"
+	2. Open "Window" dropdown menu and open "Package Manager"
 	3. In package manager click on "+" symobl and choose "Add package by name..."
 	3. Enter "com.unity.nuget.newtonsoft-json" as package name, and "3.0.1" as version
 	4. Click "add"
 
 
-Build:
+### Build
 1. Start Unity project from terminal
 2. With your Unity project open, click on the File tab at the top of the Unity window. Select Build Settings. 
 3. A new window will open where you can specify the Platform of your game. 

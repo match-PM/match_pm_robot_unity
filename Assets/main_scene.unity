@@ -1563,7 +1563,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &27586312
 MonoBehaviour:
@@ -1658,7 +1658,7 @@ GameObject:
   - component: {fileID: 38873687}
   - component: {fileID: 38873686}
   m_Layer: 0
-  m_Name: Calibration_Qube
+  m_Name: ReferenceCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1725,7 +1725,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 0.00060813274
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -0.10800001, y: 0.305, z: 0.15399998}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -1779,7 +1779,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &38873689
 MonoBehaviour:
@@ -1807,8 +1807,9 @@ GameObject:
   - component: {fileID: 39911825}
   - component: {fileID: 39911824}
   - component: {fileID: 39911823}
+  - component: {fileID: 39911827}
   m_Layer: 0
-  m_Name: Gripper_Rot_Plate
+  m_Name: RobotAxisT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1894,14 +1895,14 @@ ArticulationBody:
   m_SwingZ: 2
   m_Twist: 1
   m_XDrive:
-    lowerLimit: -114.59156
-    upperLimit: 114.59156
+    lowerLimit: 0
+    upperLimit: 687.5494
     stiffness: 0
     damping: 0
-    forceLimit: 100
+    forceLimit: 1000
     target: 0
     targetVelocity: 0
-    driveType: 0
+    driveType: 2
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -1920,9 +1921,9 @@ ArticulationBody:
     target: 0
     targetVelocity: 0
     driveType: 0
-  m_LinearDamping: 0
-  m_AngularDamping: 0
-  m_JointFriction: 0
+  m_LinearDamping: 5
+  m_AngularDamping: 5
+  m_JointFriction: 0.05
   m_CenterOfMass: {x: -0.00000020348367, y: 0.009077923, z: -0.0000001742811}
   m_InertiaTensor: {x: 0.00008602205, y: 0.00008988229, z: 0.00016570797}
   m_InertiaRotation: {x: 0.26193643, y: -0.6508062, z: -0.65594107, w: -0.27853525}
@@ -1935,7 +1936,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &39911826
 MonoBehaviour:
@@ -1950,6 +1951,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &39911827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39911821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9002dfcdcb57a1b8823e94aa2424710, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!64 &40313413
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2225,8 +2238,8 @@ ArticulationBody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_Immovable: 0
-  m_UseGravity: 1
+  m_Immovable: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &41978493
 MonoBehaviour:
@@ -2989,6 +3002,11 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 6a44f3cabe20cb7fdac604c2f87fedec, type: 2}
+--- !u!4 &49702037 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 776012092081984892, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+  m_PrefabInstance: {fileID: 1290341642}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &51415016
 GameObject:
   m_ObjectHideFlags: 8
@@ -3532,7 +3550,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &64111067
 MonoBehaviour:
@@ -3772,7 +3790,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &79130184
 MonoBehaviour:
@@ -3855,7 +3873,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: -0.014999986, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -3909,7 +3927,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &86310155
 MonoBehaviour:
@@ -4209,7 +4227,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 4.8331866
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -0.2955, y: 0, z: 0.1425}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -4263,7 +4281,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &113258093
 MonoBehaviour:
@@ -4342,7 +4360,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: -0.07342005, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -4396,7 +4414,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &113551401
 MonoBehaviour:
@@ -4481,7 +4499,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: -0.049999952, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -4535,7 +4553,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &118840843
 MonoBehaviour:
@@ -4678,7 +4696,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -0.023000002, y: 0.09654999, z: 0.017500013}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -4732,7 +4750,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &128206168
 MonoBehaviour:
@@ -7485,8 +7503,9 @@ GameObject:
   - component: {fileID: 245135945}
   - component: {fileID: 245135944}
   - component: {fileID: 245135943}
+  - component: {fileID: 245135947}
   m_Layer: 0
-  m_Name: Y_Axis
+  m_Name: RobotAxisY
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7553,7 +7572,7 @@ ArticulationBody:
   m_GameObject: {fileID: 245135941}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 5.648471
+  m_Mass: 17.662
   m_ParentAnchorPosition: {x: -0.25835, y: 0.06525004, z: 0.10864997}
   m_ParentAnchorRotation: {x: 0, y: 1, z: 0, w: 0}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
@@ -7569,12 +7588,12 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -0.134
     upperLimit: 0.0324
-    stiffness: 0
-    damping: 0
-    forceLimit: 100
+    stiffness: 1000000
+    damping: 24000
+    forceLimit: 10000
     target: 0
     targetVelocity: 0
-    driveType: 0
+    driveType: 2
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -7593,9 +7612,9 @@ ArticulationBody:
     target: 0
     targetVelocity: 0
     driveType: 0
-  m_LinearDamping: 0
+  m_LinearDamping: 10
   m_AngularDamping: 0
-  m_JointFriction: 0
+  m_JointFriction: 0.2
   m_CenterOfMass: {x: 0.3177999, y: 0.11382394, z: -0.0019681398}
   m_InertiaTensor: {x: 0.03557698, y: 0.06197892, z: 0.07343658}
   m_InertiaRotation: {x: 0.14373367, y: -0.9895926, z: -0.00007823822, w: -0.0005312108}
@@ -7608,7 +7627,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &245135946
 MonoBehaviour:
@@ -7623,6 +7642,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &245135947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245135941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9002dfcdcb57a1b8823e94aa2424710, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &255706178
 GameObject:
   m_ObjectHideFlags: 0
@@ -8566,7 +8597,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &263566409
 MonoBehaviour:
@@ -9085,7 +9116,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &276591706
 MonoBehaviour:
@@ -11785,7 +11816,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &325706559
 MonoBehaviour:
@@ -11882,7 +11913,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 43.61026
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -0.632, y: 0.00001001358, z: 0.08001}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -11936,7 +11967,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &327757882
 MonoBehaviour:
@@ -12284,7 +12315,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1.3909953
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -0.3265, y: 0.29800004, z: 0.075}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -12338,7 +12369,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &350853788
 MonoBehaviour:
@@ -12579,7 +12610,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &355721994
 MonoBehaviour:
@@ -12863,6 +12894,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9090ae501ff9cd459bec5271d40249c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &391773000
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 484951246}
+    m_Modifications:
+    - target: {fileID: 3896673856319300578, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+      propertyPath: m_Name
+      value: Camera2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256350011918197060, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.0008
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256350011918197060, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.6913
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256350011918197060, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.0048
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256350011918197060, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256350011918197060, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256350011918197060, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256350011918197060, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256350011918197060, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256350011918197060, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256350011918197060, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
 --- !u!64 &397036706
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -13383,8 +13471,9 @@ GameObject:
   - component: {fileID: 402286170}
   - component: {fileID: 402286169}
   - component: {fileID: 402286168}
+  - component: {fileID: 402286172}
   m_Layer: 0
-  m_Name: UV_Cart_X_Back
+  m_Name: PneumaticModuleUV1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13451,7 +13540,7 @@ ArticulationBody:
   m_GameObject: {fileID: 402286166}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 0.12308162
+  m_Mass: 0.11991523
   m_ParentAnchorPosition: {x: -0.20000002, y: 0.23499995, z: 0.0785}
   m_ParentAnchorRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
@@ -13466,10 +13555,10 @@ ArticulationBody:
   m_Twist: 2
   m_XDrive:
     lowerLimit: 0
-    upperLimit: 0.045
-    stiffness: 0
+    upperLimit: 0.01
+    stiffness: 0.05
     damping: 0
-    forceLimit: 0.05
+    forceLimit: 100
     target: 0
     targetVelocity: 0
     driveType: 0
@@ -13506,7 +13595,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &402286171
 MonoBehaviour:
@@ -13521,6 +13610,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &402286172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 402286166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc2548db0563a9e08975ae7b31d4aff6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &414783668
 GameObject:
   m_ObjectHideFlags: 0
@@ -13605,8 +13706,8 @@ ArticulationBody:
   m_GameObject: {fileID: 414783668}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 2.7023115
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_Mass: 2.9441626
+  m_ParentAnchorPosition: {x: -0.3125, y: 0, z: 0.4525}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -13660,7 +13761,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &414783673
 MonoBehaviour:
@@ -13734,7 +13835,7 @@ GameObject:
   - component: {fileID: 415760921}
   - component: {fileID: 415760920}
   m_Layer: 0
-  m_Name: Camera_Calibration_Platelet
+  m_Name: PneumaticModuleCameraMire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13855,7 +13956,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &415760923
 MonoBehaviour:
@@ -13951,7 +14052,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 15.755635
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -1.3982843, y: 0.11, z: -0.054852813}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -14005,7 +14106,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &421623078
 MonoBehaviour:
@@ -14597,7 +14698,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 0.18563278
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0.07399994, y: -0.4955001, z: 0.14749897}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -14651,7 +14752,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &460547150
 MonoBehaviour:
@@ -14827,6 +14928,7 @@ Transform:
   m_Children:
   - {fileID: 1646189418}
   - {fileID: 1381919155}
+  - {fileID: 1355587397}
   m_Father: {fileID: 1902207076}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &484951247
@@ -14856,7 +14958,7 @@ ArticulationBody:
   serializedVersion: 5
   m_Mass: 1
   m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
-  m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_ParentAnchorRotation: {x: 0.7071067, y: 0.00000008940697, z: 0.707107, w: 0.00000017881393}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_MatchAnchors: 1
@@ -14909,7 +15011,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &484951249
 MonoBehaviour:
@@ -16269,8 +16371,8 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
-  m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_ParentAnchorPosition: {x: -0.021000028, y: -0.15999997, z: 0.01999998}
+  m_ParentAnchorRotation: {x: 0.49999994, y: -0.49999994, z: 0.5000001, w: 0.5000001}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_MatchAnchors: 1
@@ -16323,7 +16425,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &564528738
 MonoBehaviour:
@@ -16964,7 +17066,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &625230836
 MonoBehaviour:
@@ -18305,7 +18407,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &657471996
 MonoBehaviour:
@@ -18501,7 +18603,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &676349372
 MonoBehaviour:
@@ -19957,8 +20059,9 @@ GameObject:
   - component: {fileID: 765900330}
   - component: {fileID: 765900329}
   - component: {fileID: 765900328}
+  - component: {fileID: 765900332}
   m_Layer: 0
-  m_Name: X_Axis
+  m_Name: RobotAxisX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20025,7 +20128,7 @@ ArticulationBody:
   m_GameObject: {fileID: 765900326}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 3.4665186
+  m_Mass: 11.025
   m_ParentAnchorPosition: {x: -0.11774999, y: 0.47499007, z: 0.64699}
   m_ParentAnchorRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
@@ -20040,13 +20143,13 @@ ArticulationBody:
   m_Twist: 2
   m_XDrive:
     lowerLimit: -0.745
-    upperLimit: 0.05
-    stiffness: 0
-    damping: 0
-    forceLimit: 0.1
+    upperLimit: 0.055
+    stiffness: 1000000
+    damping: 36000
+    forceLimit: 180
     target: 0
     targetVelocity: 0
-    driveType: 0
+    driveType: 2
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -20065,9 +20168,9 @@ ArticulationBody:
     target: 0
     targetVelocity: 0
     driveType: 0
-  m_LinearDamping: 0
+  m_LinearDamping: 10
   m_AngularDamping: 0
-  m_JointFriction: 0
+  m_JointFriction: 0.2
   m_CenterOfMass: {x: -0.029467342, y: 0.03222254, z: 0.13867117}
   m_InertiaTensor: {x: 0.010433285, y: 0.026431596, z: 0.03424356}
   m_InertiaRotation: {x: -0.02406354, y: -0.7062749, z: -0.7074719, w: 0.008961639}
@@ -20080,7 +20183,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &765900331
 MonoBehaviour:
@@ -20095,6 +20198,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &765900332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765900326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9002dfcdcb57a1b8823e94aa2424710, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &771633163
 GameObject:
   m_ObjectHideFlags: 0
@@ -20408,7 +20523,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &790457091
 MonoBehaviour:
@@ -22308,7 +22423,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -0.099999994, y: 0.04760003, z: 0.0034999847}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -22362,7 +22477,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &832087720
 MonoBehaviour:
@@ -22832,7 +22947,7 @@ GameObject:
   - component: {fileID: 859537145}
   - component: {fileID: 859537144}
   m_Layer: 0
-  m_Name: Gonio_Right_Stage_1_Upper
+  m_Name: RobotAxisQ
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22954,7 +23069,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &859537147
 MonoBehaviour:
@@ -23050,8 +23165,8 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 15.755635
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
-  m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_ParentAnchorPosition: {x: -1.2548528, y: 0.11, z: 1.3982843}
+  m_ParentAnchorRotation: {x: -0.70710677, y: 0.7071069, z: -0.00000003090862, w: 0.00000003090862}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_MatchAnchors: 1
@@ -23104,7 +23219,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &861462642
 MonoBehaviour:
@@ -23132,8 +23247,9 @@ GameObject:
   - component: {fileID: 878873899}
   - component: {fileID: 878873898}
   - component: {fileID: 878873897}
+  - component: {fileID: 878873901}
   m_Layer: 0
-  m_Name: 1K_Dispenser
+  m_Name: PneumaticModuleGlue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23216,12 +23332,12 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: 0
     upperLimit: 0.04
-    stiffness: 0
+    stiffness: 0.05
     damping: 0
     forceLimit: 100
     target: 0
     targetVelocity: 0
-    driveType: 0
+    driveType: 2
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -23255,7 +23371,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &878873900
 MonoBehaviour:
@@ -23270,6 +23386,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &878873901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878873895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc2548db0563a9e08975ae7b31d4aff6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &882891250
 GameObject:
   m_ObjectHideFlags: 0
@@ -23930,7 +24058,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &917252355
 MonoBehaviour:
@@ -24125,7 +24253,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &930411921
 MonoBehaviour:
@@ -24249,7 +24377,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: -0.07042003, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -24303,7 +24431,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &957298714
 MonoBehaviour:
@@ -24722,7 +24850,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &976071393
 MonoBehaviour:
@@ -24889,7 +25017,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0.045000017, y: -0.046139956, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -24943,7 +25071,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &980263884
 MonoBehaviour:
@@ -25045,7 +25173,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 143.43341
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: 0.971, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -25099,7 +25227,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &983472530
 MonoBehaviour:
@@ -25196,7 +25324,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 0.73514974
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -0.31, y: 0, z: 0.75}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -25250,7 +25378,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &984394850
 MonoBehaviour:
@@ -26555,7 +26683,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1023708882
 MonoBehaviour:
@@ -27291,7 +27419,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1052281281
 MonoBehaviour:
@@ -27642,7 +27770,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1069298974
 MonoBehaviour:
@@ -27846,8 +27974,9 @@ GameObject:
   - component: {fileID: 1072779509}
   - component: {fileID: 1072779508}
   - component: {fileID: 1072779507}
+  - component: {fileID: 1072779511}
   m_Layer: 0
-  m_Name: UV_Cart_X_Front
+  m_Name: PneumaticModuleUV2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27914,7 +28043,7 @@ ArticulationBody:
   m_GameObject: {fileID: 1072779505}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 0.12308162
+  m_Mass: 0.11991523
   m_ParentAnchorPosition: {x: -0.02000001, y: 0.23499995, z: 0.0785}
   m_ParentAnchorRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
@@ -27929,8 +28058,8 @@ ArticulationBody:
   m_Twist: 2
   m_XDrive:
     lowerLimit: 0
-    upperLimit: 0.095
-    stiffness: 0
+    upperLimit: 0.01
+    stiffness: 0.05
     damping: 0
     forceLimit: 100
     target: 0
@@ -27969,7 +28098,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1072779510
 MonoBehaviour:
@@ -27984,6 +28113,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &1072779511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072779505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc2548db0563a9e08975ae7b31d4aff6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1074227202
 GameObject:
   m_ObjectHideFlags: 8
@@ -28157,7 +28298,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: 0.05605328, z: -0.009782255}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -28211,7 +28352,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1083810502
 MonoBehaviour:
@@ -29067,7 +29208,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1093222640
 MonoBehaviour:
@@ -30582,7 +30723,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: 0.05605328, z: 0.009782255}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -30636,7 +30777,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1177818029
 MonoBehaviour:
@@ -33440,7 +33581,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 15.755635
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0.054852813, y: 0.11, z: -0.19828427}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -33494,7 +33635,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1271904250
 MonoBehaviour:
@@ -33732,6 +33873,63 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   geometryType: 3
+--- !u!1001 &1290341642
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1464572537}
+    m_Modifications:
+    - target: {fileID: 776012092081984892, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.0559
+      objectReference: {fileID: 0}
+    - target: {fileID: 776012092081984892, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 776012092081984892, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0253
+      objectReference: {fileID: 0}
+    - target: {fileID: 776012092081984892, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 776012092081984892, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 776012092081984892, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 776012092081984892, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 776012092081984892, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 776012092081984892, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 776012092081984892, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8928263275650230060, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: m_Name
+      value: Camera1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
 --- !u!1 &1295483345
 GameObject:
   m_ObjectHideFlags: 8
@@ -34088,8 +34286,8 @@ ArticulationBody:
   m_GameObject: {fileID: 1322818986}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 0.18563278
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_Mass: 0.187318
+  m_ParentAnchorPosition: {x: -0.09399998, y: 0.30750006, z: 0.18199891}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -34143,7 +34341,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1322818991
 MonoBehaviour:
@@ -37579,6 +37777,11 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: b8a31a14b81ba90bca8249a5cc6748c7, type: 2}
+--- !u!4 &1355587397 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6256350011918197060, guid: 27d920551cec01dcbb4f74c979a7b295, type: 3}
+  m_PrefabInstance: {fileID: 391773000}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1360026074
 GameObject:
   m_ObjectHideFlags: 0
@@ -37593,7 +37796,7 @@ GameObject:
   - component: {fileID: 1360026077}
   - component: {fileID: 1360026076}
   m_Layer: 0
-  m_Name: Gonio_Right_Stage_2_Upper
+  m_Name: RobotAxisR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37715,7 +37918,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1360026079
 MonoBehaviour:
@@ -39446,7 +39649,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1375187810
 MonoBehaviour:
@@ -39876,8 +40079,9 @@ GameObject:
   - component: {fileID: 1417931219}
   - component: {fileID: 1417931218}
   - component: {fileID: 1417931217}
+  - component: {fileID: 1417931221}
   m_Layer: 0
-  m_Name: Glue_Cartridge_Flap
+  m_Name: PneumaticProtectDoseur
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39957,14 +40161,14 @@ ArticulationBody:
   m_SwingZ: 2
   m_Twist: 2
   m_XDrive:
-    lowerLimit: -0.025
-    upperLimit: 0
-    stiffness: 0
+    lowerLimit: 0
+    upperLimit: 0.02
+    stiffness: 0.05
     damping: 0
     forceLimit: 100
     target: 0
     targetVelocity: 0
-    driveType: 0
+    driveType: 2
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -39998,7 +40202,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1417931220
 MonoBehaviour:
@@ -40013,6 +40217,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &1417931221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417931215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc2548db0563a9e08975ae7b31d4aff6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1424478088
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40637,7 +40853,7 @@ ArticulationBody:
   m_GameObject: {fileID: 1427026810}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 0.0172842
+  m_Mass: 0.0001063033
   m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
@@ -40692,7 +40908,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1427026815
 MonoBehaviour:
@@ -43187,6 +43403,7 @@ Transform:
   - {fileID: 1613730967}
   - {fileID: 1766101745}
   - {fileID: 564528735}
+  - {fileID: 49702037}
   m_Father: {fileID: 1902040643}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1464572538
@@ -43232,8 +43449,8 @@ ArticulationBody:
   m_GameObject: {fileID: 1464572536}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 0.22220203
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_Mass: 0.4
+  m_ParentAnchorPosition: {x: 0.058000028, y: -0.51533866, z: -0.032000005}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -43287,7 +43504,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1464572541
 MonoBehaviour:
@@ -43474,8 +43691,8 @@ ArticulationBody:
   m_GameObject: {fileID: 1475443998}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 0.070634946
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_Mass: 0.13548583
+  m_ParentAnchorPosition: {x: -0.055000007, y: 0.18469995, z: 0.04250002}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -43514,9 +43731,9 @@ ArticulationBody:
     target: 0
     targetVelocity: 0
     driveType: 0
-  m_LinearDamping: 0.05
-  m_AngularDamping: 0.05
-  m_JointFriction: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0
+  m_JointFriction: 0
   m_CenterOfMass: {x: -0.032677528, y: 0.008028793, z: 0.047395624}
   m_InertiaTensor: {x: 0.000018003435, y: 0.000033696273, z: 0.000048622387}
   m_InertiaRotation: {x: -0.49886015, y: 0.4988632, z: 0.50113684, w: 0.5011349}
@@ -43529,7 +43746,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1475444003
 MonoBehaviour:
@@ -45297,7 +45514,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -0.010250002, y: 0.05250001, z: 0.017499983}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -45351,7 +45568,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1521246230
 MonoBehaviour:
@@ -46144,7 +46361,7 @@ GameObject:
   - component: {fileID: 1595643862}
   - component: {fileID: 1595643861}
   m_Layer: 0
-  m_Name: Gonio_Left_Stage_2
+  m_Name: RobotAxisV
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46266,7 +46483,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1595643864
 MonoBehaviour:
@@ -46795,7 +47012,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1623847137
 MonoBehaviour:
@@ -51020,7 +51237,7 @@ ArticulationBody:
   serializedVersion: 5
   m_Mass: 1
   m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
-  m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_ParentAnchorRotation: {x: 0.7071067, y: 0.00000011920929, z: 0.70710695, w: 0.00000020861626}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_MatchAnchors: 1
@@ -51073,7 +51290,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1687212365
 MonoBehaviour:
@@ -51196,8 +51413,8 @@ ArticulationBody:
   m_GameObject: {fileID: 1695549341}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_Mass: 2.9441626
+  m_ParentAnchorPosition: {x: -0.092783004, y: 0.30450004, z: 0.07999998}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -51251,7 +51468,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1695549345
 MonoBehaviour:
@@ -52248,6 +52465,11 @@ GameObject:
   - component: {fileID: 1708156712}
   - component: {fileID: 1708156711}
   - component: {fileID: 1708156710}
+  - component: {fileID: 1708156717}
+  - component: {fileID: 1708156716}
+  - component: {fileID: 1708156715}
+  - component: {fileID: 1708156714}
+  - component: {fileID: 1708156713}
   m_Layer: 0
   m_Name: pm_robot
   m_TagString: robot
@@ -52262,7 +52484,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1708156709}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d607ea46a579d44c4b19a6322ce4b9b2, type: 3}
   m_Name: 
@@ -52310,6 +52532,68 @@ Transform:
   - {fileID: 166220869}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1708156713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708156709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90d8beb37947b48f9a2711d98974881f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1708156714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708156709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7cbb7ad08c6a122b92827a8bbd3c9c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1708156715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708156709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02c6cb8628702edfc814a2ed77c7d188, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mode: 0
+--- !u!114 &1708156716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708156709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4c2a4944b495b54f966aadebb88b5b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateReady: 1
+--- !u!114 &1708156717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708156709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feab04ad06492965492b3edc6423aa53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1710438132
 GameObject:
   m_ObjectHideFlags: 0
@@ -52375,7 +52659,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0.03180003, y: -0.12230003, z: -0.0009999871}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -52429,7 +52713,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1710438136
 MonoBehaviour:
@@ -54266,7 +54550,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1766613349
 MonoBehaviour:
@@ -54343,7 +54627,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -0.014999986, y: 0.10105002, z: 0.00999999}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -54397,7 +54681,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1776858475
 MonoBehaviour:
@@ -55068,7 +55352,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1805549630
 MonoBehaviour:
@@ -55618,7 +55902,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: -0.08941996, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -55672,7 +55956,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1835006228
 MonoBehaviour:
@@ -55885,8 +56169,9 @@ GameObject:
   - component: {fileID: 1869109034}
   - component: {fileID: 1869109033}
   - component: {fileID: 1869109032}
+  - component: {fileID: 1869109036}
   m_Layer: 0
-  m_Name: 2K_Glue_Cartridge
+  m_Name: PneumaticModuleGlue2K
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55954,7 +56239,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 0.4101112
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -0.011759996, y: -0.42400002, z: -0.16899997}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -55967,14 +56252,14 @@ ArticulationBody:
   m_SwingZ: 2
   m_Twist: 2
   m_XDrive:
-    lowerLimit: -0.04
-    upperLimit: 0
-    stiffness: 0
+    lowerLimit: 0
+    upperLimit: 0.0468
+    stiffness: 0.05
     damping: 0
     forceLimit: 100
     target: 0
     targetVelocity: 0
-    driveType: 0
+    driveType: 2
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -56008,7 +56293,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1869109035
 MonoBehaviour:
@@ -56023,6 +56308,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &1869109036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869109030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc2548db0563a9e08975ae7b31d4aff6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1875030597
 GameObject:
   m_ObjectHideFlags: 0
@@ -56131,7 +56428,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: -0.010699987, y: 0.06949997, z: 0.10220002}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -56185,7 +56482,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1876406069
 MonoBehaviour:
@@ -56460,8 +56757,9 @@ GameObject:
   - component: {fileID: 1902040646}
   - component: {fileID: 1902040645}
   - component: {fileID: 1902040644}
+  - component: {fileID: 1902040648}
   m_Layer: 0
-  m_Name: Z_Axis
+  m_Name: RobotAxisZ
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56534,7 +56832,7 @@ ArticulationBody:
   m_GameObject: {fileID: 1902040642}
   m_Enabled: 1
   serializedVersion: 5
-  m_Mass: 2.6438847
+  m_Mass: 7.683
   m_ParentAnchorPosition: {x: 0.499, y: 0.28525007, z: -0.0036500096}
   m_ParentAnchorRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
@@ -56548,14 +56846,14 @@ ArticulationBody:
   m_SwingZ: 2
   m_Twist: 2
   m_XDrive:
-    lowerLimit: -0.0562
+    lowerLimit: -0.05262
     upperLimit: 0.041
-    stiffness: 0
-    damping: 0
-    forceLimit: 100
+    stiffness: 1000
+    damping: 10
+    forceLimit: 10000
     target: 0
     targetVelocity: 0
-    driveType: 0
+    driveType: 2
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -56574,9 +56872,9 @@ ArticulationBody:
     target: 0
     targetVelocity: 0
     driveType: 0
-  m_LinearDamping: 0
+  m_LinearDamping: 10
   m_AngularDamping: 0
-  m_JointFriction: 0
+  m_JointFriction: 0.2
   m_CenterOfMass: {x: 0.0043467544, y: -0.2726241, z: 0.00062766427}
   m_InertiaTensor: {x: 0.0060608354, y: 0.016864395, z: 0.021874472}
   m_InertiaRotation: {x: -0.49664193, y: 0.5032841, z: -0.49405405, w: 0.50592387}
@@ -56589,7 +56887,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1902040647
 MonoBehaviour:
@@ -56604,6 +56902,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &1902040648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1902040642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9002dfcdcb57a1b8823e94aa2424710, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1902207075
 GameObject:
   m_ObjectHideFlags: 0
@@ -56667,8 +56977,8 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
-  m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_ParentAnchorPosition: {x: 0, y: -0.754, z: 0}
+  m_ParentAnchorRotation: {x: -0.49999994, y: 0.49999994, z: 0.5000001, w: 0.5000001}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_MatchAnchors: 1
@@ -56721,7 +57031,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1902207079
 MonoBehaviour:
@@ -57839,7 +58149,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1924234240
 MonoBehaviour:
@@ -59030,7 +59340,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0.0000000036717562, y: -0.013000011, z: 0.041999996}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -59084,7 +59394,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1936286292
 MonoBehaviour:
@@ -60427,7 +60737,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 15.755635
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0.19828427, y: 0.11, z: 1.2548528}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -60481,7 +60791,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1976189430
 MonoBehaviour:
@@ -60510,7 +60820,7 @@ GameObject:
   - component: {fileID: 1981531886}
   - component: {fileID: 1981531885}
   m_Layer: 0
-  m_Name: Gonio_Left_Stage_1
+  m_Name: RobotAxisU
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60632,7 +60942,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1981531888
 MonoBehaviour:
@@ -63194,8 +63504,8 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
-  m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_ParentAnchorPosition: {x: 0.12, y: -0.089999974, z: 1}
+  m_ParentAnchorRotation: {x: -0.7071068, y: -0.7071068, z: -0.00000003090862, w: -0.00000003090862}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_MatchAnchors: 1
@@ -63248,7 +63558,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &2026598522
 MonoBehaviour:
@@ -63393,7 +63703,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: -0.074419975, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -63447,7 +63757,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &2034739375
 MonoBehaviour:
@@ -64740,7 +65050,7 @@ ArticulationBody:
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &2073012073
 MonoBehaviour:
@@ -65720,7 +66030,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: -0.074419975, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -65774,7 +66084,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &2125123430
 MonoBehaviour:
@@ -65942,8 +66252,8 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
-  m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_ParentAnchorPosition: {x: -0.12199998, y: -0.48000002, z: -0.07999998}
+  m_ParentAnchorRotation: {x: 0.00000011920929, y: -0.7071067, z: 0.707107, w: 0.00000017881393}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_MatchAnchors: 1
@@ -65996,7 +66306,7 @@ ArticulationBody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &2129253615
 MonoBehaviour:

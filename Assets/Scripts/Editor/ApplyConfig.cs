@@ -11,9 +11,11 @@ using UnityEditor;
 /// </summary>
 public class ApplyConfiguration
 {
+    public string path_config = Application.dataPath + "/PM_Robot/Configs/";
+
     public void ApplyConfig(string modelName, string configName)
     {
-        string path = Application.dataPath + "/" + configName + ".json";
+        string path = path_config + configName + ".json";
         if (!File.Exists(path))
         {
             Debug.LogError("Configuration file not found: " + path);

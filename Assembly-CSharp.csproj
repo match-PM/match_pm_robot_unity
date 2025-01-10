@@ -88,6 +88,7 @@
     <Compile Include="Assets/Scripts/SpawnerService/Modify_Pose.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ITimeSource.cs" />
     <Compile Include="Assets/Scripts/Sensors/CamPublisher.cs" />
+    <Compile Include="Assets/Scripts/OpcUaControl/LaunchOpcUaServer.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Sensor.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/SpawnGameObject.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/Change_Parent_Frame.cs" />
@@ -108,7 +109,6 @@
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ClientExample.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/PneumaticsControl.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/SpawnSmallerObject.cs" />
-    <Compile Include="Assets/Scripts/OpcUaControl/OPCUA_Server.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/chooseMode.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/Disable_Object_Collision.cs" />

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 /// </summary>
 public class SaveConfiguration
 {
+    public string path_config = Application.dataPath + "/PM_Robot/Configs/";
 
     public void SaveConfig(string modelName, string configName)
     {
@@ -73,7 +74,7 @@ public class SaveConfiguration
         // Save to JSON
         ConfigData data = new ConfigData { components = components };
         string json = JsonUtility.ToJson(data, true);
-        File.WriteAllText(Application.dataPath + "/" + configName +".json", json);
+        File.WriteAllText(path_config + "/" + configName +".json", json);
         Debug.Log("Configuration (including ArticulationBody settings) saved to " + configName + ".json");
     }
 
