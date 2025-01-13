@@ -144,6 +144,7 @@ namespace UtilityFunctions
 
             }
 
+
             private float doTargetConversion(int readTarget, double? unitsPerIncrement)
             {
                 float newTarget = 0.0f;
@@ -234,7 +235,8 @@ namespace UtilityFunctions
             public OPCUAWriteContainer() { }
 
             // Method to convert the container dictionary to a WriteValueCollection.
-            void convertToValueCollection(){
+            void convertToValueCollection()
+            {
                 // Converting the dictionary values to a list and initializing the WriteValueCollection.
                 nodesToWrite = new WriteValueCollection(container.Values.ToList());
             }
@@ -259,7 +261,8 @@ namespace UtilityFunctions
             }
 
             // Method to remove a node from the container.
-            public void removeFromColection(string parentName, string childName){
+            public void removeFromColection(string parentName, string childName)
+            {
                 container.Remove(parentName + "/" + childName);
                 convertToValueCollection();
             }
