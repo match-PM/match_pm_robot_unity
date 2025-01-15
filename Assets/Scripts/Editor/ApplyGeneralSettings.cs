@@ -27,6 +27,98 @@ public class ApplyGeneralSettings
         
     }
 
+    // Deactivate all Collision Modells
+    public void DeactivateCollisionModels(string modelName)
+    {
+        GameObject root = GameObject.Find(modelName);
+        if (root == null)
+        {
+            Debug.LogError("Model not found: " + modelName);
+            return;
+        }
+
+        // Deactivate all MeshColliders
+        MeshCollider[] meshColliders;
+
+        meshColliders = Object.FindObjectsOfType<MeshCollider>();
+
+        foreach (var meshCollider in meshColliders)
+        {
+            meshCollider.enabled = false;
+        }
+
+        Debug.Log("Collision Models deactivation finished.");
+    }
+
+    // Activate only the ArticulationBodys of the axis defined in the configuration file
+    public void ActivateAxisArticulationBodies(string modelName)
+    {
+        GameObject root = GameObject.Find(modelName);
+        if (root == null)
+        {
+            Debug.LogError("Model not found: " + modelName);
+            return;
+        }
+
+        // Deactivate all ArticulationBodies
+        ArticulationBody[] articulationBodies;
+
+        articulationBodies = Object.FindObjectsOfType<ArticulationBody>();
+
+        foreach (var articulationBody in articulationBodies)
+        {
+            articulationBody.enabled = false;
+        }
+
+
+        string path = path_config + "/OpcUaAxisNames.json";
+        if (!File.Exists(path))
+        {
+            Debug.LogError("Configuration file not found: " + path);
+            return;
+        }
+
+        string jsonContent = File.ReadAllText(path);
+        LinkMappings linkMappings = JsonUtility.FromJson<LinkMappings>(jsonContent);
+
+        if (linkMappings == null || linkMappings.mappings == null || linkMappings.mappings.Length == 0)
+        {
+            Debug.LogError("Failed to load link mappings or no mappings defined.");
+            return;
+        }
+
+        HashSet<string> axisNames = new HashSet<string>();
+        foreach (var mapping in linkMappings.mappings)
+        {
+            if (!string.IsNullOrEmpty(mapping.newName))
+            {
+                axisNames.Add(mapping.newName.ToLower());
+            }
+        }
+
+        ActivateAxisArticulationBodiesRecursively(root.transform, axisNames);
+
+        Debug.Log("Axis ArticulationBodies activation finished.");
+    }
+
+    // Recursively activate only the ArticulationBodys of the axis defined in the configuration file
+    private void ActivateAxisArticulationBodiesRecursively(Transform current, HashSet<string> axisNames)
+    {
+        ArticulationBody articulationBody = current.GetComponent<ArticulationBody>();
+        if (articulationBody != null && axisNames.Contains(current.name.ToLower()))
+        {
+            Debug.Log($"Activating ArticulationBody: {current.name}");
+            articulationBody.enabled = true;
+            Debug.Log($"Activating ArticulationBody: {articulationBody.transform.parent} parent");
+            articulationBody.transform.parent.GetComponent<ArticulationBody>().enabled = true;
+        }
+
+        foreach (Transform child in current)
+        {
+            ActivateAxisArticulationBodiesRecursively(child, axisNames);
+        }
+    }
+
     // Rename links in a model to match the names in the opcua server
     public void RenameLinks(string modelName)
     {

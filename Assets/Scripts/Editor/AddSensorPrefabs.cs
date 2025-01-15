@@ -21,4 +21,28 @@ public class AddSensorPrefabs
 
     }
 
+    public void SetArticulationBodiesActive(bool activate, Transform parent = null)
+    {
+        ArticulationBody[] articulationBodies;
+
+        if (parent != null)
+        {
+            // Get all ArticulationBody components in the specified parent
+            articulationBodies = parent.GetComponentsInChildren<ArticulationBody>(true);
+        }
+        else
+        {
+            // Get all ArticulationBody components in the entire scene
+            articulationBodies = Object.FindObjectsOfType<ArticulationBody>();
+        }
+
+        // Activate or deactivate each ArticulationBody
+        foreach (var articulationBody in articulationBodies)
+        {
+            articulationBody.enabled = activate;
+        }
+
+        Debug.Log($"{articulationBodies.Length} ArticulationBody components {(activate ? "activated" : "deactivated")}");
+    }
+
 }

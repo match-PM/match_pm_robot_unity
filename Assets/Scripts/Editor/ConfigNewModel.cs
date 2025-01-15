@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,6 +11,8 @@ public class ConfigNewModelScript : EditorWindow
     private ApplyConfiguration applyConfig = new ApplyConfiguration();
 
     private ApplyGeneralSettings applyGeneralSettings = new ApplyGeneralSettings();
+
+    private AddSensorPrefabs addSensorPrefabs = new AddSensorPrefabs();
 
     private string model_name = "pm_robot";
 
@@ -54,6 +57,8 @@ public class ConfigNewModelScript : EditorWindow
         {
             applyGeneralSettings.path_config = config_path;
             applyGeneralSettings.ApplySettings(model_name, config_name);
+            applyGeneralSettings.ActivateAxisArticulationBodies(model_name);
+            applyGeneralSettings.DeactivateCollisionModels(model_name);
         }
 
         if (GUILayout.Button("Apply Settings of ArticulationBody and add scripts"))
