@@ -65,13 +65,17 @@ public class RobotAxisControl : MonoBehaviour
         OPCUA_Client.writeToServer(gameObject.name,  writeNodeName[(int)mode], value);
     }
 
-    // Start is called before the first frame update
-    void Start()
+    //  Start is called before the first frame update
+    IEnumerator Start()
     {
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
         axis = new ComponentClasses.DriveComponent(gameObject);
+
+        // Wait until the OPC UA client is connected before adding the write node to the container.
+        yield return new WaitUntil(() => OPCUA_Client.IsConnected);
+
         if (mode == 0)
         {
             OPCUA_Client.addToWriteContainer(gameObject.name, writeNodeName[(int)mode]);
@@ -81,7 +85,7 @@ public class RobotAxisControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (OPCUA_Client.updateReady)
+        if (OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
         {
             unitsPerIncrement = (double)OPCUA_Client.allNodes[gameObject.name + "/" + "UnitsPerIncrement"].dataValue.Value;
             updateAxis();

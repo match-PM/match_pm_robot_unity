@@ -61,13 +61,16 @@ public class LaserRay : MonoBehaviour
         }
     }
 
-    void Start()
+    IEnumerator Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.startWidth = 0.005f;
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
+        
+        yield return new WaitUntil(() => OPCUA_Client.IsConnected);
+
         if (mode == 0)
         {
             OPCUA_Client.addToWriteContainer(gameObject.name, "Measurement");
@@ -79,7 +82,7 @@ public class LaserRay : MonoBehaviour
     {
         renderLine();
 
-        if (mode == 0 && OPCUA_Client.updateReady)
+        if (mode == 0 && OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
         {
             writeLaserDistance();
         }

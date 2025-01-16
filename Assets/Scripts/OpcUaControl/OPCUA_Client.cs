@@ -21,7 +21,7 @@ public class OPCUA_Client : MonoBehaviour
     private Subscription subscription;
     private Dictionary<string, Tuple<string, string>> monitoredItems;
     public bool updateReady = false;
-
+    public bool IsConnected => session != null && session.Connected;
     public OPCUAWriteContainer writeContainer = new OPCUAWriteContainer();
 
     async void Awake()
@@ -139,13 +139,43 @@ public class OPCUA_Client : MonoBehaviour
 
     async Task ConnectToServer(string endpointUrl)
     {
-        var selectedEndpoint = CoreClientUtils.SelectEndpoint(endpointUrl, useSecurity: false);
+        int maxRetries = 10; // Number of retry attempts
+        int delayMilliseconds = 2000; // Delay between retries (2 seconds)
+        int attempt = 0;
 
-        var endpointConfiguration = EndpointConfiguration.Create(config);
-        var endpoint = new ConfiguredEndpoint(null, selectedEndpoint, endpointConfiguration);
+        while (attempt < maxRetries)
+        {
+            try
+            {
+                Debug.Log($"Attempting to connect to OPC UA server... (Attempt {attempt + 1}/{maxRetries})");
+                var selectedEndpoint = CoreClientUtils.SelectEndpoint(endpointUrl, useSecurity: false);
 
-        session = await Session.Create(config, endpoint, false, "", 60000, null, null);
-        Debug.Log("Connected to OPC UA server");
+                var endpointConfiguration = EndpointConfiguration.Create(config);
+                var endpoint = new ConfiguredEndpoint(null, selectedEndpoint, endpointConfiguration);
+
+                session = await Session.Create(config, endpoint, false, "", 60000, null, null);
+                Debug.Log("Connected to OPC UA server" + session.Connected);
+
+                // Exit the retry loop once connected
+                return;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Connection attempt {attempt + 1} failed: {e.Message}");
+                attempt++;
+
+                if (attempt < maxRetries)
+                {
+                    Debug.Log($"Retrying connection in {delayMilliseconds / 1000} seconds...");
+                    await Task.Delay(delayMilliseconds);
+                }
+                else
+                {
+                    Debug.LogError("Max connection attempts reached. Could not connect to OPC UA server.");
+                    throw; // Re-throw the exception after max retries
+                }
+            }
+        }
     }
 
     public void getAllNodes(Session session)

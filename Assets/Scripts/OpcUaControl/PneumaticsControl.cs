@@ -71,12 +71,15 @@ public class PneumaticsControl : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    IEnumerator Start()
     {
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
         pneumaticComponent = new ComponentClasses.DriveComponent(gameObject);
+
+        yield return new WaitUntil(() => OPCUA_Client.IsConnected);
+
         // If the mode is 0, add the dispenser's position to the write container of the OPC UA client
         if (mode == 0)
         {
@@ -88,7 +91,7 @@ public class PneumaticsControl : MonoBehaviour
     void Update()
     {
         // Check if the OPC UA client has new data ready
-        if (OPCUA_Client.updateReady)
+        if (OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
         {
             // Update the dispenser's position
             updateDispenserPosition();

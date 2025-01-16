@@ -47,11 +47,14 @@ public class Camera1LightControl : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    IEnumerator Start()
     {
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         List<GameObject> childrenGameObjects = GenericFunctions.getChildrenGameObjects(gameObject);
+
+        yield return new WaitUntil(() => OPCUA_Client.IsConnected);
+
         foreach (GameObject childGameObject in childrenGameObjects)
         {
             lightComponents.Add(new ComponentClasses.LightComponent(childGameObject));
@@ -61,7 +64,7 @@ public class Camera1LightControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (OPCUA_Client.updateReady)
+        if (OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
         {
             updateLights();
         }

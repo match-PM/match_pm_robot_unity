@@ -73,10 +73,13 @@ public class UVLightControl : MonoBehaviour
         Debug.Log("Shutting "+ (ArrayIndex+1)+ "." + " UV light down. Elapsed UV light time: " + elapsedTime.ToString("0.00") + " seconds.");
     }
 
-    void Start()
+    IEnumerator Start()
     {
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
+
+        yield return new WaitUntil(() => OPCUA_Client.IsConnected);
+        
         UVLight = GetComponent<Light>();
         UVLight.enabled = false;
     }
@@ -84,7 +87,7 @@ public class UVLightControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (OPCUA_Client.updateReady)
+        if (OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
         {
             elapsedTime += Time.deltaTime;
             updateUVLight();
