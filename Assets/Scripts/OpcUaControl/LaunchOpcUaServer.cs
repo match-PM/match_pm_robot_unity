@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LaunchOpcUaServer : MonoBehaviour
 {
+    private Process ros2Process = new Process();
     void Awake()
     {
         // Define the command to run
@@ -11,7 +12,6 @@ public class LaunchOpcUaServer : MonoBehaviour
         string ros2Arguments = "run opcua_server opcua_server";
 
         // Start the ROS 2 node process
-        Process ros2Process = new Process();
         ros2Process.StartInfo.FileName = ros2Command;
         ros2Process.StartInfo.Arguments = ros2Arguments;
         ros2Process.StartInfo.UseShellExecute = false;
@@ -21,9 +21,17 @@ public class LaunchOpcUaServer : MonoBehaviour
         // Start the process
         ros2Process.Start();
 
+        UnityEngine.Debug.Log("opcua-server started.");
+
         // Optionally, log output
-        UnityEngine.Debug.Log("ROS 2 Node started.");
-        //ros2Process.OutputDataReceived += (sender, args) => UnityEngine.Debug.Log(args.Data);
-        //ros2Process.BeginOutputReadLine();
+        ros2Process.OutputDataReceived += (sender, args) => UnityEngine.Debug.Log(args.Data);
+        ros2Process.BeginOutputReadLine();
+    }
+
+    // Shutdown when the application quits
+    void OnApplicationQuit()
+    {
+        UnityEngine.Debug.Log("Shutting down opcua-server.");
+        ros2Process.Kill();
     }
 }
