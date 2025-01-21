@@ -17,6 +17,7 @@ public class RobotAxisControl : MonoBehaviour
     ComponentClasses.DriveComponent axis;
     float currentTarget;
     int readTarget;
+    private bool isComplete = false;
     private int lastRead = 0;
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
@@ -78,14 +79,17 @@ public class RobotAxisControl : MonoBehaviour
 
         if (mode == 0)
         {
-            OPCUA_Client.addToWriteContainer(gameObject.name, writeNodeName[(int)mode]);
+            OPCUA_Client.addToWriteContainer(gameObject.name, writeNodeName[(int)mode], () => isComplete = true);
         }
+   
+        // Wait for the operation to complete
+        yield return new WaitUntil(() => isComplete);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
+        if (isComplete && OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
         {
             unitsPerIncrement = (double)OPCUA_Client.allNodes[gameObject.name + "/" + "UnitsPerIncrement"].dataValue.Value;
             updateAxis();

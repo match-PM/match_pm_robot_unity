@@ -2,6 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+using Unity.Robotics.UrdfImporter;
 
 /// <summary>
 /// Apply general settings to a new model
@@ -10,7 +11,7 @@ using System.Collections.Generic;
 public class ApplyGeneralSettings
 {
     public string path_config = Application.dataPath + "/PM_Robot/Configs/";
-
+    
     // Apply general settings to a new model
     public void ApplySettings(string modelName, string configName)
     {
@@ -21,9 +22,13 @@ public class ApplyGeneralSettings
             Debug.LogError("Model not found: " + modelName);
             return;
         }
+
         // ArticulationBody of base_link_empthy -> immovable
         ArticulationBody base_link_empty = root.transform.FindChildByPattern("base_link_empthy").GetComponent<ArticulationBody>();
         base_link_empty.immovable = true;
+
+        // Get the script UrdfLinks of gameObject world and set base_link to true
+        root.transform.FindChildByPattern("world").GetComponent<UrdfLink>().IsBaseLink = true;
         
     }
 
@@ -67,6 +72,10 @@ public class ApplyGeneralSettings
 
         foreach (var articulationBody in articulationBodies)
         {
+            if (articulationBody.name == "base_link_empthy")
+            {
+                continue;
+            }
             articulationBody.enabled = false;
         }
 

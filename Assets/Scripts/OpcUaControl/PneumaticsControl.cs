@@ -18,6 +18,7 @@ public class PneumaticsControl : MonoBehaviour
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
     private chooseMode.Mode mode;
+    private bool isInitialized = false;
     private int readTarget;
     private int lastMove = 0;
     private int move;
@@ -83,15 +84,17 @@ public class PneumaticsControl : MonoBehaviour
         // If the mode is 0, add the dispenser's position to the write container of the OPC UA client
         if (mode == 0)
         {
-            OPCUA_Client.addToWriteContainer(gameObject.name, "Position");
+            OPCUA_Client.addToWriteContainer(gameObject.name, "Position" , () => isInitialized = true);
         }
+
+        isInitialized = true;
     }
 
     // Update is called once per frame
     void Update()
     {
         // Check if the OPC UA client has new data ready
-        if (OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
+        if (isInitialized && OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
         {
             // Update the dispenser's position
             updateDispenserPosition();

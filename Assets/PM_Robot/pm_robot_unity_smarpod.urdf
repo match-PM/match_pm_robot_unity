@@ -1,0 +1,2760 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="pm_robot"><material name="black">
+    <color rgba="0.0 0.0 0.0 1.0" />
+  </material>
+  <material name="blue">
+    <color rgba="0.0 0.0 0.8 1.0" />
+  </material>
+  <material name="green">
+    <color rgba="0.0 0.8 0.0 1.0" />
+  </material>
+  <material name="grey">
+    <color rgba="0.2 0.2 0.2 1.0" />
+  </material>
+  <material name="orange">
+    <color rgba="1.0 0.4235294117647059 0.0392156862745098 1.0" />
+  </material>
+  <material name="brown">
+    <color rgba="0.8705882352941177 0.8117647058823529 0.7647058823529411 1.0" />
+  </material>
+  <material name="red">
+    <color rgba="0.8 0.0 0.0 1.0" />
+  </material>
+  <material name="white">
+    <color rgba="1.0 1.0 1.0 1.0" />
+  </material>
+  <material name="match_green">
+    <color rgba="0.6901960784313725 0.796078431372549 0.12941176470588237 1" />
+  </material>
+  
+  <link name="housing_vl">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.106855071606918 -0.0365763858981578 0.4055" />
+      <mass value="15.7556351853533" />
+      <inertia ixx="0.894316439132711" ixy="0.0157593692116881" ixz="2.27661474248145E-18" iyy="0.894316439132711" iyz="-6.86930254496152E-17" izz="0.0614975233077981" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/housing_vl.STL" />
+      </geometry>
+      <material name="red" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/housing_vl.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="housing_vl_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.198284271247462 -0.0548528137423858 0.11" />
+    <parent link="base_link_empthy" />
+    <child link="housing_vl" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="housing_vr">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0365763858981576 0.106855071606918 0.4055" />
+      <mass value="15.7556351853533" />
+      <inertia ixx="0.894316439132712" ixy="-0.0157593692116881" ixz="-2.21308886639773E-18" iyy="0.894316439132712" iyz="-6.04673492304204E-17" izz="0.0614975233077981" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/housing_vr.STL" />
+      </geometry>
+      <material name="red" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/housing_vr.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="housing_vr_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="1.25485281374239 -0.198284271247462 0.11" />
+    <parent link="base_link_empthy" />
+    <child link="housing_vr" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="housing_hr">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.106855071606919 0.0365763858981576 -0.4055" />
+      <mass value="15.7556351853533" />
+      <inertia ixx="0.894316439132712" ixy="-0.015759369211688" ixz="3.2198946826335E-17" iyy="0.894316439132712" iyz="-8.14379058383444E-17" izz="0.0614975233077981" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/housing_hr.STL" />
+      </geometry>
+      <material name="red" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/housing_hr.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="housing_hr_joint" type="fixed">
+    <origin rpy="-3.14159265358979 0 3.14159265358979" xyz="1.39828427124746 1.25485281374239 0.11" />
+    <parent link="base_link_empthy" />
+    <child link="housing_hr" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="housing_hl">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0365763858981578 -0.106855071606918 0.4055" />
+      <mass value="15.7556351853533" />
+      <inertia ixx="0.894316439132711" ixy="-0.0157593692116881" ixz="-5.63429353481997E-18" iyy="0.894316439132711" iyz="-1.83506172989189E-16" izz="0.0614975233077981" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/housing_hl.STL" />
+      </geometry>
+      <material name="red" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/housing_hl.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="housing_hl_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.0548528137423857 1.39828427124746 0.11" />
+    <parent link="base_link_empthy" />
+    <child link="housing_hl" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="housing">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <mass value="0" />
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/housing.STL" />
+      </geometry>
+      <material name="grey" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/housing.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="housing_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="base_link_empthy" />
+    <child link="housing" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="world">
+    </link>
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link="base_link_empthy" />
+    <origin rpy="0 0 0" xyz="0 0 0" />
+  </joint>
+  
+  <link name="base_link_empthy">
+    </link>
+  
+  <link name="pm_robot_base_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.600186355261373 0.60024822812755 -0.0500803495201262" />
+      <mass value="143.433412382625" />
+      <inertia ixx="17.331308476166" ixy="-0.000173857700061693" ixz="-0.00010330360577037" iyy="17.3263788236508" iyz="-0.00227792943650154" izz="34.4189883960519" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/pm_robot_base_link.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/pm_robot_base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="pm_robot_base_link_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0.971" />
+    <parent link="base_link_empthy" />
+    <child link="pm_robot_base_link" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="match_logo_link">
+    </link>
+  <joint name="match_logo_link_joint" type="fixed">
+    <origin rpy="0 0 3.14159265359" xyz="1 -0.12 -0.09" />
+    <parent link="pm_robot_base_link" />
+    <child link="match_logo_link" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="left_match_logo_background">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/match_background.dae" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="match_green" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Housing/match_background.dae" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="match_green" />
+    </collision>
+  </link>
+  <joint name="left_match_logo_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="match_logo_link" />
+    <child link="left_match_logo_background" />
+  </joint>
+  <link name="match_font">
+    <visual>
+      <origin rpy="1.5707963267948966 0 3.141592653589793" xyz="0 0 0 " />
+      <geometry>
+        <mesh filename="meshes/Housing/match_font.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="1.5707963267948966 0 3.141592653589793" xyz="0 0 0 " />
+      <geometry>
+        <mesh filename="meshes/Housing/match_font.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="white" />
+    </collision>
+  </link>
+  <joint name="left_match_logo_font_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.042 0.0 -0.013" />
+    <parent link="left_match_logo_background" />
+    <child link="match_font" />
+  </joint>
+  
+  <link name="axis_base">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.396220059353836 0.105196690337481 0.307909602405796" />
+      <mass value="43.6102590245999" />
+      <inertia ixx="0.364950648797973" ixy="-0.000379121082023338" ixz="0.00337088160159615" iyy="2.29090638523672" iyz="0.000705385684699142" izz="2.23411883185999" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/axis_base.STL" />
+      </geometry>
+      <material name="grey" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/axis_base.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="axis_base_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.08001 0.632 1.000000000001E-05" />
+    <parent link="pm_robot_base_link" />
+    <child link="axis_base" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  
+  <link name="X_Axis">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.13867117656886 0.0294673421865695 0.0322225410424505" />
+      <mass value="3.46651857022574" />
+      <inertia ixx="0.0263967056575219" ixy="-0.000746452162875097" ixz="-6.60103497268881E-06" iyy="0.0104790265642698" iyz="-0.000507544087069928" izz="0.0342327102580871" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/X_Axis.STL" />
+      </geometry>
+      <material name="orange" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/X_Axis.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="X_Axis_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.64699 0.11775 0.47499" />
+    <parent link="axis_base" />
+    <child link="X_Axis" />
+    <axis xyz="1 0 0" />
+    <limit effort="0.1" lower="-0.745" upper="0.05" velocity="35" />
+  </joint>
+  
+  <link name="Y_Axis">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.00196813987548172 -0.3177998990051 0.113823941424653" />
+      <mass value="5.64847104935336" />
+      <inertia ixx="0.0734343917353869" ixy="-5.65230035141878E-06" ixz="-0.000161953758832679" iyy="0.0377139193260435" iyz="0.00720112978111611" izz="0.0598441739891415" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Y_Axis.STL" />
+      </geometry>
+      <material name="brown" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Y_Axis.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Y_Axis_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.10865 0.25835 0.06525" />
+    <parent link="X_Axis" />
+    <child link="Y_Axis" />
+    <axis xyz="0 1 0" />
+    <limit effort="100" lower="-0.134000" upper="0.032400" velocity="35" />
+  </joint>
+  
+  <link name="Z_Axis">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000627664293855634 -0.00434675424374531 -0.2726241124114" />
+      <mass value="2.64388477073549" />
+      <inertia ixx="0.0168607348742555" ixy="-1.50786678765243E-05" ixz="-0.000199875277453675" iyy="0.0218740034837586" iyz="-8.24046242568125E-05" izz="0.00606496678568248" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Z_Axis.STL" />
+      </geometry>
+      <material name="blue" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Z_Axis.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Z_Axis">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Z_Axis_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="-0.00365 -0.499 0.28525" />
+    <parent link="Y_Axis" />
+    <child link="Z_Axis" />
+    <axis xyz="0 0 -1" />
+    <limit effort="100" lower="-0.0562" upper="0.041" velocity="35" />
+  </joint>
+  
+  <link name="Gripper_Rot_Plate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.74281094778017E-07 2.03483659588777E-07 0.00907792340584457" />
+      <mass value="0.110297257842221" />
+      <inertia ixx="8.79759467929701E-05" ixy="1.90651210379881E-6" ixz="1.25536613370482E-6" iyy="8.79764882626525E-05" iyz="-1.50065581017382E-6" izz="0.00016565987032676" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gripper_Rot_Plate.STL" />
+      </geometry>
+      <material name="black" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gripper_Rot_Plate.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Gripper_Rot_Plate">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="T_Axis_Joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0600000000000017 -0.0580000000000003 -0.427500000000004" />
+    <parent link="Z_Axis" />
+    <child link="Gripper_Rot_Plate" />
+    <axis xyz="0 0 1" />
+    <limit effort="100" lower="-2.0" upper="2.0" velocity="5" />
+  </joint>
+  <link name="t_axis_tool">
+    <inertial>
+      <origin rpy="0 0 0" xyz="2.66657822625138E-05 -6.51697797860451E-05 -0.0173989628147272" />
+      <mass value="0.0741175653990944" />
+      <inertia ixx="1.38724675369177E-05" ixy="-2.81065278601148E-08" ixz="-4.32931581160332E-09" iyy="1.28173377099281E-05" iyz="-3.69738102041932E-6" izz="2.32495071670115E-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/t_axis_tool.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/t_axis_tool.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="t_axis_toolchanger">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="t_axis_toolchanger_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="Gripper_Rot_Plate" />
+    <child link="t_axis_tool" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  
+  <link name="Glue_Cartridge_Flap">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0475534171935499 -0.0152444446246764 -0.0129366605877314" />
+      <mass value="0.0179075605864254" />
+      <inertia ixx="4.17413884237766E-06" ixy="1.29835566651944E-07" ixz="6.2953731666034E-08" iyy="5.03313568637311E-06" iyz="9.02306176060272E-09" izz="4.11882542880041E-06" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Glue_Cartridge_Flap.STL" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Glue_Cartridge_Flap.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="1K_Dispenser_Flap">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="1K_Dispenser_Flap_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="-0.0315 -0.02479 -0.424" />
+    <parent link="Z_Axis" />
+    <child link="Glue_Cartridge_Flap" />
+    <axis xyz="-1 0 0" />
+    <limit effort="100" lower="-0.025" upper="0.00" velocity="0.5" />
+  </joint>
+  
+  <link name="1K_Dispenser">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.00291125760198996 -0.0158910684396169 -0.0486744620635529" />
+      <mass value="0.0741292037954837" />
+      <inertia ixx="3.4337175367919E-05" ixy="-1.91908706800505E-07" ixz="-5.62664674872138E-08" iyy="3.41011193217523E-05" iyz="5.66364181173195E-07" izz="1.14904781429849E-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/1K_Dispenser.STL" />
+      </geometry>
+      <material name="grey" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/1K_Dispenser.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="1K_Dispenser">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="1K_Dispenser_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="-0.104 -0.0262 -0.3545" />
+    <parent link="Z_Axis" />
+    <child link="1K_Dispenser" />
+    <axis xyz="0 0 -1" />
+    <limit effort="100" lower="0" upper="0.04" velocity="0.05" />
+  </joint>
+  <link name="1K_Dispenser_TCP">
+    </link>
+  <joint name="1K_Dispenser_TCP_Joint" type="fixed">
+    <origin rpy="         0.0          0.0          0.0" xyz="         -0.001          -0.0318          -0.1223" />
+    <parent link="1K_Dispenser" />
+    <child link="1K_Dispenser_TCP" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  
+  <link name="Dis_Tip_Yellow_I_100_A240_L12700">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-3.29882314770198E-12 -2.87859854641722E-08 0.0233706132060024" />
+      <mass value="0.00266749600701752" />
+      <inertia ixx="7.71061807673942e-05" ixy="5.31796627071765e-05" ixz="-8.5237329598285e-05" iyy="7.72096804248683e-05" iyz="2.74255625257587e-05" izz="1.50227360147676e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Dispenser_Tips/Dis_Tip_Yellow_I_100_A240_L12700.STL" />
+      </geometry>
+      <material name="orange">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Dispenser_Tips/Dis_Tip_Yellow_I_100_A240_L12700.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="1K_Dispenser_Tip">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="1K_Dispenser_Tip_Joint" type="fixed">
+    
+    <origin rpy="0 0 0" xyz="0.000 0 0 " />
+    <parent link="1K_Dispenser_TCP" />
+    <child link="Dis_Tip_Yellow_I_100_A240_L12700" />
+  </joint>
+  
+  <link name="2K_Glue_Cartridge">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000286904622212703 -0.0363382955214142 0.157114812049142" />
+      <mass value="0.410111177184055" />
+      <inertia ixx="0.00156205497813664" ixy="-4.41612447012715E-06" ixz="-9.93222982118684E-08" iyy="0.00154767600658026" iyz="-1.49654417442962E-06" izz="0.000122541965999881" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/2K_Glue_Cartridge.STL" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/2K_Glue_Cartridge.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="2K_Dispenser_Cartridge">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="2K_Dispenser_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="-0.169 0.01176 -0.424" />
+    <parent link="Z_Axis" />
+    <child link="2K_Glue_Cartridge" />
+    <axis xyz="0 0 1" />
+    <limit effort="100" lower="-0.04" upper="0.00" velocity="0.1" />
+  </joint>
+  <link name="2K_Dispenser_TCP">
+    </link>
+  <joint name="2K_Dispenser_TCP_Joint" type="fixed">
+    <origin rpy="         0.0          0.0          0.0" xyz="         0.0          -0.045          -0.04614" />
+    <parent link="2K_Glue_Cartridge" />
+    <child link="2K_Dispenser_TCP" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Cam1_Toolhead_TCP">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.00294756628931103 0.0112908552453015 0.186544370768599" />
+      <mass value="0.222202026755256" />
+      <inertia ixx="0.000198536268283264" ixy="-2.57443493637635E-07" ixz="-2.33028260890714E-06" iyy="0.00020443076967091" iyz="-8.54446341843522E-06" izz="4.76896342979841E-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Cam1_Toolhead_TCP.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Cam1_Toolhead_TCP.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Cam1_Toolhead_TCP">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Cam1_Toolhead_TCP_Joint" type="fixed">
+    <origin rpy="         0.0          0.0          0.0" xyz="         -0.0320000000000003          -0.0579999999999998          -0.515338706" />
+    <parent link="Z_Axis" />
+    <child link="Cam1_Toolhead_TCP" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Laser_Kopf_TCP">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.00143426339843722 0.014826109459576 0.0588947661972293" />
+      <mass value="0.185632781644417" />
+      <inertia ixx="0.00018384097226268" ixy="5.39428478530615E-09" ixz="-6.26322611599089E-07" iyy="0.000136967759808617" iyz="6.13082513214026E-07" izz="7.65210217467237E-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Laser_Kopf_TCP.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Laser_Kopf_TCP.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Laser_Toolhead_TCP">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Laser_Toolhead_TCP_Joint" type="fixed">
+    <origin rpy="           0.0            0.0            0.0" xyz="           0.147498952947694            -0.0739999732334102            -0.495500146516092" />
+    <parent link="Z_Axis" />
+    <child link="Laser_Kopf_TCP" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Test_Station">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0250000000000002 0.0791274046351475 -0.154851137332961" />
+      <mass value="1.39099524679326" />
+      <inertia ixx="0.00780193904512034" ixy="-2.61717009512019E-6" ixz="-4.79910370720457E-6" iyy="0.00547600691976027" iyz="9.87499782602546E-6" izz="0.00281708795214926" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Test_Station.STL" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Test_Station.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Test_Station_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.075 0.3265 0.298" />
+    <parent link="pm_robot_base_link" />
+    <child link="Test_Station" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Camera_Station">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0886413519365855 0.189925462464436 0.138483690350839" />
+      <mass value="2.70231148841738" />
+      <inertia ixx="0.0183035942970588" ixy="1.26351026901094E-05" ixz="-2.79575355635167E-06" iyy="0.00441812287973743" iyz="5.22848888698871E-05" izz="0.0193956330708548" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Camera_Station.STL" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Camera_Station.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Camera_Station_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.4525 0.3125 0" />
+    <parent link="pm_robot_base_link" />
+    <child link="Camera_Station" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="Camera_Station_TCP">
+    </link>
+  <joint name="Camera_Station_TCP_Joint" type="fixed">
+    <origin rpy="         0.0          0.0          0.0" xyz="         0.08          0.092783          0.3045" />
+    <parent link="Camera_Station" />
+    <child link="Camera_Station_TCP" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="Station_Laser_Bottom_TCP">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.00143426339843278 -0.0148261094595752 -0.0588947661972306" />
+      <mass value="0.185632781644417" />
+      <inertia ixx="0.000183840972262678" ixy="-5.39428478522435E-09" ixz="6.26322611589981E-07" iyy="0.000136967759808615" iyz="6.13082513215402E-07" izz="7.65210217467232E-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Station_Laser_Bottom_TCP.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Station_Laser_Bottom_TCP.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Station_Laser_Bottom_TCP_Joint" type="fixed">
+    <origin rpy="             0.0              0.0              0.0" xyz="             0.181998910097099              0.0939999732334105              0.307500000000001" />
+    <parent link="Camera_Station" />
+    <child link="Station_Laser_Bottom_TCP" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Camera_Calibration_Platelet">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000344499007125409 0.0696122748122424 0.000295151280628292" />
+      <mass value="0.0334016358510876" />
+      <inertia ixx="2.05104945364406E-05" ixy="-1.61006130053269E-08" ixz="-7.42638002033627E-6" iyy="2.64967112268826E-06" iyz="4.64472618194223E-07" izz="2.23824646029018E-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Camera_Calibration_Platelet.STL" />
+      </geometry>
+      <material name="green" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Camera_Calibration_Platelet.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Camera_Calibration_Platelet_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.08 -0.0805 0.293" />
+    <parent link="Camera_Station" />
+    <child link="Camera_Calibration_Platelet" />
+    <axis xyz="0 -1 0" />
+    <limit effort="100" lower="-0.04" upper="0.0" velocity="0.5" />
+  </joint>
+  
+  <link name="Calibration_Qube">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 -5.55111512312578E-6 -0.007418215969486" />
+      <mass value="0.000608132735199849" />
+      <inertia ixx="3.05434929012605E-04" ixy="2.70098962651108E-6" ixz="-1.09265340380468E-6" iyy="3.05434929012605E-04" iyz="6.45610037231024E-6" izz="5.52989859299796E-04" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Calibration_Qube.STL" />
+      </geometry>
+      <material name="green" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Calibration_Qube.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Calibration_Qube">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Calibration_Qube_Joint" type="prismatic">
+    <origin rpy="           0.0            0.0            0.0" xyz="           0.154            0.108            0.305" />
+    <parent link="Camera_Station" />
+    <child link="Calibration_Qube" />
+    <axis xyz="0 0 1" />
+    <limit effort="0" lower="-0.008" upper="0" velocity="0.005" />
+  </joint>
+  
+  
+  
+  <link name="Tool_Schunk_SPT_Holder">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-5.23913406004772E-05 3.02196159816615E-05 0.0222290213656595" />
+      <mass value="0.0172841989183379" />
+      <inertia ixx="0.0734343917353869" ixy="-5.65230035141878e-06" ixz="-0.000161953758832679" iyy="0.0377139193260435" iyz="0.00720112978111611" izz="0.0598441739891415" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/SPT_Toolholder/Tool_Schunk_SPT_Holder.STL" />
+      </geometry>
+      <material name="grey">
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/SPT_Toolholder/Tool_Schunk_SPT_Holder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="PM_Robot_Vacuum_Tool">
+    <turnGravityOff>true</turnGravityOff>
+    <color>1.0 0 0.5 1.0</color>
+  </gazebo>
+  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="PM_Robot_Tool_TCP" />
+    <child link="Tool_Schunk_SPT_Holder" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="Tool_Tip_R_A1000_I500">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.00881061215391388" />
+      <mass value="0.00106303297474693" />
+      <inertia ixx="0.0734343917353869" ixy="-5.65230035141878e-06" ixz="-0.000161953758832679" iyy="0.0377139193260435" iyz="0.00720112978111611" izz="0.0598441739891415" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/SPT_Toolholder/Tips/Tool_Tip_R_A1000_I500.STL" />
+      </geometry>
+      <material name="white">
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/SPT_Toolholder/Tips/Tool_Tip_R_A1000_I500.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="PM_Robot_Vacuum_Tool_Tip">
+    <turnGravityOff>true</turnGravityOff>
+    <color>1.0 0 0.5 1.0</color>
+  </gazebo>
+  <joint name="PM_Robot_Vacuum_Tool_Tip_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="PM_Robot_Tool_TCP" />
+    <child link="Tool_Tip_R_A1000_I500" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="PM_Robot_Tool_TCP">
+  </link>
+  <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
+    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.07442" />
+    <parent link="Gripper_Rot_Plate" />
+    <child link="PM_Robot_Tool_TCP" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  
+  
+  <link name="Gonio_Base_Right">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0750000000000001 0.0875 0.0967750321735945" />
+      <mass value="0.735149712395275" />
+      <inertia ixx="0.00216092025189497" ixy="-1.14771309991733E-20" ixz="-3.69522069861046E-19" iyy="0.00218184071743384" iyz="5.29016162077308E-20" izz="0.000537834506363752" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Base_Right.STL" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Base_Right.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Gonio_Base_Right_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.750000000000003 0.9099999999999999 0" />
+    <parent link="pm_robot_base_link" />
+    <child link="Gonio_Base_Right" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Gonio_Right_Stage_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0473956245440273 0.0326775285629692 0.00802879322662528" />
+      <mass value="0.0706349432835732" />
+      <inertia ixx="1.8004068123271E-05" ixy="7.72258833076008E-11" ixz="1.39266767162876E-07" iyy="3.36962706733938E-05" iyz="-1.91981813996212E-11" izz="4.86217530226206E-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Stage_1.STL" />
+      </geometry>
+      <material name="grey" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Stage_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Gonio_Right_Stage_1_Bottom">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Gonio_Right_Stage_1_Bottom_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0425000000000001 0.055 0.1847" />
+    <parent link="Gonio_Base_Right" />
+    <child link="Gonio_Right_Stage_1" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Gonio_Right_Stage_1_Upper">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.23867349599571E-07 0.00776563461425855 -0.0788347959618214" />
+      <mass value="0.135485828183631" />
+      <inertia ixx="6.29207513367842E-05" ixy="-8.20165428667741E-11" ixz="3.32779841696372E-11" iyy="4.16210408086872E-05" iyz="1.10769519244758E-07" izz="9.7190851412307E-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Stage_1_Upper.STL" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Stage_1_Upper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Gonio_Right_Stage_1_Top">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Gonio_Right_Stage_1_Joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0324999999999993 0.0326774999999999 0.11" />
+    <parent link="Gonio_Right_Stage_1" />
+    <child link="Gonio_Right_Stage_1_Upper" />
+    <axis xyz="0 -1 0" />
+    <limit effort="100" lower="-0.087266" upper="0.087266" velocity="0.1" />
+  </joint>
+  
+  <link name="Gonio_Right_Stage_2_Upper">
+    <inertial>
+      <origin rpy="0 0 0" xyz="8.11599898398185E-10 -7.70700947505532E-10 -0.0578599597513433" />
+      <mass value="0.0546397543064688" />
+      <inertia ixx="1.83573872586574E-05" ixy="1.02198811435971E-11" ixz="3.03498623147601E-13" iyy="2.38958828661973E-05" iyz="8.61195754462734E-13" izz="3.93608749922961E-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Stage_2_Upper.STL" />
+      </geometry>
+      <material name="grey" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Stage_2_Upper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Gonio_Right_Stage_2_Bottom">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Gonio_Right_Stage_2_Joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="Gonio_Right_Stage_1_Upper" />
+    <child link="Gonio_Right_Stage_2_Upper" />
+    <axis xyz="-1 0 0" />
+    <limit effort="100" lower="-0.17453" upper="0.17453" velocity="0.1" />
+  </joint>
+  
+  <link name="Gonio_Right_Chuck_Origin">
+  </link>
+  <joint name="Gonio_Right_Chuck_Origin_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 -0.0499999999999999" />
+    <parent link="Gonio_Right_Stage_2_Upper" />
+    <child link="Gonio_Right_Chuck_Origin" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="Chuck_Double_Lens_Holder_12_7">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-9.19297095559313E-19 -2.27077957540206E-18 0.0172248900305356" />
+      <mass value="0.129863306528145" />
+      <inertia ixx="4.82948612003887e-05" ixy="-3.25500417801018e-21" ixz="1.64704228720239e-21" iyy="4.99204835318359e-05" iyz="-1.66535047771477e-23" izz="7.72305136475402e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Chucks/Chuck_Double_Lens_Holder_12_7.STL" />
+      </geometry>
+      <material name="white">
+    </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Chucks/Chuck_Double_Lens_Holder_12_7.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Gonio_Right_Chuck_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="Gonio_Right_Chuck_Origin" />
+    <child link="Chuck_Double_Lens_Holder_12_7" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Gonio_Right_Part_1_Origin">
+  </link>
+  <joint name="Gonio_Right_Part_1_Origin_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.009782273 0.0 0.056053231" />
+    <parent link="Gonio_Right_Chuck_Origin" />
+    <child link="Gonio_Right_Part_1_Origin" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Gonio_Right_Part_2_Origin">
+  </link>
+  <joint name="Gonio_Right_Part_2_Origin_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.009782273 0.0 0.056053231" />
+    <parent link="Gonio_Right_Chuck_Origin" />
+    <child link="Gonio_Right_Part_2_Origin" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  
+  
+  <link name="Gonio_Left_Base">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.177919402818021 0.0965286177417367 0.101012071345888" />
+      <mass value="4.83318674398637" />
+      <inertia ixx="0.0115127403940929" ixy="-3.33565784736103E-05" ixz="-1.45496624993124E-06" iyy="0.0188686138682557" iyz="-2.7618864699939E-05" izz="0.026985073699425" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Base.STL" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Base.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Gonio_Left_Base_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.14249999999998 0.295499999999939 0" />
+    <parent link="pm_robot_base_link" />
+    <child link="Gonio_Left_Base" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Gonio_Left_Stage_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.059782487896749 0.00877925652714845 -0.0446785627316222" />
+      <mass value="0.578798857286943" />
+      <inertia ixx="0.000400478324367351" ixy="-0.000129239522587819" ixz="7.82346515336273E-07" iyy="0.00157904583991977" iyz="-5.25968237719779E-06" izz="0.00188005175520343" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Stage_1.STL" />
+      </geometry>
+      <material name="grey" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Stage_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Gonio_Left_Stage_1_Top">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Gonio_Left_Stage_1_Joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.188500000000042 0.110000000000054 0.212499999999997" />
+    <parent link="Gonio_Left_Base" />
+    <child link="Gonio_Left_Stage_1" />
+    <axis xyz="1 0 0" />
+    <limit effort="100" lower="-0.17453" upper="0.17453" velocity="0.1" />
+  </joint>
+  
+  <link name="Gonio_Left_Stage_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="4.69633887334453E-10 4.9960036108132E-16 -0.0212004572137997" />
+      <mass value="0.02706267019929" />
+      <inertia ixx="6.08758948397044E-06" ixy="4.1172957090613E-14" ixz="-8.65658801813879E-13" iyy="4.36785274885666E-06" iyz="-3.36683105860672E-21" izz="9.6064002937604E-06" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Stage_2.STL" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Stage_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Gonio_Left_Stage_2_Joint">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Gonio_Left_Stage_2_Joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="Gonio_Left_Stage_1" />
+    <child link="Gonio_Left_Stage_2" />
+    <axis xyz="0 -1 0" />
+    <limit effort="100" lower="-0.17453" upper="0.17453" velocity="0.1" />
+  </joint>
+  
+  <link name="Gonio_Left_Chuck_Origin">
+    </link>
+  <joint name="Gonio_Left_Chuck_Origin_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 -0.015" />
+    <parent link="Gonio_Left_Stage_2" />
+    <child link="Gonio_Left_Chuck_Origin" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="Chuck_ipeg_Demonstrator">
+    <inertial>
+      <origin rpy="0 0 0" xyz="2.67452024915572E-05 0.00473435482735033 0.0506333248330911" />
+      <mass value="0.11530970264759" />
+      <inertia ixx="2.48390077396091e-05" ixy="-8.88685892499368e-09" ixz="-3.6912429939074e-08" iyy="3.71154973701588e-05" iyz="-3.86161448630438e-07" izz="3.3978117134478e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Chucks/Chuck_ipeg_Demonstrator.STL" />
+      </geometry>
+      <material name="white">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Chucks/Chuck_ipeg_Demonstrator.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Gonio_Left_Chuck_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="Gonio_Left_Chuck_Origin" />
+    <child link="Chuck_ipeg_Demonstrator" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Gonio_Left_Part_Origin">
+    </link>
+  <joint name="Gonio_Left_Part_Origin_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.01 0.015 0.10105" />
+    <parent link="Gonio_Left_Chuck_Origin" />
+    <child link="Gonio_Left_Part_Origin" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <gazebo reference="Gonio_Left_Chuck">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  
+  <link name="UV_Cart_X_Front">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0678075668801579 -0.00614110312679139 0.0281452705871906" />
+      <mass value="0.123081615016624" />
+      <inertia ixx="5.17246869963476E-05" ixy="5.73233720860217E-08" ixz="1.10286553709345E-07" iyy="6.01963900555089E-05" iyz="-1.95135766107832E-09" izz="0.0001085863059652" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/UV_Cart_X_Front.STL" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/UV_Cart_X_Front.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="UV_Slider_X_Front_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.0785000000000391 0.0200000000000492 0.234999999999997" />
+    <parent link="Gonio_Left_Base" />
+    <child link="UV_Cart_X_Front" />
+    <axis xyz="1 0 0" />
+    <limit effort="100" lower="0" upper="0.095" velocity="0.05" />
+  </joint>
+  
+  <link name="UV_Cart_Front">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.00149625706477036 0.00485466541438256 0.010590788590885" />
+      <mass value="0.119915229322348" />
+      <inertia ixx="8.58688559917156E-05" ixy="-9.33412701053303E-06" ixz="2.12947225159946E-07" iyy="1.98652848189388E-05" iyz="9.66953808700587E-07" izz="0.00010123498655613" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/UV_Cart_Front.STL" />
+      </geometry>
+      <material name="grey" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/UV_Cart_Front.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="UV_LED_Front_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.0649999999999999 -0.0540000000000002 0.0496999999988213" />
+    <parent link="UV_Cart_X_Front" />
+    <child link="UV_Cart_Front" />
+    <axis xyz="0 1 0" />
+    <limit effort="100" lower="-0.0157" upper="0.0" velocity="0.5" />
+  </joint>
+  
+  <link name="UV_Cart_X_Back">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0621924331202753 0.00614110312652594 0.0281452705830895" />
+      <mass value="0.123081615017413" />
+      <inertia ixx="5.17246869964295E-05" ixy="5.73233722279355E-08" ixz="-1.10286553628501E-07" iyy="6.01963900556179E-05" iyz="1.95135762598339E-09" izz="0.000108586305965351" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/UV_Cart_X_Back.STL" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/UV_Cart_X_Back.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="UV_Slider_X_Back_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.0785000000000389 0.200000000000049 0.234999999999998" />
+    <parent link="Gonio_Left_Base" />
+    <child link="UV_Cart_X_Back" />
+    <axis xyz="1 0 0" />
+    <limit effort="0.05" lower="0" upper="0.045" velocity="100" />
+  </joint>
+  
+  <link name="UV_Cart_Back">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.00149625706477086 -0.00485466541438306 0.0105907885908847" />
+      <mass value="0.119915229322348" />
+      <inertia ixx="8.58688559917144E-05" ixy="-9.33412701053305E-06" ixz="-2.12947225160345E-07" iyy="1.98652848189388E-05" iyz="-9.66953808700748E-07" izz="0.000101234986556129" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/UV_Cart_Back.STL" />
+      </geometry>
+      <material name="grey" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/UV_Cart_Back.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="UV_LED_Back_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.0649999999999949 0.0539999999999998 0.0496999999948266" />
+    <parent link="UV_Cart_X_Back" />
+    <child link="UV_Cart_Back" />
+    <axis xyz="0 1 0" />
+    <limit effort="100" lower="-0.0157" upper="0.0" velocity="0.05" />
+  </joint>
+  
+  
+  
+  <link name="SmarPod_Origin">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000115674408481878 4.3455677874632E-01 0.00518901166455497" />
+      <mass value="500.360244074757092" />
+      <inertia ixx="0.00100587075765343" ixy="2.39856870538707E-01" ixz="2.80480689068284E-01" iyy="0.00101471193331311" iyz="-9.50059374674845E-01" izz="0.00201708421229238" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/SmarPod_Origin.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/SmarPod_Origin.STL" />
+      </geometry>
+    </collision>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  
+  <joint name="SmarPod_Origin_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="Smarpod_Station_Base" />
+    <child link="SmarPod_Origin" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="SP_X_Axis">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.13867117656886 0.0294673421865695 0.0322225410424505" />
+      <mass value="3.46651857022574" />
+      <inertia ixx="0.0263967056575219" ixy="-0.000746452162875097" ixz="-6.60103497268881E-01" iyy="0.0104790265642698" iyz="-0.000507544087069928" izz="0.0342327102580871" />
+    </inertial>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="SP_X_Axis">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="SP_X_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.0573743036851433" />
+    <parent link="SmarPod_Origin" />
+    <child link="SP_X_Axis" />
+    <axis xyz="1 0 0" />
+    <limit effort="0.1" lower="-0.01" upper="0.01" velocity="35" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="SP_Y_Axis">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.13867117656886 0.0294673421865695 0.0322225410424505" />
+      <mass value="3.46651857022574" />
+      <inertia ixx="0.0263967056575219" ixy="-0.000746452162875097" ixz="-6.60103497268881E-01" iyy="0.0104790265642698" iyz="-0.000507544087069928" izz="0.0342327102580871" />
+    </inertial>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="SP_Y_Axis">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="SP_Y_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.0" />
+    <parent link="SP_X_Axis" />
+    <child link="SP_Y_Axis" />
+    <axis xyz="0 1 0" />
+    <limit effort="0.1" lower="-0.01" upper="0.01" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="SP_Z_Axis">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.13867117656886 0.0294673421865695 0.0322225410424505" />
+      <mass value="3.46651857022574" />
+      <inertia ixx="0.0263967056575219" ixy="-0.000746452162875097" ixz="-6.60103497268881E-01" iyy="0.0104790265642698" iyz="-0.000507544087069928" izz="0.0342327102580871" />
+    </inertial>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="SP_Z_Axis">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="SP_Z_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.0" />
+    <parent link="SP_Y_Axis" />
+    <child link="SP_Z_Axis" />
+    <axis xyz="0 0 1" />
+    <limit effort="0.1" lower="-0.01" upper="0.01" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="SP_A_Axis">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.13867117656886 0.0294673421865695 0.0322225410424505" />
+      <mass value="3.46651857022574" />
+      <inertia ixx="0.0263967056575219" ixy="-0.000746452162875097" ixz="-6.60103497268881E-01" iyy="0.0104790265642698" iyz="-0.000507544087069928" izz="0.0342327102580871" />
+    </inertial>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="SP_A_Axis">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="SP_A_Joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.0" />
+    <parent link="SP_Z_Axis" />
+    <child link="SP_A_Axis" />
+    <axis xyz="1 0 0" />
+    <limit effort="0.1" lower="-0.349066" upper="0.349066" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="SP_B_Axis">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.13867117656886 0.0294673421865695 0.0322225410424505" />
+      <mass value="3.46651857022574" />
+      <inertia ixx="0.0263967056575219" ixy="-0.000746452162875097" ixz="-6.60103497268881E-01" iyy="0.0104790265642698" iyz="-0.000507544087069928" izz="0.0342327102580871" />
+    </inertial>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="SP_B_Axis">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="SP_B_Joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.0" />
+    <parent link="SP_A_Axis" />
+    <child link="SP_B_Axis" />
+    <axis xyz="0 1 0" />
+    <limit effort="0.1" lower="-0.349066" upper="0.349066" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="SP_C_Axis">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.13867117656886 0.0294673421865695 0.0322225410424505" />
+      <mass value="3.46651857022574" />
+      <inertia ixx="0.0263967056575219" ixy="-0.000746452162875097" ixz="-6.60103497268881E-01" iyy="0.0104790265642698" iyz="-0.000507544087069928" izz="0.0342327102580871" />
+    </inertial>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="SP_C_Axis">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="SP_C_Joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.0" />
+    <parent link="SP_B_Axis" />
+    <child link="SP_C_Axis" />
+    <axis xyz="0 0 1" />
+    <limit effort="0.1" lower="-0.349066" upper="0.349066" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Smarpod_Top_Plate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-8.97776294070382E-01 7.62020262626441E-01 0.00496321958307749" />
+      <mass value="0.1" />
+      <inertia ixx="5.78544111423082E-01" ixy="-1.0594309472348E-01" ixz="-3.55606498481884E-01" iyy="5.78606868887532E-01" iyz="-5.52110095884091E-01" izz="0.000115234659795365" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_Top_Plate.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_Top_Plate.STL" />
+      </geometry>
+    </collision>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="Smarpod_Top_Plate">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Smarpod_Top_Plate_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="SP_C_Axis" />
+    <child link="Smarpod_Top_Plate" />
+    <axis xyz="0 0 0" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  
+  
+  <link name="Smarpod_A_Stage_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.16023578801785E-01 0.0247751892546865 -0.000210361878445467" />
+      <mass value="0.1" />
+      <inertia ixx="5.51700011610151E-01" ixy="-1.75203964008593E-01" ixz="-1.80526055393165E-01" iyy="7.25629781746008E-01" iyz="2.16722973573367E-01" izz="1.253258476352E-01" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_A_Stage_1.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_A_Stage_1.STL" />
+      </geometry>
+    </collision>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="Smarpod_A_Stage_1">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Smarpod_A_Stage_1_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0 -0.11 0.0233" />
+    <parent link="SmarPod_Origin" />
+    <child link="Smarpod_A_Stage_1" />
+    <axis xyz="0 -1 0" />
+    <limit effort="0.1" lower="-0.02" upper="0.02" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Smarpod_A_Stage_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000652857985147887 0.0300494777131996 0.009177736372205" />
+      <mass value="0.1" />
+      <inertia ixx="9.98096864448635E-01" ixy="4.31001961659525E-01" ixz="-2.37088268452878E-01" iyy="7.66831650403072E-01" iyz="-7.46550390643979E-01" izz="1.38109251264444E-01" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_A_Stage_2.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_A_Stage_2.STL" />
+      </geometry>
+    </collision>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="Smarpod_A_Stage_2">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Smarpod_A_Stage_2_Joint" type="prismatic">
+    <origin rpy="0 0 -1.5707963267949" xyz="-0.03 0.0212386752719503 0.011" />
+    <parent link="Smarpod_A_Stage_1" />
+    <child link="Smarpod_A_Stage_2" />
+    <axis xyz="0 -1 0" />
+    <limit effort="0.1" lower="-0.02" upper="0.02" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Smarpod_A_Stage_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.22225478481848E-01 0.0141591617382052 -0.00740478303750262" />
+      <mass value="0.1" />
+      <inertia ixx="1.40743142173703E-01" ixy="1.10344892086608E-01" ixz="-8.16577255284425E-01" iyy="4.43146869340753E-01" iyz="5.7188915279526E-01" izz="1.10867849001894E-01" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_A_Stage_3.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_A_Stage_3.STL" />
+      </geometry>
+    </collision>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="Smarpod_A_Stage_3">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Smarpod_A_Stage_3_Joint" type="prismatic">
+    <origin rpy="0 0 1.5707963267949" xyz="-0.00253689759876602 0.03 0.0259362157397364" />
+    <parent link="Smarpod_A_Stage_2" />
+    <child link="Smarpod_A_Stage_3" />
+    <axis xyz="0 -0.86602540378444 0.499999999999997" />
+    <limit effort="0.1" lower="-0.02" upper="0.02" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Smarpod_C_Stage_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.16023570812937E-01 0.0247751893114078 -0.000210361915583886" />
+      <mass value="0.1" />
+      <inertia ixx="5.51700014477524E-01" ixy="-1.75203964262733E-01" ixz="-1.80526056563053E-01" iyy="7.25629784611764E-01" iyz="2.16722973572946E-01" izz="1.25325847547698E-01" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_C_Stage_1.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_C_Stage_1.STL" />
+      </geometry>
+    </collision>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="Smarpod_C_Stage_1">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Smarpod_C_Stage_1_Joint" type="prismatic">
+    <origin rpy="0 0 2.09439510239321" xyz="0.0952627944162877 0.0550000000000009 0.0233" />
+    <parent link="SmarPod_Origin" />
+    <child link="Smarpod_C_Stage_1" />
+    <axis xyz="0 -1 0" />
+    <limit effort="0.1" lower="-0.02" upper="0.02" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Smarpod_C_Stage_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000652858062738612 0.03004947750205 0.00917773766627061" />
+      <mass value="0.1" />
+      <inertia ixx="9.98097100944404E-01" ixy="4.30995179502273E-01" ixz="-2.37088255097514E-01" iyy="7.66831673601403E-01" iyz="-7.46545924890167E-01" izz="1.38109269497091E-01" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_C_Stage_2.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_C_Stage_2.STL" />
+      </geometry>
+    </collision>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="Smarpod_C_Stage_2">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Smarpod_C_Stage_2_Joint" type="prismatic">
+    <origin rpy="0 0 -1.5707963267949" xyz="-0.0300000000000004 0.0212386752719508 0.0109999999999993" />
+    <parent link="Smarpod_C_Stage_1" />
+    <child link="Smarpod_C_Stage_2" />
+    <axis xyz="0 -1 0" />
+    <limit effort="0.1" lower="-0.02" upper="0.02" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Smarpod_C_Stage_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.2018486135323E-01 0.0141591609481026 -0.00740478322853082" />
+      <mass value="0.1" />
+      <inertia ixx="1.40743143835985E-01" ixy="1.06062795706572E-01" ixz="-7.88087766002222E-01" iyy="4.43146876561248E-01" iyz="5.71889148008975E-01" izz="1.1086784901102E-01" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_C_Stage_3.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_C_Stage_3.STL" />
+      </geometry>
+    </collision>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="Smarpod_C_Stage_3">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Smarpod_C_Stage_3_Joint" type="prismatic">
+    <origin rpy="0 0 1.5707963267949" xyz="-0.00253689759876601 0.0299999999999999 0.0259362157397364" />
+    <parent link="Smarpod_C_Stage_2" />
+    <child link="Smarpod_C_Stage_3" />
+    <axis xyz="0 -0.866025403784441 0.499999999999995" />
+    <limit effort="0.1" lower="-0.02" upper="0.02" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Smarpod_B_Stage_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.16023570813223E-01 0.0247751893114078 -0.0002103619156017" />
+      <mass value="0.1" />
+      <inertia ixx="5.51700014477523E-01" ixy="-1.75203963733502E-01" ixz="-1.80526056563058E-01" iyy="7.25629784611764E-01" iyz="2.16722973572947E-01" izz="1.25325847547698E-01" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_B_Stage_1.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_B_Stage_1.STL" />
+      </geometry>
+    </collision>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="Smarpod_B_Stage_1">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Smarpod_B_Stage_1_Joint" type="prismatic">
+    <origin rpy="0 0 -2.09439510239321" xyz="-0.0952627944162879 0.0550000000000004 0.0233" />
+    <parent link="SmarPod_Origin" />
+    <child link="Smarpod_B_Stage_1" />
+    <axis xyz="0 -1 0" />
+    <limit effort="0.1" lower="-0.02" upper="0.02" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Smarpod_B_Stage_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000652858067155968 0.0300494774330553 0.00917773767012908" />
+      <mass value="0.1" />
+      <inertia ixx="9.98097100964306E-01" ixy="4.30994857336727E-01" ixz="-2.37088255091762E-01" iyy="7.66831673583624E-01" iyz="-7.46545594865821E-01" izz="1.38109269497073E-01" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_B_Stage_2.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_B_Stage_2.STL" />
+      </geometry>
+    </collision>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="Smarpod_B_Stage_2">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Smarpod_B_Stage_2_Joint" type="prismatic">
+    <origin rpy="0 0 -1.5707963267949" xyz="-0.03 0.0212386752719502 0.0109999999999993" />
+    <parent link="Smarpod_B_Stage_1" />
+    <child link="Smarpod_B_Stage_2" />
+    <axis xyz="0 -1 0" />
+    <limit effort="0.1" lower="-0.02" upper="0.02" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Smarpod_B_Stage_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.22313518276452E-01 0.0141591609478842 -0.00740478322837319" />
+      <mass value="0.1" />
+      <inertia ixx="1.407431438344E-01" ixy="1.13557800874835E-01" ixz="-8.34213168697538E-01" iyy="4.43146876535531E-01" iyz="5.71889148001332E-01" izz="1.10867849008051E-01" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_B_Stage_3.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_B_Stage_3.STL" />
+      </geometry>
+    </collision>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <gazebo reference="Smarpod_B_Stage_3">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Smarpod_B_Stage_3_Joint" type="prismatic">
+    <origin rpy="0 0 1.5707963267949" xyz="-0.00253689759876589 0.03 0.0259362157397364" />
+    <parent link="Smarpod_B_Stage_2" />
+    <child link="Smarpod_B_Stage_3" />
+    <axis xyz="0 -0.866025403784442 0.499999999999994" />
+    <limit effort="0.1" lower="-0.02" upper="0.02" velocity="1" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Top_Plate_A">
+    <inertial>
+      <mass value="1.0" />
+      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1" />
+    </inertial>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <joint name="Top_Plate_A_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 -0.0588334882222388 0" />
+    <parent link="Smarpod_Top_Plate" />
+    <child link="Top_Plate_A" />
+    <axis xyz="0 0 0" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Top_Plate_B">
+    <inertial>
+      <mass value="1.0" />
+      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1" />
+    </inertial>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <joint name="Top_Plate_B_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.0509512951020539 0.0294167446162847 0" />
+    <parent link="Smarpod_Top_Plate" />
+    <child link="Top_Plate_B" />
+    <axis xyz="0 0 0" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  <link name="Top_Plate_C">
+    <inertial>
+      <mass value="1.0" />
+      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1" />
+    </inertial>
+    <gazebo>
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </link>
+  <joint name="Top_Plate_C_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0509512956853688 0.0294167436059538 0" />
+    <parent link="Smarpod_Top_Plate" />
+    <child link="Top_Plate_C" />
+    <axis xyz="0 0 0" />
+    <friction>
+      <ode>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+      </ode>
+    </friction>
+  </joint>
+  
+  <link name="Smarpod_Station">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0921880695439856 0.106740010574494 0.186664921950654" />
+      <mass value="0.782282249809798" />
+      <inertia ixx="0.00477442216909529" ixy="-5.89281059975844E-08" ixz="2.37578030999895E-10" iyy="0.00354235482448058" iyz="2.44320538923886E-08" izz="0.00631238764877303" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_Station.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Smarpod_Station.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Smarpod_Station_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.750000000000003 0.315 0" />
+    <parent link="pm_robot_base_link" />
+    <child link="Smarpod_Station" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="Smarpod_Station_Base">
+    
+  </link>
+  <joint name="Smarpod_Station_Base_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.09 0.0899999999999999 0.2136999999992" />
+    <parent link="Smarpod_Station" />
+    <child link="Smarpod_Station_Base" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Camera_Top_View_Link" />
+  <joint name="Camera_Top_View_Link_Joint" type="fixed">
+    <parent link="Cam1_Toolhead_TCP" />
+    <child link="Camera_Top_View_Link" />
+    <origin rpy="0 1.570796 0 " xyz="0.02 0.021 -0.16" />
+  </joint>
+  <link name="Camera_Top_View_Link_Optical" />
+  <joint name="Camera_Top_View_Link_Optical_Joint" type="fixed">
+    <parent link="Camera_Top_View_Link" />
+    <child link="Camera_Top_View_Link_Optical" />
+    <origin rpy="-1.570796 0 -1.570796 " xyz="0 0 0" />
+  </joint>
+  <gazebo reference="Camera_Top_View_Link">
+    <sensor name="Cam1" type="camera">
+      <pose>0 0 0 0 0 0 </pose>
+      
+      
+      <camera name="head">
+        <horizontal_fov>1.050453012</horizontal_fov>
+        <image>
+          <width>2592</width>
+          <height>1942</height>
+          <format>L8</format>
+        </image>
+        <clip>
+          <near>0.1</near>
+          <far>0.214</far>
+        </clip>
+        <lens>
+          <type>orthographic</type>
+          <scale_to_hfov>true</scale_to_hfov>
+        </lens>
+      </camera>
+      <plugin filename="libgazebo_ros_camera.so" name="camera_controller_cam1">
+        <topicName>pm_robot_description/cam1</topicName>
+        <frameName>Camera_Top_View_Link_Optical</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+  
+  <link name="Camera_Bottom_View_Link" />
+  <joint name="Camera_Bottom_View_Joint" type="fixed">
+    <parent link="Camera_Station_TCP" />
+    <child link="Camera_Bottom_View_Link" />
+    <origin rpy="0 -1.570796 0 " xyz="0.0 0 -0.754" />
+  </joint>
+  <link name="Camera_Bottom_View_Link_Optical" />
+  <joint name="Camera_Bottom_View_Link_Optical_Joint" type="fixed">
+    <parent link="Camera_Bottom_View_Link" />
+    <child link="Camera_Bottom_View_Link_Optical" />
+    <origin rpy="-1.570796 0 -1.570796 " xyz="0 0 0" />
+  </joint>
+  <gazebo reference="Camera_Bottom_View_Link">
+    <sensor name="Cam2" type="camera">
+      <pose>0 0 0 0 0 0 </pose>
+      <visualize>true</visualize>
+      <update_rate>14.6</update_rate>
+      <camera name="bottom">
+        <horizontal_fov>0.01</horizontal_fov>
+        <image>
+          <width>2592</width>
+          <height>1942</height>
+          <format>L8</format>
+        </image>
+        <clip>
+          <near>0.9</near>
+          <far>2.13</far>
+        </clip>
+        
+      </camera>
+      <plugin filename="libgazebo_ros_camera.so" name="camera_controller_cam2">
+        <topicName>pm_robot_description/cam2</topicName>
+        <frameName>Camera_Bottom_View_Link_Optical</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+  
+  <link name="laser_top_link" />
+  <joint name="laser_top_joint" type="fixed">
+    <parent link="Z_Axis" />
+    <child link="laser_top_link" />
+    <origin rpy="-1.570796 1.570796 0 " xyz="-0.08 0.122 -0.48" />
+  </joint>
+  <gazebo reference="laser_top_link">
+    <sensor name="laser_top" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>40</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.1</min_angle>
+            <max_angle>0.1</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.0057</min>
+          <max>0.0063</max>
+          <resolution>0.0001</resolution>
+        </range>
+        
+      </ray>
+      <plugin filename="libgazebo_ros_gpu_laser.so" name="gazebo_ros_head_hokuyo_controller">
+        <topicName>laser/scan</topicName>
+        <frameName>laser_top_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+  
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="X_Axis_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="Y_Axis_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="Z_Axis_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="T_Axis_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="1K_Dispenser_Flap_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="1K_Dispenser_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="2K_Dispenser_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="Gonio_Right_Stage_1_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="Gonio_Right_Stage_2_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="Camera_Calibration_Platelet_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="Gonio_Left_Stage_1_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="Gonio_Left_Stage_2_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="UV_Slider_X_Front_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="UV_LED_Front_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="UV_Slider_X_Back_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="UV_LED_Back_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="Calibration_Qube_Joint">
+      <command_interface name="position">
+                </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="SP_X_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="SP_Y_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="SP_Z_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="SP_A_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="SP_B_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="SP_C_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="Smarpod_A_Stage_1_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="Smarpod_A_Stage_2_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="Smarpod_A_Stage_3_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="Smarpod_B_Stage_1_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="Smarpod_B_Stage_2_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="Smarpod_B_Stage_3_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="Smarpod_C_Stage_1_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="Smarpod_C_Stage_2_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="Smarpod_C_Stage_3_Joint">
+      <command_interface name="position">
+    </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+  </ros2_control>
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>/home/match-mover/Documents/ros2_ws/install/pm_robot_description/share/pm_robot_description/config/pm_robot_control_sim_HW.yaml</parameters>
+      <parameters>/home/match-mover/Documents/ros2_ws/install/pm_robot_description/share/pm_robot_description/config/pm_robot_control_gonio_right_sim_HW.yaml</parameters>
+      <parameters>/home/match-mover/Documents/ros2_ws/install/pm_robot_description/share/pm_robot_description/config/pm_robot_control_gonio_left_sim_HW.yaml</parameters>
+      
+      <parameters>/home/match-mover/Documents/ros2_ws/install/smaract_hexapod_description/share/smaract_hexapod_description/config/smaract_hexapod_control_sim.yaml</parameters>
+      
+      
+      
+      
+      
+    </plugin>
+  </gazebo>
+<link name="Dis_Tip_Lavender_I_150_A310_L12700">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-3.29882314770198E-12 -2.87859854641722E-08 0.0233706132060024" />
+      <mass value="0.00266749600701752" />
+      <inertia ixx="7.71061807673942e-05" ixy="5.31796627071765e-05" ixz="-8.5237329598285e-05" iyy="7.72096804248683e-05" iyz="2.74255625257587e-05" izz="1.50227360147676e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Dispenser_Tips/Dis_Tip_Lavender_I_150_A310_L12700.STL" />
+      </geometry>
+      <material name="blue">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Dispenser_Tips/Dis_Tip_Lavender_I_150_A310_L12700.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="1K_Dispenser_Tip_Joint" type="fixed">
+    
+    <origin rpy="0 0 0" xyz="0.000 0 0 " />
+    <parent link="1K_Dispenser_TCP" />
+    <child link="Dis_Tip_Lavender_I_150_A310_L12700" />
+  </joint>
+  
+  <link name="Dis_Tip_Red_I_250_A520_L12700">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-3.29882314770198E-12 -2.87859854641722E-08 0.0233706132060024" />
+      <mass value="0.00266749600701752" />
+      <inertia ixx="0.0734343917353869" ixy="-5.65230035141878e-06" ixz="-0.000161953758832679" iyy="0.0377139193260435" iyz="0.00720112978111611" izz="0.0598441739891415" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Dispenser_Tips/Dis_Tip_Red_I_250_A520_L12700.STL" />
+      </geometry>
+      <material name="red">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Dispenser_Tips/Dis_Tip_Red_I_250_A520_L12700.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="1K_Dispenser_Tip_Joint" type="fixed">
+    
+    <origin rpy="0 0 0" xyz="0.000 0 0 " />
+    <parent link="1K_Dispenser_TCP" />
+    <child link="Dis_Tip_Red_I_250_A520_L12700" />
+  </joint>
+  
+  <link name="Chuck_Siemens_Carrier">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.00930287068817187 0.00707331634668878 0.0446054201819608" />
+      <mass value="0.193859196068301" />
+      <inertia ixx="6.69651317033426e-05" ixy="1.79270788880429e-07" ixz="-9.94006464209221e-07" iyy="0.000515179692722766" iyz="-1.11700651338439e-06" izz="0.00047114586366426" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Chucks/Chuck_Siemens_Carrier.STL" />
+      </geometry>
+      <material name="white">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Chucks/Chuck_Siemens_Carrier.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Gonio_Left_Chuck_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="Gonio_Left_Chuck_Origin" />
+    <child link="Chuck_Siemens_Carrier" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <joint name="Gonio_Left_Part_Origin_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.1022 0.0107 0.0695" />
+    <parent link="Gonio_Left_Chuck_Origin" />
+    <child link="Gonio_Left_Part_Origin" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Chuck_Siemens_Sensor">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-3.84147559289952E-05 0.00708674028490255 0.0372986610029385" />
+      <mass value="0.0867575149913972" />
+      <inertia ixx="1.95387514762084e-05" ixy="-3.94243659687735e-08" ixz="-7.05273020033425e-09" iyy="2.93438945343926e-05" iyz="-6.75363420168913e-07" izz="2.35055667738253e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Chucks/Chuck_Siemens_Sensor.STL" />
+      </geometry>
+      <material name="white">
+        </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Chucks/Chuck_Siemens_Sensor.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Gonio_Left_Chuck_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="Gonio_Left_Chuck_Origin" />
+    <child link="Chuck_Siemens_Sensor" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <joint name="Gonio_Left_Part_Origin_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0175 0.023 0.09655" />
+    <parent link="Gonio_Left_Chuck_Origin" />
+    <child link="Gonio_Left_Part_Origin" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="Chuck_Siemens_UFC_Gonio_Right">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-4.91275391850676E-05 -7.08920350384057E-06 0.0216564841336891" />
+      <mass value="0.133934804202608" />
+      <inertia ixx="3.05433990945277e-05" ixy="-2.55507616624267e-10" ixz="-1.7486699307754e-08" iyy="4.80787890381723e-05" iyz="2.24246430305895e-09" izz="7.18729232269431e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Chucks/Chuck_Siemens_UFC_Gonio_Right.STL" />
+      </geometry>
+      <material name="white">
+    </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Chucks/Chuck_Siemens_UFC_Gonio_Right.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Gonio_Right_Chuck_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="Gonio_Right_Chuck_Origin" />
+    <child link="Chuck_Siemens_UFC_Gonio_Right" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <joint name="Gonio_Right_Part_1_Origin_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0175 0.01025 0.0525" />
+    <parent link="Gonio_Right_Chuck_Origin" />
+    <child link="Gonio_Right_Part_1_Origin" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <joint name="Gonio_Right_Part_2_Origin_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.0" />
+    <parent link="Gonio_Right_Chuck_Origin" />
+    <child link="Gonio_Right_Part_2_Origin" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  
+  
+  <link name="IpeG_Active_Alignment_Station">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0292710890999095 0.00164466917936382 0.0348012213776075" />
+      <mass value="0.387992554413035" />
+      <inertia ixx="0.000243333487720992" ixy="1.53164380354745e-06" ixz="1.38682871462652e-05" iyy="0.000229594321317007" iyz="-4.74747342704676e-06" izz="0.000267600696367442" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Chucks/IpeG_Active_Alignment_Station.STL" />
+      </geometry>
+      <material name="white">
+    </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Gonio_Right/Gonio_Right_Chucks/IpeG_Active_Alignment_Station.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Gonio_Right_Chuck_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="Gonio_Right_Chuck_Origin" />
+    <child link="IpeG_Active_Alignment_Station" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <joint name="Gonio_Right_Part_1_Origin_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0035 0.1 0.0476" />
+    <parent link="Gonio_Right_Chuck_Origin" />
+    <child link="Gonio_Right_Part_1_Origin" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="PM_Robot_Tool_TCP_Tip_R_A1000_I500" />
+    <child link="Tool_Schunk_SPT_Holder" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <joint name="PM_Robot_Vacuum_Tool_Tip_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="PM_Robot_Tool_TCP_Tip_R_A1000_I500" />
+    <child link="Tool_Tip_R_A1000_I500" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="PM_Robot_Tool_TCP_Tip_R_A1000_I500">
+  </link>
+  <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
+    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.07442" />
+    <parent link="Gripper_Rot_Plate" />
+    <child link="PM_Robot_Tool_TCP_Tip_R_A1000_I500" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  
+  
+  <link name="Tool_Holder_Siemens_Vacuum_Array">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0001252666624285 -8.73670257350925E-05 0.0143350430460158" />
+      <mass value="0.0221301374746933" />
+      <inertia ixx="3.46416743890629e-05" ixy="-5.11326964427359e-05" ixz="-3.3181423255289e-05" iyy="2.42108157991381e-05" iyz="-5.95705687984465e-05" izz="5.35218008422331e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Holder_Siemens_Vacuum_Array.STL" />
+      </geometry>
+      <material name="grey">
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Holder_Siemens_Vacuum_Array.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array" />
+    <child link="Tool_Holder_Siemens_Vacuum_Array" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="Tool_Tip_Vacuum_Array">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.29186788957441E-21 7.60244056032738E-20 0.00881061215391388" />
+      <mass value="0.00384481220269709" />
+      <inertia ixx="2.45892988803428e-05" ixy="-2.98920423975232e-05" ixz="-3.90727092319594e-05" iyy="3.52128939197889e-05" iyz="-1.17218991534775e-05" izz="5.82868910775811e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Tip_Vacuum_Array.STL" />
+      </geometry>
+      <material name="white">
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Tip_Vacuum_Array.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="PM_Robot_Vacuum_Tool_Tip_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array" />
+    <child link="Tool_Tip_Vacuum_Array" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array">
+  </link>
+  <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
+    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.07042000000000001" />
+    <parent link="Gripper_Rot_Plate" />
+    <child link="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  
+  
+  <link name="Tool_Schunk_Lens_Holder">
+    <inertial>
+      <origin rpy="0 0 0" xyz="1.94962067323612E-5 8.67361737988404E-5 0.00857148720935565" />
+      <mass value="0.000252215142180128" />
+      <inertia ixx="2.97527922886531e-05" ixy="-5.55102525874779e-05" ixz="1.68231331951212e-05" iyy="2.04734495928482e-05" iyz="-2.30568654913543e-05" izz="4.73717402562279e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper/Tool_Schunk_Lens_Holder.STL" />
+      </geometry>
+      <material name="grey">
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper/Tool_Schunk_Lens_Holder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="PM_Robot_Tool_TCP_Tip_Lens_12_7" />
+    <child link="Tool_Schunk_Lens_Holder" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="Tip_Lens_12_7">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.29186788957441E-21 7.60244056032738E-5 0.00881061215391388" />
+      <mass value="0.00384481220269709" />
+      <inertia ixx="1.36440715877095e-05" ixy="-3.53519310023124e-05" ixz="7.47710101979354e-05" iyy="3.91548342058176e-05" iyz="2.42885894721925e-05" izz="3.29488653146782e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper/Tips/Tip_Lens_12_7.STL" />
+      </geometry>
+      <material name="white">
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper/Tips/Tip_Lens_12_7.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="PM_Robot_Vacuum_Tool_Tip_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="PM_Robot_Tool_TCP_Tip_Lens_12_7" />
+    <child link="Tip_Lens_12_7" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="PM_Robot_Tool_TCP_Tip_Lens_12_7">
+  </link>
+  <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
+    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.07342" />
+    <parent link="Gripper_Rot_Plate" />
+    <child link="PM_Robot_Tool_TCP_Tip_Lens_12_7" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  
+  
+  <link name="Tool_Schunk_Lens_Holder_long">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-7.27367336112415E-05 7.45086790461934E-05 0.0362589765461052" />
+      <mass value="0.0201926555806949" />
+      <inertia ixx="2.9853615697905e-06" ixy="-5.05919548415697e-08" ixz="1.73675287109836e-09" iyy="2.04022017020586e-06" iyz="2.16027321887872e-09" izz="4.74384919822489e-06" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper_long/Tool_Schunk_Lens_Holder_long.STL" />
+      </geometry>
+      <material name="grey">
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper_long/Tool_Schunk_Lens_Holder_long.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="PM_Robot_Tool_TCP_Tip_Lens_12_7_long" />
+    <child link="Tool_Schunk_Lens_Holder_long" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="Tip_Lens_12_7_long">
+    <inertial>
+      <origin rpy="0 0 0" xyz="5.51768492007554E-11 0 0.0160617769778818" />
+      <mass value="0.00230092030303971" />
+      <inertia ixx="1.36440715877095e-05" ixy="-3.53519310023124e-05" ixz="7.47710101979354e-05" iyy="3.91548342058176e-05" iyz="2.42885894721925e-05" izz="3.29488653146782e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper_long/Tips/Tip_Lens_12_7_long.STL" />
+      </geometry>
+      <material name="white">
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper_long/Tips/Tip_Lens_12_7_long.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="PM_Robot_Vacuum_Tool_Tip_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="PM_Robot_Tool_TCP_Tip_Lens_12_7_long" />
+    <child link="Tip_Lens_12_7_long" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="PM_Robot_Tool_TCP_Tip_Lens_12_7_long">
+  </link>
+  <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
+    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.08942" />
+    <parent link="Gripper_Rot_Plate" />
+    <child link="PM_Robot_Tool_TCP_Tip_Lens_12_7_long" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  
+  
+  </robot>

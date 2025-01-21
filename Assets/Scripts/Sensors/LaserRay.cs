@@ -16,6 +16,7 @@ public class LaserRay : MonoBehaviour
     private LineRenderer lineRenderer;
     private double distance;
     private double distance_prev;
+    private bool isInitialized = false;
     private List<OPCUAWriteContainer> containerList;
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
@@ -73,7 +74,7 @@ public class LaserRay : MonoBehaviour
 
         if (mode == 0)
         {
-            OPCUA_Client.addToWriteContainer(gameObject.name, "Measurement");
+            OPCUA_Client.addToWriteContainer(gameObject.name, "Measurement", () => isInitialized = true);
         }
     }
 

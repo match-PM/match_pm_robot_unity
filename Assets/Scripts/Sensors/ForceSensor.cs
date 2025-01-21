@@ -19,6 +19,7 @@ public class ForceSensor : MonoBehaviour
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
     private List<OPCUAWriteContainer> containerList;
+    private bool isInitialized = false;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +28,7 @@ public class ForceSensor : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         forceSensor = GetComponent<ArticulationBody>();
         forceSensor.useGravity = false;
-        OPCUA_Client.addToWriteContainer("ForceSensor", "Measurements");
+        OPCUA_Client.addToWriteContainer("ForceSensor", "Measurements", () => isInitialized = true);
     }
 
     // async void writeForceValues()

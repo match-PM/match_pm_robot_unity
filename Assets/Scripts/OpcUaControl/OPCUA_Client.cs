@@ -20,7 +20,7 @@ public class OPCUA_Client : MonoBehaviour
     public CancellationTokenSource cts;
     private Subscription subscription;
     private Dictionary<string, Tuple<string, string>> monitoredItems;
-    public bool updateReady = false;
+    public bool updateReady = true;
     public bool IsConnected => session != null && session.Connected;
     public OPCUAWriteContainer writeContainer = new OPCUAWriteContainer();
 
@@ -35,7 +35,7 @@ public class OPCUA_Client : MonoBehaviour
         addMonitoredItems();
     }
 
-    public void addToWriteContainer(string parentName, string childName)
+    public void addToWriteContainer(string parentName, string childName, Action onComplete)
     {
         Debug.Log("Adding: " + parentName + "/" + childName);
         NodeId nId = allNodes[parentName + "/" + childName].nodeId;
@@ -44,6 +44,8 @@ public class OPCUA_Client : MonoBehaviour
         Variant initalValue = allNodes[parentName + "/" + childName].dataValue.WrappedValue;
         // Add the node to the write container.
         writeContainer.addToCollection(nId, parentName, childName, initalValue);
+
+        onComplete?.Invoke();
     }
 
     public void removeFromWriteContainer(string parentName, string childName)
