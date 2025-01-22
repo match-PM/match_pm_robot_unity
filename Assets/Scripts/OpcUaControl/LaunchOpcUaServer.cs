@@ -68,31 +68,28 @@ public class LaunchOpcUaServer : MonoBehaviour
     }
 
     // Shutdown when the application quits
-    async void OnApplicationQuit()
+    void OnApplicationQuit()
     {
         if (ros2Process != null && !ros2Process.HasExited)
         {
             try
             {
-                UnityEngine.Debug.Log("Shutting down opcua-server.");
-                ros2Process.Kill();
+                UnityEngine.Debug.Log("Shutting down OPC UA server...");
+                // This kills only the direct process, not children:
+                ros2Process.StandardInput.WriteLine("\x3"); // Ctrl+C
+                ros2Process.StandardInput.Flush();
 
-                // Wait asynchronously to avoid freezing Unity's main thread
-                await Task.Run(() =>
-                {
-                    if (!ros2Process.WaitForExit(5000)) // Wait up to 5 seconds
-                    {
-                        UnityEngine.Debug.LogWarning("opcua-server did not exit within timeout.");
-                    }
-                });
+                // Wait up to 5 seconds (blocking) for the process to exit
+                ros2Process.WaitForExit(5000); 
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.LogError($"Error while shutting down opcua-server: {e.Message}");
+                UnityEngine.Debug.LogError($"Error while shutting down OPC UA server: {e.Message}");
             }
             finally
             {
                 ros2Process.Dispose();
+                UnityEngine.Debug.Log("OPC UA server has been shut down.");
             }
         }
     }

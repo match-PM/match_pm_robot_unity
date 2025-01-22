@@ -28,7 +28,7 @@ public class ForceSensor : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         forceSensor = GetComponent<ArticulationBody>();
         forceSensor.useGravity = false;
-        OPCUA_Client.addToWriteContainer("ForceSensor", "Measurements", () => isInitialized = true);
+        OPCUA_Client.addToWriteContainer("ForceSensor", "Measurements");
     }
 
     // async void writeForceValues()

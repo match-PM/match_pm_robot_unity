@@ -84,7 +84,7 @@ public class PneumaticsControl : MonoBehaviour
         // If the mode is 0, add the dispenser's position to the write container of the OPC UA client
         if (mode == 0)
         {
-            OPCUA_Client.addToWriteContainer(gameObject.name, "Position" , () => isInitialized = true);
+            OPCUA_Client.addToWriteContainer(gameObject.name, "Position" );
         }
 
         isInitialized = true;

@@ -24,6 +24,8 @@ public class OPCUA_Client : MonoBehaviour
     public bool IsConnected => session != null && session.Connected;
     public OPCUAWriteContainer writeContainer = new OPCUAWriteContainer();
 
+    public bool nodesAreReady = false;
+
     async void Awake()
     {
         await InitClient();
@@ -35,7 +37,7 @@ public class OPCUA_Client : MonoBehaviour
         addMonitoredItems();
     }
 
-    public void addToWriteContainer(string parentName, string childName, Action onComplete)
+    public void addToWriteContainer(string parentName, string childName)
     {
         Debug.Log("Adding: " + parentName + "/" + childName);
         NodeId nId = allNodes[parentName + "/" + childName].nodeId;
@@ -44,8 +46,7 @@ public class OPCUA_Client : MonoBehaviour
         Variant initalValue = allNodes[parentName + "/" + childName].dataValue.WrappedValue;
         // Add the node to the write container.
         writeContainer.addToCollection(nId, parentName, childName, initalValue);
-
-        onComplete?.Invoke();
+        nodesAreReady = true;
     }
 
     public void removeFromWriteContainer(string parentName, string childName)

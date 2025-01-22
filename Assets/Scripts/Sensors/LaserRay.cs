@@ -74,7 +74,7 @@ public class LaserRay : MonoBehaviour
 
         if (mode == 0)
         {
-            OPCUA_Client.addToWriteContainer(gameObject.name, "Measurement", () => isInitialized = true);
+            OPCUA_Client.addToWriteContainer(gameObject.name, "Measurement");
         }
     }
 

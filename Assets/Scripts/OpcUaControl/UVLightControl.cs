@@ -61,7 +61,7 @@ public class UVLightControl : MonoBehaviour
     void writeUVValues()
     {
         // Add the UV light state to the write container of the OPC UA client
-        OPCUA_Client.addToWriteContainer("HoenleUV", "OnOff", () => isInitialized = true);
+        OPCUA_Client.addToWriteContainer("HoenleUV", "OnOff");
         // Update the state reading array with the current state
         stateReading[ArrayIndex] = currentState;
         // Create a variant to hold the updated state reading
