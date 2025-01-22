@@ -76,6 +76,8 @@ public class LaserRay : MonoBehaviour
         {
             OPCUA_Client.addToWriteContainer(gameObject.name, "Measurement");
         }
+
+        isInitialized = true;
     }
 
     // Update is called once per frame
@@ -83,7 +85,7 @@ public class LaserRay : MonoBehaviour
     {
         renderLine();
 
-        if (mode == 0 && OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
+        if (isInitialized && mode == 0 && OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
         {
             writeLaserDistance();
         }

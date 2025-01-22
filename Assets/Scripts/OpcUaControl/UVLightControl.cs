@@ -19,7 +19,6 @@ public class UVLightControl : MonoBehaviour
     private GameObject robotGameObject;
     private List<OPCUAWriteContainer> containerList;
     private Light UVLight;
-    private bool isInitialized = false;
     private bool[] stateReading;
     private bool[] writeValues;
     private bool currentState = false;

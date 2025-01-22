@@ -19,7 +19,6 @@ public class ForceSensor : MonoBehaviour
     private OPCUA_Client OPCUA_Client;
     private GameObject robotGameObject;
     private List<OPCUAWriteContainer> containerList;
-    private bool isInitialized = false;
 
     // Start is called before the first frame update
     void Start()
@@ -31,20 +30,20 @@ public class ForceSensor : MonoBehaviour
         OPCUA_Client.addToWriteContainer("ForceSensor", "Measurements");
     }
 
-    // async void writeForceValues()
-    // {
-    //     forceData[2] = (double)forceSensor.driveForce[0];
-    //     Debug.Log(forceData[2]);
-    //     containerList[0].writeValue = new DataValue(forceData);
-    //     await OPCUA_Client.WriteValues(containerList);
-    // }
+    void writeForceValues()
+    {
+        forceData[2] = (double)forceSensor.driveForce[0];
+        Debug.Log(forceData[2]);
+        Variant forceValues = new Variant(forceData);
+        OPCUA_Client.writeToServer("ForceSensor", "Measurements", forceValues);
+    }
 
     // Update is called once per frame
     void Update()
     {
-        // if (OPCUA_Client.updateReady)
-        // {
-        //     writeForceValues();
-        // }
+        if (OPCUA_Client.updateReady)
+        {
+            writeForceValues();
+        }
     }
 }
