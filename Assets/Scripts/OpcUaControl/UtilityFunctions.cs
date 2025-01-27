@@ -1,13 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Linq;
+using System.IO;
+
+using UnityEngine;
+
 using Opc.Ua;
 using Opc.Ua.Client;
 using Opc.Ua.Configuration;
-using System.Linq;
+
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
+
 
 
 namespace UtilityFunctions
@@ -72,7 +80,8 @@ namespace UtilityFunctions
                         turnLightsOnOff(currentState[i]);
                     }
                     state = currentState;
-                };
+                }
+                ;
 
                 if (currentColor != null && !color.Equals(new Color((float)currentColor[0], (float)currentColor[1], (float)currentColor[2], 1.0f)))
                 {
@@ -82,7 +91,8 @@ namespace UtilityFunctions
                         light.color = new Color((float)currentColor[0], (float)currentColor[1], (float)currentColor[2], 1.0f);
                     }
                     color = light.color;
-                };
+                }
+                ;
             }
 
             // Method to turn lights on or off based on the current activity.
@@ -204,7 +214,119 @@ namespace UtilityFunctions
 
             return currentColor;
         }
+
+
+
+        public static void hideGameObjects(List<GameObject> objectsToHide)
+        {
+            foreach (GameObject objectToHide in objectsToHide)
+            {
+                objectToHide.SetActive(false);
+            }
+        }
+
+        public static class YamlLoader
+        {
+            public static Dictionary<string, object> LoadYaml(string filepath)
+            {
+                Dictionary<string, object> dict = null;
+                try
+                {
+                    var deserializer = new DeserializerBuilder()
+                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                        .WithObjectFactory(new CustomObjectFactory()) // Use the custom object factory
+                        .Build();
+
+                    var yaml = File.ReadAllText(filepath);
+                    var rawObject = deserializer.Deserialize<object>(yaml);
+
+                    // Safely convert to Dictionary<string, object>
+                    dict = ConvertToDictionary(rawObject) as Dictionary<string, object>;
+
+                    if (dict == null)
+                    {
+                        throw new InvalidOperationException("YAML root object is not a dictionary");
+                    }
+
+                    // Recursively process the dictionary and convert booleans
+                    ProcessBooleansRecursively(dict);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occurred while loading the YAML file: " + ex);
+                }
+                return dict;
+            }
+
+
+            private static object ConvertToDictionary(object obj)
+            {
+                if (obj is Dictionary<object, object> originalDict)
+                {
+                    return originalDict.ToDictionary(
+                        entry => entry.Key.ToString(),
+                        entry => ConvertToDictionary(entry.Value) // Missing closing parentheses can cause issues
+                    );
+                }
+                else if (obj is List<object> list)
+                {
+                    return list.Select(ConvertToDictionary).ToList();
+                }
+                return obj; // Missing return can also cause issues
+            }
+
+
+            private static void ProcessBooleansRecursively(Dictionary<string, object> dict)
+            {
+                foreach (var key in dict.Keys.ToList())
+                {
+                    var value = dict[key];
+
+                    if (value is string strValue)
+                    {
+                        if (bool.TryParse(strValue, out bool boolValue))
+                        {
+                            dict[key] = boolValue;
+                        }
+                    }
+                    else if (value is Dictionary<string, object> nestedDict)
+                    {
+                        ProcessBooleansRecursively(nestedDict);
+                    }
+                    else if (value is List<object> list)
+                    {
+                        for (int i = 0; i < list.Count; i++)
+                        {
+                            if (list[i] is string itemStr && bool.TryParse(itemStr, out bool itemBool))
+                            {
+                                list[i] = itemBool;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public class CustomObjectFactory : IObjectFactory
+        {
+            public object Create(Type type)
+            {
+                if (type == typeof(Dictionary<object, object>))
+                {
+                    // Ensure dictionaries are created as Dictionary<string, object>
+                    return new Dictionary<string, object>();
+                }
+                if (type == typeof(List<object>))
+                {
+                    // Ensure lists are created properly
+                    return new List<object>();
+                }
+                return Activator.CreateInstance(type);
+            }
+        }
+
     }
+
 
 
     namespace OPCUA
@@ -269,3 +391,5 @@ namespace UtilityFunctions
         }
     }
 }
+
+
