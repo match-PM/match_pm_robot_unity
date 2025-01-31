@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using System.Text;
@@ -15,14 +16,13 @@ using System.Diagnostics.Tracing;
 
 public class configureRobot : MonoBehaviour
 {
-    string filepath = "/home/pmlab/pm_ros2_ws/install/pm_robot_bringup/share/pm_robot_bringup/config/pm_robot_bringup_config.yaml";
     Dictionary<string, object> dictionary;
     private string componentName = null;
-
 
     // Start is called before the first frame update
     void Start()
     {
+        string filepath = GetConfigFilePath("pm_robot_bringup", "pm_robot_bringup_config.yaml");
         dictionary = GenericFunctions.YamlLoader.LoadYaml(filepath);
 
         if (dictionary != null)
@@ -50,16 +50,16 @@ public class configureRobot : MonoBehaviour
 
         foreach (var kvp in dict)
         {
-            Debug.Log("Key: " + kvp.Key + " is tool: " + isTool);
+            //Debug.Log("Key: " + kvp.Key + " is tool: " + isTool);
 
             if (kvp.Key.StartsWith("use_"))
             {
-                Debug.Log("Checking key: " + kvp.Key);
+                //Debug.Log("Checking key: " + kvp.Key);
                 if (isTool)
                 {
                     if (kvp.Value is bool && (bool)kvp.Value)
                     {
-                        Debug.Log("Boolean tool in use: " + kvp.Key);
+                        //Debug.Log("Boolean tool in use: " + kvp.Key);
                         booleanToolUsed = true;
                         // Store unity_parent temporarily
                         useKey = kvp.Key;
@@ -73,7 +73,7 @@ public class configureRobot : MonoBehaviour
                             useKeyValue = "PM_Robot_Tool_TCP_" + (string)dict["use_jaw_type"];
                             currentUnityParent = dict["unity_parent"].ToString();  // Store unity_parent
                         }
-                        Debug.Log("Using Tool: " + useKeyValue);
+                        //Debug.Log("Using Tool: " + useKeyValue);
                     }
                 }
                 else
@@ -94,7 +94,7 @@ public class configureRobot : MonoBehaviour
         // Only handle unity_parent after tool selection is confirmed
         if (booleanToolUsed && !string.IsNullOrEmpty(currentUnityParent))
         {
-            Debug.Log("Unity Parent: " + currentUnityParent + " " + useKey + ": " + dict[useKey]);
+            //Debug.Log("Unity Parent: " + currentUnityParent + " " + useKey + ": " + dict[useKey]);
             GameObject gameObject = GameObject.Find(currentUnityParent);
             List<GameObject> childrenGameObjects = GenericFunctions.getChildrenGameObjects(gameObject);
             List<string> childrenNames = childrenGameObjects.Select(child => child.gameObject.name).ToList();
@@ -103,8 +103,8 @@ public class configureRobot : MonoBehaviour
             List<GameObject> objectsToHide = childrenGameObjects.Where(child => child.gameObject.name != bestMatch).ToList();
             for (int i = 0; i < objectsToHide.Count; i++)
             {
-                name = objectsToHide[i].name;
-                if (name.Equals("t_axis_tool"))
+                string childName = objectsToHide[i].name;
+                if (childName.Equals("t_axis_tool"))
                 {
                     objectsToHide.RemoveAt(i);
                 }
@@ -113,7 +113,7 @@ public class configureRobot : MonoBehaviour
         }
         else if (hasUseKey && hasUnityParentKey)
         {
-            Debug.Log("Unity Parent: " + unityParentValue + " " + useKey + ": " + dict[useKey]);
+            //Debug.Log("Unity Parent: " + unityParentValue + " " + useKey + ": " + dict[useKey]);
             GameObject gameObject = GameObject.Find(unityParentValue);
             List<GameObject> childrenGameObjects = GenericFunctions.getChildrenGameObjects(gameObject);
             List<string> childrenNames = childrenGameObjects.Select(child => child.gameObject.name).ToList();
@@ -187,5 +187,52 @@ public class configureRobot : MonoBehaviour
         return bestMatch;
     }
 
+    public static string GetROS2PackagePath(string packageName)
+    {
+        try
+        {
+            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "/bin/bash",
+                Arguments = "-c \"source /opt/ros/humble/setup.bash && ros2 pkg prefix " + packageName + "\"",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using (System.Diagnostics.Process process = new System.Diagnostics.Process { StartInfo = psi })
+            {
+                process.Start();
+                string packagePath = process.StandardOutput.ReadToEnd().Trim();
+                process.WaitForExit();
+
+                if (process.ExitCode == 0 && !string.IsNullOrEmpty(packagePath))
+                {
+                    return packagePath;
+                }
+                else
+                {
+                    Console.WriteLine($"Error finding ROS2 package '{packageName}': {process.StandardError.ReadToEnd()}");
+                    return null;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Exception while retrieving ROS2 package path: " + ex.Message);
+            return null;
+        }
+    }
+
+    public static string GetConfigFilePath(string packageName, string fileName)
+    {
+        string packagePath = GetROS2PackagePath(packageName);
+        if (!string.IsNullOrEmpty(packagePath))
+        {
+            return Path.Combine(packagePath, "share", packageName, "config", fileName);
+        }
+        return null;
+    }
 
 }
