@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Configuration class for a component in the model
@@ -16,6 +17,7 @@ public class ComponentConfig
 [System.Serializable]
 public class ArticulationBodyConfig
 {
+    public Vector3 anchorRotation;    
     public string collisionDetection;
     public float linearDamping;
     public float angularDamping;

@@ -53,6 +53,7 @@ public class SaveConfiguration
             {
                 articulationConfig = new ArticulationBodyConfig
                 {
+                    anchorRotation = articulationBody.anchorRotation.eulerAngles,
                     collisionDetection = articulationBody.collisionDetectionMode.ToString(),
                     linearDamping = articulationBody.linearDamping,
                     angularDamping = articulationBody.angularDamping,

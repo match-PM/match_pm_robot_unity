@@ -31,6 +31,7 @@ public class PneumaticsControl : MonoBehaviour
     {
         // Retrieve the move command value from the OPC UA client
         move = (int)OPCUA_Client.allNodes[gameObject.name + "/" + "MoveCommand"].dataValue.Value;
+
         if (lastMove != move)
         {
             if (move == 1)
@@ -49,6 +50,7 @@ public class PneumaticsControl : MonoBehaviour
     // Function to write the current state (position) of the dispenser to the OPC UA server
     void writeState()
     {
+
         // Check if the dispenser is at the upper limit position
         if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.upperLimit) < 0.001)
         {
