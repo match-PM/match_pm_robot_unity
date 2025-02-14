@@ -99,6 +99,7 @@
     <Compile Include="Assets/Scripts/configureRobot.cs" />
     <Compile Include="Assets/Scripts/Sensors/Camera2LightControl.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/tf_Ref/DrawCoordinates.cs" />
+    <Compile Include="Assets/CollisionDetection.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/DotnetTimeSource.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/TimeUtils.cs" />
     <Compile Include="Assets/Scripts/Joint_States_To_Axis.cs" />
