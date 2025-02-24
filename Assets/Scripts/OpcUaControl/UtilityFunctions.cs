@@ -58,15 +58,12 @@ namespace UtilityFunctions
             // The color of the light.
             public Color color;
 
-            public LightComponent(GameObject currentGameObject)
+            public LightComponent(List<Light> lightsList)
             {
-                this.name = currentGameObject.name;
-                this.parentObject = currentGameObject;
-                lights = new List<Light>();
+                lights = lightsList;
                 state = new List<bool>();
                 intensity = 1.0;
                 color = Color.white;
-                getLightComponentFormParent();
             }
 
             // Method to update the state and color of the light component based on input parameters.
