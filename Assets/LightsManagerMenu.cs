@@ -19,6 +19,7 @@ using UnityEditor.Animations;
 
 public class LightsManagerMenu : MonoBehaviour
 {
+    public bool useOPCUA = true;
     private OPCUA_Client OPCUA_Client;
     public string OPCUANodeName_Parent;
     public string OPCUANodeName_Child;
@@ -31,8 +32,10 @@ public class LightsManagerMenu : MonoBehaviour
         Ring_Light
     }
 
-    public int numberOfLights = 4;
+    public float lightIntensity = 1f;
 
+    public int numberOfLights = 4;
+    public float distanceFromFocusPoint = 0.1f;
     public float radius;
 
     private Light coaxLight;
@@ -42,6 +45,12 @@ public class LightsManagerMenu : MonoBehaviour
     private GameObject robotGameObject;
     private List<ComponentClasses.LightComponent> lightComponents = new List<ComponentClasses.LightComponent>();
 
+
+    void offsetLightFormFocusPoint(GameObject lightObject, Vector3 offset)
+    {
+        lightObject.transform.localPosition = offset;
+    }
+
     GameObject createChildGameObject(string name)
     {
         GameObject childGameObject = new GameObject(name);
@@ -49,6 +58,8 @@ public class LightsManagerMenu : MonoBehaviour
         childGameObject.transform.localPosition = Vector3.zero;
         childGameObject.transform.localRotation = Quaternion.identity;
         childGameObject.transform.localScale = Vector3.one;
+        Vector3 offsetVector = new Vector3(0, 0, -distanceFromFocusPoint);
+        offsetLightFormFocusPoint(childGameObject, offsetVector);
         return childGameObject;
     }
 
@@ -57,6 +68,7 @@ public class LightsManagerMenu : MonoBehaviour
         GameObject coaxialLightParent = createChildGameObject("Coaxial Light");
         coaxLight = coaxialLightParent.AddComponent<Light>();
         coaxLight.type = LightType.Spot;
+        coaxLight.intensity = lightIntensity;
         lights.Add(coaxLight);
         lightComponent = new ComponentClasses.LightComponent(lights);
     }
@@ -69,16 +81,17 @@ public class LightsManagerMenu : MonoBehaviour
         {
             float angle = i * (360.0f / numberOfLights);
             float xPos = Mathf.Cos(angle * Mathf.Deg2Rad) * radius;
-            float zPos = Mathf.Sin(angle * Mathf.Deg2Rad) * radius;
-
+            float yPos = Mathf.Sin(angle * Mathf.Deg2Rad) * radius;
+            Vector3 offsetVector = new Vector3(xPos, yPos, -distanceFromFocusPoint);
             GameObject lightObject = new GameObject("Ring Light " + (i + 1));
             lightObject.transform.SetParent(ringLightParent.transform);
-            lightObject.transform.localPosition = new Vector3(xPos, 0, zPos);
+            offsetLightFormFocusPoint(lightObject, offsetVector);
             lightObject.transform.localRotation = Quaternion.identity;
             lightObject.transform.localScale = Vector3.one;
 
             Light ringLight = lightObject.AddComponent<Light>();
-            ringLight.type = LightType.Point;
+            ringLight.type = LightType.Spot;
+            ringLight.intensity = lightIntensity;
             lights.Add(ringLight);
         }
 
@@ -131,9 +144,8 @@ public class LightsManagerMenu : MonoBehaviour
 
     void Update()
     {
-        if (OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
+        if (OPCUA_Client.updateReady && OPCUA_Client.IsConnected && useOPCUA)
         {
-            Debug.Log("Here.");
             updateLights();
         }
     }
