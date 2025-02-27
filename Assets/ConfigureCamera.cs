@@ -21,6 +21,8 @@ public class ConfigureCamera : MonoBehaviour
     public float scale;
 
     private Camera cam;
+
+    public bool isCameraInitialized = false;
     IEnumerator AddCamera()
     {
         yield return null;
@@ -38,6 +40,8 @@ public class ConfigureCamera : MonoBehaviour
         cam.nearClipPlane = 0.0f;
         cam.farClipPlane = 10f;
         cam.aspect = (float)sensorWidth / (float)sensorHeight;
+
+        isCameraInitialized = true;
     }
 
 
@@ -51,17 +55,6 @@ public class ConfigureCamera : MonoBehaviour
 
         StartCoroutine(AddCamera());
 
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
-    IEnumerator AddCoaxialLight()
-    {
-        yield return null;
     }
 
 
