@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets/Scripts/Sensors/LaserRay.cs" />
+    <Compile Include="Assets/LightsManagerMenuEditor.cs" />
     <Compile Include="Assets/Scripts/Sensors/Camera1LightControl.cs" />
     <Compile Include="Assets/Scripts/MainCamController.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/Destroy_Object.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ClientExample.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/PneumaticsControl.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/SpawnSmallerObject.cs" />
+    <Compile Include="Assets/ConfigureCameraMenu.cs" />
     <Compile Include="Assets/LightsManagerMenu.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/chooseMode.cs" />

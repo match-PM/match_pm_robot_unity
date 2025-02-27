@@ -79,6 +79,7 @@ MonoBehaviour:
   pixelSizeX: 0
   pixelSizeY: 0
   scale: 0
+  isCameraInitialized: 0
 --- !u!114 &159668053534102060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91,6 +92,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28ab5e6e32c5c4cafb1206a52579a425, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  useOPCUA: 1
   OPCUANodeName_Parent: 
   OPCUANodeName_Child: 
   selectedLightType: 0
+  lightIntensity: 1
+  numberOfLights: 4
+  distanceFromFocusPoint: 0.1
+  radius: 0
