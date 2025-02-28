@@ -118,7 +118,7 @@ namespace ROS2
                 if (recievedRequest.Obj_name == Object.name)
                 {
                     Destroy(Object);
-                    Info.removeFromSpawnNamesList(recievedRequest.Obj_name); // Remove from namelist
+                    // Info.removeFromSpawnNamesList(recievedRequest.Obj_name); // Remove from namelist
                 }
             }
         }

@@ -27,10 +27,17 @@ public class PneumaticsControl : MonoBehaviour
 
     private List<OPCUAWriteContainer> containerList;
 
+    public bool invertMovement = false;
+
     void updateDispenserPosition()
     {
         // Retrieve the move command value from the OPC UA client
         move = (int)OPCUA_Client.allNodes[gameObject.name + "/" + "MoveCommand"].dataValue.Value;
+
+        if (invertMovement)
+        {
+            move = -move;
+        }
 
         if (lastMove != move)
         {
@@ -55,11 +62,19 @@ public class PneumaticsControl : MonoBehaviour
         if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.upperLimit) < 0.001)
         {
             currentState = 1; // Set the current state to 1 (upper limit reached)
+            if (invertMovement)
+            {
+                currentState = -1;
+            }
         }
         // Check if the dispenser is at the lower limit position
         else if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.lowerLimit) < 0.001)
         {
             currentState = -1; // Set the current state to -1 (lower limit reached)
+            if (invertMovement)
+            {
+                currentState = 1;
+            }
         }
 
         // Check if there is a change in the current state

@@ -63,6 +63,8 @@ namespace ROS2
 
         private Hold_Info Info;
 
+        public bool withRefFrame = false;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -137,7 +139,12 @@ namespace ROS2
             }
 
             // Instantiate new GameObject with the given parent frame
-            Instantiate(Resources.Load<GameObject>("Prefabs/RefFrame"), spawnedGameObject.transform);
+
+            if (withRefFrame)
+            {
+                Instantiate(Resources.Load<GameObject>("Prefabs/RefFrame"), spawnedGameObject.transform);
+            }
+            
             // Append "SpawndeGameObject" script to GameObject
             var sgo = spawnedGameObject.AddComponent<SpawnGameObject>();
             float[] translation = new float[3];
@@ -158,7 +165,7 @@ namespace ROS2
             sgo.cadDataPath = recievedRequest.Cad_data;
             sgo.tag = "spawned";
             //add tag for later recognition
-            Info.addToSpawnNamesList(recievedRequest.Obj_name); // Add to namelist
+            // Info.addToSpawnNamesList(recievedRequest.Obj_name); // Add to namelist
         }
     }
 }
