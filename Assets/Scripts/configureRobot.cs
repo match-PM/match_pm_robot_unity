@@ -29,6 +29,10 @@ public class configureRobot : MonoBehaviour
         {
             chooseComponentsFormConfig(dictionary);
         }
+        else
+        {
+            Debug.LogError("Error loading yaml file: " + filepath);
+        }
     }
 
     // Update is called once per frame

@@ -84,6 +84,7 @@
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ForUnity.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/Delete_Ref_Frame.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/UtilityFunctions.cs" />
+    <Compile Include="Assets/Scripts/OpcUaControl/NozzleControl.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ROS2TimeSource.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/Modify_Pose.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ITimeSource.cs" />
