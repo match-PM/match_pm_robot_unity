@@ -20,33 +20,6 @@ using rcl_interfaces.msg;
 ///     ---
 ///     bool success
 ///
-/// 
-/// ros2 service call /object_manager/so assembly_manager_interfaces_unity/srv/SpawnObjectUnity "{obj_name: my_object_1, parent_frame: RobotAxisY, translation: {x: 0.0, y: 0.0, z: 0.0}, rotation: {x: 0.0, y: 0.0, z: 0.0, w: 0.0}, cad_data: //home/match-mover/Downloads/UFC.STL}"}
-/// Step 1:
-///         spwaw an object:
-///             ros2 service call /object_manager/so assembly_manager_interfaces_unity/srv/SpawnObjectUnity "{obj_name: my_object_1, parent_frame: Y_Axis , translation:[0.0,0.0,0.0], rotation:[0.0,0.0,0.0,0.0], cad_data: //home/pmlab/Downloads/Tool_MPG_10_Base.STL}"
-/// Step 2:
-///         change the parent_frame:
-///             ros2 service call /object_manager/cp assembly_manager_interfaces_unity/srv/ChangeParentFrame "{obj_name: my_object_1, parent_frame: X_Axis}"
-/// Step 3:
-///         delete the object:
-///             ros2 service call /object_manager/do assembly_manager_interfaces_unity/srv/DestroyObject "{obj_name: my_object_1}"
-/// Step 4:
-///         create Ref frame:
-///             ros2 service call object_manager/crf assembly_manager_interfaces_unity/srv/CreateRefFrame "{frame_name: Ref_Frame_1, parent_frame: X_Axis , pose:{position: {x: -0.035, y: -0.02166, z: 0.00235}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}}}"
-/// Step 5:
-///         delete Ref frame:
-///             ros2 service call object_manager/drf assembly_manager_interfaces_unity/srv/DeleteRefFrame "{frame_name: Ref_Frame_1}"
-/// Step 6:
-///         disable object collision:
-///             ros2 service call object_manager/doc assembly_manager_interfaces_unity/srv/DisableObjCollision "{obj_name: my_object_1, link: Y_Axis}"
-/// Step 7:
-///         get informations:
-///             ros2 service call object_manager/gi assembly_manager_interfaces_unity/srv/GetInfo
-/// Step 8:
-///         modify pose:
-///             ros2 service call object_manager/mp assembly_manager_interfaces_unity/srv/ModifyPose "{frame_name: Ref_Frame_1, rel_pose:{position: {x: -0.035, y: -0.02166, z: 0.00235}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}}}"
-///
 /// </summary>
 
 namespace ROS2
@@ -61,16 +34,11 @@ namespace ROS2
         private bool NewData = false;
         private assembly_manager_interfaces_unity.srv.SpawnObjectUnity_Request recievedRequest;
 
-        private Hold_Info Info;
-
         public bool withRefFrame = false;
 
         // Start is called before the first frame update
         void Start()
         {
-            //Script holding Lists with the wanted Information
-            Info = GetComponentInChildren<Hold_Info>();
-
             // Open a node for communication         
             ros2Unity = GetComponent<ROS2UnityComponent>();
             if (ros2Unity.Ok())
@@ -164,8 +132,6 @@ namespace ROS2
 
             sgo.cadDataPath = recievedRequest.Cad_data;
             sgo.tag = "spawned";
-            //add tag for later recognition
-            // Info.addToSpawnNamesList(recievedRequest.Obj_name); // Add to namelist
         }
     }
 }

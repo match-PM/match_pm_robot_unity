@@ -18,8 +18,6 @@ public class NozzleControl : MonoBehaviour
     private chooseMode.Mode mode;
 
     // Current nozzle state (-1 = vacuum, 0 = off, 1 = pressure)
-    private int currentNozzleState = 0;
-    private int lastNozzleState = 0;
 
     // Flag to check when OPC UA is initialized
     private bool isInitialized = false;
@@ -34,12 +32,6 @@ public class NozzleControl : MonoBehaviour
 
         // Wait until the OPC UA client is actually connected
         yield return new WaitUntil(() => OPCUA_Client.IsConnected);
-
-        // If we are in mode 0, add this nozzle’s state to the write container
-        // if (mode == 0)
-        // {
-        //     OPCUA_Client.addToWriteContainer(gameObject.name, "State");
-        // }
 
         isInitialized = true;
     }

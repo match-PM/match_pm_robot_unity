@@ -75,7 +75,7 @@ public class RobotAxisControl : MonoBehaviour
         axis = new ComponentClasses.DriveComponent(gameObject);
 
         // Wait until the OPC UA client is connected before adding the write node to the container.
-        yield return new WaitUntil(() => OPCUA_Client.IsConnected && OPCUA_Client.nodesAreReady);
+        yield return new WaitUntil(() => OPCUA_Client.IsConnected && OPCUA_Client.nodesAreReady && OPCUA_Client.updateReady);
 
         if (mode == 0)
         {

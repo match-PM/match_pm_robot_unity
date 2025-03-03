@@ -53,13 +53,9 @@ namespace ROS2
         private bool NewData = false;
         private assembly_manager_interfaces_unity.srv.DestroyObjectUnity_Request recievedRequest;
 
-        private Hold_Info Info;
-
         // Start is called before the first frame update
         void Start()
         {
-            Info = GetComponentInChildren<Hold_Info>();
-
             // Open a node for communication
             ros2Unity = GetComponent<ROS2UnityComponent>();
             if (ros2Unity.Ok())
@@ -118,7 +114,6 @@ namespace ROS2
                 if (recievedRequest.Obj_name == Object.name)
                 {
                     Destroy(Object);
-                    // Info.removeFromSpawnNamesList(recievedRequest.Obj_name); // Remove from namelist
                 }
             }
         }

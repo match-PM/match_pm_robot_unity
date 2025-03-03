@@ -26,7 +26,7 @@ public class OPCUA_Client : MonoBehaviour
 
     public bool nodesAreReady = false;
 
-    async void Awake()
+    private async void Start()
     {
         await InitClient();
         // await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
@@ -260,7 +260,7 @@ public class OPCUA_Client : MonoBehaviour
         {
             subscription = new Subscription(session.DefaultSubscription);
             subscription.PublishingEnabled = true;
-            subscription.PublishingInterval = 10;
+            subscription.PublishingInterval = 100;
             session.AddSubscription(subscription);
             subscription.Create();
             Debug.Log("Subscrtiption initialized...");
@@ -321,10 +321,25 @@ public class OPCUA_Client : MonoBehaviour
 
     void updateNodeCallback(MonitoredItem item, MonitoredItemNotificationEventArgs e)
     {
-        // Dequeue the latest value update from the MonitoredItem.
-        var value = item.DequeueValues()[0];
+        // // Dequeue the latest value update from the MonitoredItem.
+        // var value = item.DequeueValues()[0];
 
-        // Update the data value associated with the MonitoredItem's corresponding node.
-        allNodes[item.DisplayName].dataValue = value;
+        // // Update the data value associated with the MonitoredItem's corresponding node.
+        // allNodes[item.DisplayName].dataValue = value;
+        var notifications = item.DequeueValues();
+        try
+        {
+            // Check if the notifications are not null.
+            foreach (var val in notifications)
+            {
+                // Debug.Log($"updateNodeCallback fired for {item.DisplayName} with value: {val.Value}");
+                allNodes[item.DisplayName].dataValue = val;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Error updating node: " + ex.Message);
+        }
+
     }
 }
