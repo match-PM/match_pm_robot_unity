@@ -71,6 +71,7 @@
     <Compile Include="Assets/Scripts/OpcUaControl/RobotAxisControl.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/TF_Listener.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ListenerExample.cs" />
+    <Compile Include="Assets/Scripts/Sensors/ConfigureCamera.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2PerformanceTest.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/UVLightControl.cs" />
     <Compile Include="Assets/Scripts/enableArticualtionBodies.cs" />
@@ -106,7 +107,10 @@
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ROS2Clock.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ClientExample.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/PneumaticsControl.cs" />
+    <Compile Include="Assets/Scripts/Sensors/LightsManagerMenu.cs" />
+    <Compile Include="Assets/Scripts/Sensors/ConfigureCameraMenu.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/SpawnSmallerObject.cs" />
+    <Compile Include="Assets/Scripts/Sensors/LightsManagerMenuEditor.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/chooseMode.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/Disable_Object_Collision.cs" />
