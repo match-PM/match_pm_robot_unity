@@ -332,7 +332,7 @@ public class OPCUA_Client : MonoBehaviour
             // Check if the notifications are not null.
             foreach (var val in notifications)
             {
-                // Debug.Log($"updateNodeCallback fired for {item.DisplayName} with value: {val.Value}");
+                Debug.Log($"updateNodeCallback fired for {item.DisplayName} with value: {val.Value}");
                 allNodes[item.DisplayName].dataValue = val;
             }
         }
