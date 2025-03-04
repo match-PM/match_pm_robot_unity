@@ -53,8 +53,12 @@ public class ConfigureCameraMenu : Editor
 
 
         // Scale
-        GUIContent scaleLabel = new GUIContent("Scale", "Conversion factor from millimeters to Unity units. Eg.If 1 Unity unit = 1 mm, then scale=1.");
-        configureCamera.pixelSizeY = EditorGUILayout.FloatField(scaleLabel, configureCamera.scale);
+        GUIContent scaleLabel = new GUIContent("Scale", "Conversion factor from millimeters to Unity units. Eg.If 1 Unity unit = 1mm, then scale=1.");
+        configureCamera.scale = EditorGUILayout.FloatField(scaleLabel, configureCamera.scale);
+
+        // Display number
+        GUIContent displayNumberLabel = new GUIContent("Display number", "Display number of the camera.");
+        configureCamera.DisplayNumber = EditorGUILayout.IntField(displayNumberLabel, configureCamera.DisplayNumber);
 
 
         if (GUI.changed)

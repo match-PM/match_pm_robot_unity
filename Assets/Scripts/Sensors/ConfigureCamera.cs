@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System;
 using Unity.VisualScripting;
+using System.Collections.Generic;
 public class ConfigureCamera : MonoBehaviour
 {
     [Header("Lens Specifications")]
@@ -17,8 +18,10 @@ public class ConfigureCamera : MonoBehaviour
     [Tooltip("Height of single pixel in µm.")]
     public float pixelSizeY;
 
-    [Tooltip("Conversion factor from millimeters to Unity units. Eg.If 1 Unity unit = 1 mm, then scale=1.")]
+    [Tooltip("Conversion factor from millimeters to Unity units. Eg.If 1 Unity unit = 1mm, then scale=1.")]
     public float scale;
+    [Tooltip("Display number of the camera.")]
+    public int DisplayNumber;
 
     private Camera cam;
 
@@ -40,6 +43,8 @@ public class ConfigureCamera : MonoBehaviour
         cam.nearClipPlane = 0.0f;
         cam.farClipPlane = 10f;
         cam.aspect = (float)sensorWidth / (float)sensorHeight;
+
+        cam.targetDisplay = DisplayNumber-1;
 
         isCameraInitialized = true;
     }
@@ -76,4 +81,5 @@ public class ConfigureCamera : MonoBehaviour
         float orthographicSize = 0.5f * (sensorHeight * pixelSizeX * (float)Math.Pow(10, -3) / lensMagnification * scale);
         cam.orthographicSize = orthographicSize;
     }
+
 }
