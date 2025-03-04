@@ -79,6 +79,7 @@ MonoBehaviour:
   pixelSizeX: 0
   pixelSizeY: 0
   scale: 0
+  DisplayNumber: 0
   isCameraInitialized: 0
 --- !u!114 &159668053534102060
 MonoBehaviour:

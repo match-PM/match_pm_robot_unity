@@ -37,7 +37,7 @@ public class ConfigureCamera : MonoBehaviour
         // Align camera's z-axis to parent's y-axis
         Quaternion parentRotation = transform.parent.rotation;
         Quaternion desiredRotation = Quaternion.LookRotation(parentRotation * Vector3.up, parentRotation * Vector3.forward);
-        transform.rotation = desiredRotation;
+        // transform.rotation = desiredRotation;
 
         calculateAndSetOrthographicSize();
         cam.nearClipPlane = 0.0f;
