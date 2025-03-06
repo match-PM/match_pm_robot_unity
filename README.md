@@ -12,7 +12,21 @@ You can find detailed instructions here: [Installation](Docs/INSTALLATION.md)
 
 # 2. Usage
 Open the project in Unity. 
-The simulation is for simulating the real robot and can be controlled the same way. 
+
+To start the simulation, do the following:
+
+1. Start the opcua-server
+
+		ros2 run opcua_server opcua_server
+
+
+2. Start the unity simulation by entering the play mode
+
+3. Start ros2
+
+		ros2 launch pm_robot_bringup pm_robot_unity_HW.launch.py 
+
+If the robot movements are not executed in the simulation, restart the simulation (game-mode on/off).
 
 ## Communication structure
  

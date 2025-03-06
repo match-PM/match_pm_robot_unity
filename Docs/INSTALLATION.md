@@ -38,7 +38,7 @@ sudo apt-get install libssl1.1
         4. Restart your computer.   
 
 ## ROS2-for-Unity
-1. Get all prerequisites:
+### 1. Get all prerequisites:
 ```
 sudo apt install -y ros-${ROS_DISTRO}-test-msgs
 ```
@@ -72,11 +72,44 @@ sudo apt-get update; \
         sudo apt-get update && \
         sudo apt-get install -y dotnet-sdk-6.0
 ```
-2. Clone project form Git Hub: https://github.com/RobotecAI/ros2cs
-3. Source your ROS2 installation: source /opt/ros/humble/setup.bash (ange foxy to whatever version you are using)
-4. Navigate to the top project folder and run from terminal: ./get_repos.sh 
-5. Run in the terminal: ./build.sh
-5*. "The folder [/usr/share/dotnet/host/fxr] does not exist.". If you get following error while running code from 5. you need to reinstall your dotnet package:
+### 2. Install ros2-for-unity
+1. Clone the repro to your home- or documents-folder
+
+    https://github.com/RobotecAI/ros2-for-unity
+
+2. Source your ROS2 installation: 
+```
+source /opt/ros/humble/setup.bash 
+```
+
+### 3. Get custom interfaces
+The custom interfaces you need to run the unity-simulation are defined in the repro https://github.com/match-PM/pm_ros2_unity_interface.git
+
+To clone the repro, you can defined it as a custom_messages.repro. 
+
+Go to Documents/ros2-for-unity and open `ros2_for_unity_custom_messages.repos`.
+
+Type in:
+
+    repositories:
+      src/ros2cs/custom_messages/pm_ros2_unity_interface:
+        type: git
+        url: https://github.com/match-PM/pm_ros2_unity_interface.git
+        version: main
+
+Execute
+
+    ./pull_repositories.sh
+
+Now the repro is located at Documents/ros2-for-unity/src/ros2cs/custom_messages
+
+Build the workspace
+
+    ./build.sh
+
+The first time you might get some errors, but running `./build.sh` again should fix that.
+
+If yout get the error: "The folder [/usr/share/dotnet/host/fxr] does not exist.", you need to reinstall your dotnet package:
 ```
 sudo apt remove dotnet*
 ```
@@ -105,8 +138,22 @@ sudo apt update
 sudo apt install dotnet-sdk-6.0
 ```
 
+#### 4. Deploy
+Afterwards everything should be located in `~/ros2-for-unity/install/asset/Ros2ForUnity`
+
+If you have not made any changes to the custom interfaces, the match_pm_robot_unity simulation should run.
+
+If not or you made changes copy that folder (`~/ros2-for-unity/install/asset/Ros2ForUnity`) to the Unity `Assets` folder.
+
+Before you (re-)start Unity make sure, you source'd all of your terminals. This is importent, otherwise Unity and ROS2 doesn't know the right linking.
+
+Enter this to your `~.bashrc`-file.
+
+    source ~/ros2-for-unity/install/setup.bash
+
+
 ## Building environment
-1. Navigate to your workspace 
+1. Navigate to your ros2-workspace 
 2. Run: colcon build 
 3. If there are no previous installation files you might get this error:
     By not providing "Findros2cs_common.cmake" in CMAKE_MODULE_PATH this
@@ -129,6 +176,6 @@ Solution: DO NOT delete Build, Log and Install folders from step 1. Instead run 
         colcon build
 
 ## Urdf-Importer
-Add the urdf-importer
+The urdf-importer is already included in match_pm_robot_unity.
 
-Go to https://github.com/Unity-Technologies/URDF-Importer and follow the install instructions.
+If you want to install it manually, to https://github.com/Unity-Technologies/URDF-Importer and follow the install instructions.
