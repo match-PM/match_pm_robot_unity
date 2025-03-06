@@ -5,7 +5,7 @@ The simulation encompasses all relevant functionalities of the real robot and th
 
 
 # 1. Installation 
-Make sure you have Unity installed.
+Make sure you have Unity and ros2-for-unity installed.
 
 You can find detailed instructions here: [Installation](Docs/INSTALLATION.md)
 
