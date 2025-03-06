@@ -10,6 +10,8 @@ using Opc.Ua.Configuration;
 using System.Linq;
 using UtilityFunctions;
 using UtilityFunctions.OPCUA;
+using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 public class LaserRay : MonoBehaviour
 {
@@ -23,14 +25,24 @@ public class LaserRay : MonoBehaviour
     private chooseMode.Mode mode;
     private RaycastHit hit;
 
+    // This factor is used to add some tolerance to raycast calculations, because after moving with laser too close to the part the measurement reaches high values.
+    private float measureToleranceFactor = 10;
+    private const float MinDistance = -0.0003f;
+    private const float MaxDistance = 0.0003f;
+
+    private void CalculateDistance()
+    {
+        distance = transform.position.y - hit.point.y;
+        distance = Mathf.Clamp((float)distance, MinDistance, MaxDistance);
+        Debug.Log("Distance: " + distance);
+    }
 
     void renderLine()
     {
         lineRenderer.SetPosition(0, transform.position);
-        RaycastHit hit;
 
         // Set the start position of the line renderer to the transform position
-        if (Physics.Raycast(transform.position, -transform.up, out hit))
+        if (Physics.Raycast(transform.position + new Vector3(0.0f, measureToleranceFactor * 0.0003f, 0.0f), -transform.up, out hit))
         {
             // If a collider is hit, set the end position of the line renderer to the hit point
             if (hit.collider)
@@ -46,8 +58,7 @@ public class LaserRay : MonoBehaviour
 
     void writeLaserDistance()
     {
-        // Calculate the distance between the hit point and the transform position
-        distance = hit.point[0] - transform.position[0];
+        CalculateDistance();
         // Check if the distance has changed since the previous measurement
         if (distance != distance_prev)
         {
@@ -62,6 +73,7 @@ public class LaserRay : MonoBehaviour
         }
     }
 
+
     IEnumerator Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
@@ -69,7 +81,7 @@ public class LaserRay : MonoBehaviour
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
-        
+
         yield return new WaitUntil(() => OPCUA_Client.IsConnected);
 
         if (mode == 0)
