@@ -266,3 +266,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 834bfbadf9440e5a089a3bd36ee8c58b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  laserPointPrefab: {fileID: 701800157617612592, guid: 2b49ef202dcd360469548a7ed8bc68b6, type: 3}

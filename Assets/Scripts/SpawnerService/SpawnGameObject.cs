@@ -100,5 +100,11 @@ public class SpawnGameObject : MonoBehaviour
         mat.color = new Color(0.1f, 0.5f, 0.8f, 1.0f); 
     
         mechRenderer.material = mat;
+
+        // Add a mesh collider to the part and set convex to true
+        var mc = spawnedPart.AddComponent<MeshCollider>();
+        mc.sharedMesh = mesh;
+        mc.convex = true;
+
     }
 }
