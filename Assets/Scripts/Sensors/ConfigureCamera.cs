@@ -39,6 +39,9 @@ public class ConfigureCamera : MonoBehaviour
         Quaternion desiredRotation = Quaternion.LookRotation(parentRotation * Vector3.up, parentRotation * Vector3.forward);
         // transform.rotation = desiredRotation;
 
+        // Set the camera above the parent
+        transform.position = transform.parent.position + new Vector3(0, 0.05f, 0);
+
         calculateAndSetOrthographicSize();
         cam.nearClipPlane = 0.0f;
         cam.farClipPlane = 10f;
