@@ -38,8 +38,8 @@ public class LaserRay : MonoBehaviour
     {
         distance = transform.position.y - hit.point.y;
         distance = Mathf.Clamp((float)distance, MinDistance, MaxDistance);
-        Debug.Log("Distance: " + distance);
-        Debug.Log("Hit point: " + hit.point);
+        // Debug.Log("Distance: " + distance);
+        // Debug.Log("Hit point: " + hit.point);
     }
 
     void renderLine()
