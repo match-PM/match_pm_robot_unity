@@ -33,7 +33,7 @@ public class UVLightControl : MonoBehaviour
         stateReading = (bool[])OPCUA_Client.allNodes["HoenleUV/OnOff"].dataValue.Value;
         time = (double[])OPCUA_Client.allNodes["HoenleUV/Time"].dataValue.Value;
         power = (int[])OPCUA_Client.allNodes["HoenleUV/Power"].dataValue.Value;
-
+        
         // Check if the UV light is currently on and if it has exceeded the specified time limit
         if (currentState == true && elapsedTime >= time[ArrayIndex])
         {
@@ -49,7 +49,7 @@ public class UVLightControl : MonoBehaviour
             currentState = stateReading[ArrayIndex];
             UVLight.enabled = currentState;
             // Adjust the intensity of the UV light based on the power value
-            UVLight.intensity = power[ArrayIndex] / 100.0f;
+            UVLight.intensity = power[ArrayIndex] / 1.0f;
             // Reset the elapsed time
             elapsedTime = 0.0;
         }
