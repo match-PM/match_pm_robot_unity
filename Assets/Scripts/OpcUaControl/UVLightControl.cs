@@ -25,7 +25,7 @@ public class UVLightControl : MonoBehaviour
     private double[] time;
     private double elapsedTime = 0.0;
     int[] power;
-  
+
     // Function to update the state of the UV light based on OPC UA data
     void updateUVLight()
     {
@@ -70,7 +70,7 @@ public class UVLightControl : MonoBehaviour
         // Remove the UV light state from the write container of the OPC UA client
         OPCUA_Client.removeFromWriteContainer("HoenleUV", "OnOff");
         // Log the shutdown of the UV light and the elapsed time
-        Debug.Log("Shutting "+ (ArrayIndex+1)+ "." + " UV light down. Elapsed UV light time: " + elapsedTime.ToString("0.00") + " seconds.");
+        Debug.Log("Shutting " + (ArrayIndex + 1) + "." + " UV light down. Elapsed UV light time: " + elapsedTime.ToString("0.00") + " seconds.");
     }
 
     IEnumerator Start()
@@ -79,7 +79,7 @@ public class UVLightControl : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
 
         yield return new WaitUntil(() => OPCUA_Client.IsConnected);
-        
+
         UVLight = GetComponent<Light>();
         UVLight.enabled = false;
     }
