@@ -19,6 +19,8 @@ public class TF_Listener : MonoBehaviour
     {
         public string childFrame;
         public string parentFrame;
+        public Vector3 childTransform;
+        public Quaternion childRotation;
     }
 
     // Thread-safe buffer of frame pairs awaiting processing
@@ -61,6 +63,22 @@ public class TF_Listener : MonoBehaviour
             {
                 // Try to find the child GameObject
                 GameObject childObj = GameObject.Find(fp.childFrame);
+                // Try to find the parent GameObject
+                GameObject parentObj = GameObject.Find(fp.parentFrame);
+
+
+                // check if child name contains "Glue". If so, spawn a empty game object and parent it to the child
+                if (fp.childFrame.Contains("Glue") && childObj == null && parentObj != null)
+                {
+                    GameObject adhesivePoint = new GameObject();
+                    adhesivePoint.name = fp.childFrame.ToString();
+                    adhesivePoint.tag = "spawned";
+                    adhesivePoint.transform.position = fp.childTransform;
+                    adhesivePoint.transform.rotation = fp.childRotation;
+                    adhesivePoint.transform.SetParent(GameObject.Find(fp.parentFrame).transform, false);
+                    Debug.Log($"Spawned {adhesivePoint.name} under {fp.parentFrame}");
+                    continue;
+                }
 
                 // If the child object is null or not tagged as "spawned", skip it
                 if (childObj == null || childObj.tag != "spawned")
@@ -68,8 +86,7 @@ public class TF_Listener : MonoBehaviour
                     continue;
                 }
 
-                // Try to find the parent GameObject
-                GameObject parentObj = GameObject.Find(fp.parentFrame);
+
                 if (parentObj == null)
                 {
                     Debug.LogWarning($"Parent GameObject not found: {fp.parentFrame}. Setting no parent.");
@@ -105,9 +122,21 @@ public class TF_Listener : MonoBehaviour
                 // The "child frame" is from the transform
                 string childFrame = transformStamped.Child_frame_id;
 
+                Vector3 position = new(
+                    (float)(transformStamped.Transform.Translation.Y * -1),  // ROS Y -> Unity X
+                    (float)transformStamped.Transform.Translation.Z,  // ROS Z -> Unity Y
+                    (float)transformStamped.Transform.Translation.X   // ROS X -> Unity Z
+                );
+                Quaternion rotation = new(
+                    (float)transformStamped.Transform.Rotation.Y,  // ROS Y -> Unity X
+                    (float)transformStamped.Transform.Rotation.Z,  // ROS Z -> Unity Y
+                    (float)transformStamped.Transform.Rotation.X,  // ROS X -> Unity Z
+                    (float)transformStamped.Transform.Rotation.W
+                );
+
                 // Add to our processing list
                 framePairsToProcess.Add(
-                    new FramePair { childFrame = childFrame, parentFrame = parentFrame }
+                    new FramePair { childFrame = childFrame, parentFrame = parentFrame, childRotation = rotation, childTransform = position }
                 );
             }
         }
