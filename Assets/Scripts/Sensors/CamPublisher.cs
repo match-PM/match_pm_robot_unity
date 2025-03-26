@@ -59,7 +59,6 @@ namespace ROS2
             cam_config = GetComponent<ConfigureCamera>();
 
             renderTexture = new RenderTexture((int)cam_config.sensorWidth, (int)cam_config.sensorHeight, 24);
-            Debug.Log($"RenderTexture width: {renderTexture.width}, height: {renderTexture.height}");
             renderTexture.Create();
 
             frame_width = renderTexture.width;

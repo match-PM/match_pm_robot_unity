@@ -40,7 +40,14 @@ public class ConfigureCamera : MonoBehaviour
         // transform.rotation = desiredRotation;
 
         // Set the camera above the parent
-        transform.position = transform.parent.position + new Vector3(0, 0.05f, 0);
+        if (transform.localRotation.eulerAngles.x > 90)
+        {
+            transform.position = transform.parent.position - new Vector3(0, 0.05f, 0);
+        }
+        else
+        {
+            transform.position = transform.parent.position + new Vector3(0, 0.05f, 0);
+        }
 
         calculateAndSetOrthographicSize();
         cam.nearClipPlane = 0.0f;
