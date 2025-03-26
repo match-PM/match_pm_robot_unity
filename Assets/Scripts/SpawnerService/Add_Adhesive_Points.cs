@@ -35,6 +35,8 @@ public class Add_Adhesive_Points : MonoBehaviour
     // A lock to synchronize access from the subscription callback
     private readonly object framesLock = new object();
 
+    private bool shouldClearAll = false;
+
     void Start()
     {
         ros2Unity = GetComponent<ROS2UnityComponent>();
@@ -58,6 +60,12 @@ public class Add_Adhesive_Points : MonoBehaviour
             Debug.Log($"Subscribed to {addAdhesivePointsTopic} and ready to receive points.");
         }
 
+        // If the callback signaled that we should remove all points:
+        if (shouldClearAll)
+        {
+            ClearAllAdhesivePoints();
+        }
+
         lock (framesLock)
         {
             List<string> toRemove = new List<string>();
@@ -76,6 +84,7 @@ public class Add_Adhesive_Points : MonoBehaviour
 
                 // Create the prefab
                 GameObject pointObject = Instantiate(adhesivePointPrefab, parentObj.transform);
+                pointObject.tag = "AdhesivePoint";
                 pointObject.name = ap.pointName;
                 pointObject.transform.localPosition = ap.localPosition;
 
@@ -101,11 +110,20 @@ public class Add_Adhesive_Points : MonoBehaviour
     {
         lock (framesLock)
         {
+            // 1) If the incoming message has no points: remove all existing adhesive points
+            if (msg.Points.Length == 0 && pendingPoints.Count != 0)
+            {
+                Debug.Log("Received empty points array. Removing all adhesive points in the scene...");
+
+                shouldClearAll = true;
+                return;
+            }
+
             foreach (var p in msg.Points)
             {
                 string trimmedName = p.Name.Trim();
                 if (createdPoints.Contains(trimmedName))
-                {
+                {   
                     // We already created it
                     continue;
                 }
@@ -127,5 +145,28 @@ public class Add_Adhesive_Points : MonoBehaviour
                 };
             }
         }
+    }
+
+    private void ClearAllAdhesivePoints()
+    {
+        // Must be done on main thread
+        Debug.Log("Clearing all adhesive points...");
+
+        // 1) Remove all objects with tag "AdhesivePoint"
+        GameObject[] allAdhesiveObjects = GameObject.FindGameObjectsWithTag("AdhesivePoint");
+        foreach (var obj in allAdhesiveObjects)
+        {
+            Destroy(obj);
+        }
+
+        // 2) Clear data structures
+        lock (framesLock)
+        {
+            pendingPoints.Clear();
+            createdPoints.Clear();
+        }
+
+        // 3) Reset the flag
+        shouldClearAll = false;
     }
 }

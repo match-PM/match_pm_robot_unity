@@ -17,6 +17,7 @@ namespace ROS2
         private IPublisher<sensor_msgs.msg.Image> cam_pub;
 
         private Camera cam_1;
+        private ConfigureCamera cam_config;
 
         public string nodeName = "ROS2UnityCam1Publisher";
         public string topicName = "Image_Cam1_raw";
@@ -55,8 +56,10 @@ namespace ROS2
 
             // Now that the camera is initialized, continue with the rest of the setup
             cam_1 = GetComponent<Camera>();
+            cam_config = GetComponent<ConfigureCamera>();
 
-            renderTexture = new RenderTexture(cam_1.pixelWidth, cam_1.pixelHeight, 24);
+            renderTexture = new RenderTexture((int)cam_config.sensorWidth, (int)cam_config.sensorHeight, 24);
+            Debug.Log($"RenderTexture width: {renderTexture.width}, height: {renderTexture.height}");
             renderTexture.Create();
 
             frame_width = renderTexture.width;
