@@ -16643,6 +16643,9 @@ Transform:
   - {fileID: 1489231533}
   - {fileID: 344628798}
   - {fileID: 758338853}
+  - {fileID: 1294785253}
+  - {fileID: 1200025102}
+  - {fileID: 545583725}
   m_Father: {fileID: 1786491063}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &391409268
@@ -27344,7 +27347,7 @@ GameObject:
   - component: {fileID: 545583723}
   - component: {fileID: 545583722}
   m_Layer: 0
-  m_Name: back (2)
+  m_Name: glass_left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27430,12 +27433,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 545583721}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -3.807, y: 1.14, z: -1.16}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -0.563, y: 1.5, z: -0.08}
+  m_LocalScale: {x: 0.15, y: 1, z: 0.15}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 391409267}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &549431322
 GameObject:
@@ -55009,7 +55012,7 @@ GameObject:
   - component: {fileID: 1200025100}
   - component: {fileID: 1200025099}
   m_Layer: 0
-  m_Name: back (1)
+  m_Name: glass_right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55095,12 +55098,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1200025098}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -2.394, y: 1.14, z: 2.47}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -0.593, y: 1.5, z: 1.303}
+  m_LocalScale: {x: 0.15, y: 1, z: 0.15}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 391409267}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &1203106068
 GameObject:
@@ -59118,7 +59121,7 @@ GameObject:
   - component: {fileID: 1294785251}
   - component: {fileID: 1294785250}
   m_Layer: 0
-  m_Name: back
+  m_Name: glass_back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59204,12 +59207,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1294785249}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -4.945, y: 1.14, z: 2.47}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: -1.272, y: 1.5, z: 0.61}
+  m_LocalScale: {x: 0.15, y: 1, z: 0.15}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 391409267}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!1 &1299759634
 GameObject:
@@ -90503,6 +90506,3 @@ SceneRoots:
   - {fileID: 1540455125}
   - {fileID: 1828579171}
   - {fileID: 1218182272}
-  - {fileID: 1294785253}
-  - {fileID: 1200025102}
-  - {fileID: 545583725}
