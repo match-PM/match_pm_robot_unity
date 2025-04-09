@@ -32,7 +32,7 @@ public class SpawnGameObject : MonoBehaviour
             targetRotation[2],
             targetRotation[3]
         );
-        // If needed, do: unityRotation = unityRotation.Ros2Unity();
+        unityRotation = unityRotation.Ros2Unity();
         transform.localRotation = unityRotation;
 
         // --- 3) Import your mesh data
@@ -100,6 +100,12 @@ public class SpawnGameObject : MonoBehaviour
         mat.color = new Color(0.1f, 0.5f, 0.8f, 1.0f); 
     
         mechRenderer.material = mat;
+
+        if (partName.Contains("UFC"))
+        {
+            mat.color = Color.white;
+            mechRenderer.material = mat;
+        }
 
         // Add a mesh collider to the part and set convex to true
         var mc = spawnedPart.AddComponent<MeshCollider>();

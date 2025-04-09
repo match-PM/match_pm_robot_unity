@@ -69,6 +69,7 @@ public class LightsManagerMenu : MonoBehaviour
         coaxLight = coaxialLightParent.AddComponent<Light>();
         coaxLight.type = LightType.Spot;
         coaxLight.intensity = lightIntensity;
+        coaxLight.spotAngle = 10f;
         lights.Add(coaxLight);
         lightComponent = new ComponentClasses.LightComponent(lights);
     }

@@ -101,6 +101,8 @@ public class TF_Listener : MonoBehaviour
                 {
                     // Re-parent
                     childObj.transform.SetParent(parentObj.transform, true);
+                    childObj.transform.localPosition = fp.childTransform;
+                    childObj.transform.localRotation = fp.childRotation;
                     Debug.Log($"Re-parented {childObj.name} under {parentObj.name}");
                 }
             }
@@ -130,7 +132,7 @@ public class TF_Listener : MonoBehaviour
                 Quaternion rotation = new(
                     (float)transformStamped.Transform.Rotation.Y,  // ROS Y -> Unity X
                     (float)transformStamped.Transform.Rotation.Z,  // ROS Z -> Unity Y
-                    (float)transformStamped.Transform.Rotation.X,  // ROS X -> Unity Z
+                    (float)(transformStamped.Transform.Rotation.X*-1),  // ROS X -> Unity Z
                     (float)transformStamped.Transform.Rotation.W
                 );
 
