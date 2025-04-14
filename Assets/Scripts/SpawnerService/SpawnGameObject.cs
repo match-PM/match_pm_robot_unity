@@ -101,11 +101,11 @@ public class SpawnGameObject : MonoBehaviour
     
         mechRenderer.material = mat;
 
-        if (partName.Contains("UFC"))
-        {
-            mat.color = Color.white;
-            mechRenderer.material = mat;
-        }
+        // if (partName.Contains("UFC"))
+        // {
+        //     mat.color = Color.white;
+        //     mechRenderer.material = mat;
+        // }
 
         // Add a mesh collider to the part and set convex to true
         var mc = spawnedPart.AddComponent<MeshCollider>();
