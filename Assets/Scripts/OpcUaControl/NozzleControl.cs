@@ -47,8 +47,7 @@ public class NozzleControl : MonoBehaviour
     }
 
     /// <summary>
-    /// Reads the commanded nozzle state (-1, 0, or 1) from the OPC UA client,
-    /// adjusts if necessary, and stores it in currentNozzleState.
+    /// Reads the commanded nozzle state (-1, 0, or 1) from the OPC UA client
     /// </summary>
     private void UpdateNozzleState()
     {

@@ -74,6 +74,7 @@
     <Compile Include="Assets/Scripts/Sensors/ConfigureCamera.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2PerformanceTest.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/UVLightControl.cs" />
+    <Compile Include="Assets/Scripts/Sensors/ReferenceCubeTrigger.cs" />
     <Compile Include="Assets/Scripts/enableArticualtionBodies.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2UnityComponent.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/Spawn_Object.cs" />
