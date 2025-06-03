@@ -55812,6 +55812,7 @@ GameObject:
   - component: {fileID: 1218182274}
   - component: {fileID: 1218182275}
   - component: {fileID: 1218182276}
+  - component: {fileID: 1218182277}
   m_Layer: 0
   m_Name: pm_robot
   m_TagString: robot
@@ -55975,6 +55976,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   adhesivePointPrefab: {fileID: 701800157617612592, guid: 5ea9773de79ae7e57b6da928cf86dae2, type: 3}
+--- !u!114 &1218182277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218182265}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2eca679e27bb97689d542c527cbcaea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1220666853
 GameObject:
   m_ObjectHideFlags: 8
@@ -76884,7 +76897,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1828579171}
-  - component: {fileID: 1828579170}
+  - component: {fileID: 1828579172}
+  - component: {fileID: 1828579173}
   m_Layer: 0
   m_Name: OpcUaServer
   m_TagString: Untagged
@@ -76892,19 +76906,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1828579170
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1828579169}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a472fb2bd92f0c8d2a392b7c3951d2f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serverIsRunning: 0
 --- !u!4 &1828579171
 Transform:
   m_ObjectHideFlags: 0
@@ -76920,6 +76921,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1828579172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1828579169}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc43dea2512f109629fa7a8cf9b93e87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1828579173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1828579169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d4bef718064e1a9af63f6ae46a10a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1828640525
 GameObject:
   m_ObjectHideFlags: 0

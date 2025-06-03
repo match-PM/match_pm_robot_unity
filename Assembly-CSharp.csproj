@@ -59,7 +59,7 @@
     <UnityVersion>2022.3.18f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="/home/match-mover/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.1.1/Analyzers/Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="/home/match-mover/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.1.2/Analyzers/Microsoft.Unity.Analyzers.dll" />
     <Analyzer Include="/home/match-mover/Unity/Hub/Editor/2022.3.18f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll" />
     <Analyzer Include="/home/match-mover/Unity/Hub/Editor/2022.3.18f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
@@ -73,8 +73,10 @@
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ListenerExample.cs" />
     <Compile Include="Assets/Scripts/Sensors/ConfigureCamera.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2PerformanceTest.cs" />
+    <Compile Include="Assets/Scripts/OpcUaControl/OpcUaServer.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/UVLightControl.cs" />
     <Compile Include="Assets/Scripts/Sensors/ReferenceCubeTrigger.cs" />
+    <Compile Include="Assets/OpcUaServerExample.cs" />
     <Compile Include="Assets/Scripts/enableArticualtionBodies.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2UnityComponent.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/Spawn_Object.cs" />
@@ -112,6 +114,7 @@
     <Compile Include="Assets/Scripts/Sensors/ConfigureCameraMenu.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/SpawnSmallerObject.cs" />
     <Compile Include="Assets/Scripts/Sensors/LightsManagerMenuEditor.cs" />
+    <Compile Include="Assets/OpcUaSkills.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/Add_Adhesive_Points.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/chooseMode.cs" />
@@ -124,6 +127,7 @@
     <None Include="Assets/Ros2ForUnity/Plugins/lifecycle_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/composition_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/ros2cs_common.dll" />
+    <None Include="Assets/Ros2ForUnity/Plugins/pm_opcua_skills_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/rcl_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/visualization_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/metadata_ros2cs.xml" />
@@ -507,6 +511,10 @@
       <HintPath>Assets/Ros2ForUnity/Plugins/ros2cs_common.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="pm_opcua_skills_msgs_assembly">
+      <HintPath>Assets/Ros2ForUnity/Plugins/pm_opcua_skills_msgs_assembly.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="rcl_interfaces_assembly">
       <HintPath>Assets/Ros2ForUnity/Plugins/rcl_interfaces_assembly.dll</HintPath>
       <Private>False</Private>
@@ -557,6 +565,10 @@
     </Reference>
     <Reference Include="Opc.Ua.Client">
       <HintPath>Assets/Plugins/Opc.Ua.Client.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Opc.Ua.Configuration">
+      <HintPath>Assets/Plugins/Opc.Ua.Configuration.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
