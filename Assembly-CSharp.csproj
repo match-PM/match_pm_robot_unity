@@ -118,6 +118,7 @@
     <Compile Include="Assets/Scripts/SpawnerService/Add_Adhesive_Points.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/chooseMode.cs" />
+    <Compile Include="Assets/Scripts/Sensors/GreyscaleEffect.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/Disable_Object_Collision.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +137,7 @@
     <None Include="Assets/Ros2ForUnity/Plugins/diagnostic_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/geometry_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/pm_msgs_assembly.dll" />
+    <None Include="Assets/Resources/Shader/Greyscale.shader" />
     <None Include="Assets/Ros2ForUnity/Plugins/trajectory_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/builtin_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/assembly_manager_interfaces_unity_assembly.dll" />

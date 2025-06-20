@@ -9,6 +9,10 @@ public class ConfigureCamera : MonoBehaviour
     public float lensMagnification;
 
     [Header("Sensor Specifications")]
+
+    [Tooltip("Enable Greyscale effect on camera.")]
+    public bool enableGreyscale = true;
+
     [Tooltip("Width of camera sensor in Px.")]
     public float sensorWidth;
     [Tooltip("Height of camera sensor in Px.")]
@@ -33,7 +37,11 @@ public class ConfigureCamera : MonoBehaviour
         // Add the Camera component
         cam = gameObject.AddComponent<Camera>();
         cam.orthographic = true;
-
+        if (enableGreyscale)
+        {
+            cam.AddComponent<GreyscaleEffect>();
+        }
+        
         // Align camera's z-axis to parent's y-axis
         Quaternion parentRotation = transform.parent.rotation;
         Quaternion desiredRotation = Quaternion.LookRotation(parentRotation * Vector3.up, parentRotation * Vector3.forward);

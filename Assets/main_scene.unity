@@ -70641,6 +70641,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8791127032876325533, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      propertyPath: enableGreyscale
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8791127032876325533, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
       propertyPath: lensMagnification
       value: 1
       objectReference: {fileID: 0}

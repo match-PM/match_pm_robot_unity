@@ -32,6 +32,10 @@ public class ConfigureCameraMenu : Editor
 
         EditorGUILayout.LabelField("Sensor specifications", EditorStyles.boldLabel);
 
+        // Enable Greyscale effect
+        GUIContent enableGreyscaleLabel = new GUIContent("Enable Greyscale", "Enable Greyscale effect on camera.");
+        configureCamera.enableGreyscale = EditorGUILayout.Toggle(enableGreyscaleLabel, configureCamera.enableGreyscale);
+
         // Sensor widht
         GUIContent sensorWidthLabel = new GUIContent("Sensor width", "Width of camera sensor in Px.");
         configureCamera.sensorWidth = EditorGUILayout.FloatField(sensorWidthLabel, configureCamera.sensorWidth);
