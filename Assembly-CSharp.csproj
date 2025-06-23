@@ -114,7 +114,6 @@
     <Compile Include="Assets/Scripts/Sensors/ConfigureCameraMenu.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/SpawnSmallerObject.cs" />
     <Compile Include="Assets/Scripts/Sensors/LightsManagerMenuEditor.cs" />
-    <Compile Include="Assets/OpcUaSkills.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/Add_Adhesive_Points.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/PostInstall.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/chooseMode.cs" />
@@ -128,7 +127,6 @@
     <None Include="Assets/Ros2ForUnity/Plugins/lifecycle_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/composition_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/ros2cs_common.dll" />
-    <None Include="Assets/Ros2ForUnity/Plugins/pm_opcua_skills_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/rcl_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/visualization_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/metadata_ros2cs.xml" />
@@ -511,10 +509,6 @@
     </Reference>
     <Reference Include="ros2cs_common">
       <HintPath>Assets/Ros2ForUnity/Plugins/ros2cs_common.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="pm_opcua_skills_msgs_assembly">
-      <HintPath>Assets/Ros2ForUnity/Plugins/pm_opcua_skills_msgs_assembly.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="rcl_interfaces_assembly">
