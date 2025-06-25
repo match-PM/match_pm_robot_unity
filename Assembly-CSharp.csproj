@@ -87,6 +87,7 @@
     <Compile Include="Assets/Scripts/OpcUaControl/UtilityFunctions.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/NozzleControl.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ROS2TimeSource.cs" />
+    <Compile Include="Assets/Scripts/Sensors/ConfocalEpsilon.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ITimeSource.cs" />
     <Compile Include="Assets/Scripts/Sensors/CamPublisher.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/LaunchOpcUaServer.cs" />
@@ -144,6 +145,7 @@
     <None Include="Assets/Ros2ForUnity/metadata_ros2_for_unity.xml" />
     <None Include="Assets/Ros2ForUnity/Plugins/Linux/x86_64/metadata_ros2cs.xml" />
     <None Include="Assets/Ros2ForUnity/Plugins/rosgraph_msgs_assembly.dll" />
+    <None Include="Assets/Ros2ForUnity/Plugins/pm_uepsilon_confocal_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/unique_identifier_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/metadata_ros2cs.xml" />
     <None Include="Assets/Ros2ForUnity/Plugins/nav_msgs_assembly.dll" />
@@ -573,6 +575,10 @@
     </Reference>
     <Reference Include="rosgraph_msgs_assembly">
       <HintPath>Assets/Ros2ForUnity/Plugins/rosgraph_msgs_assembly.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="pm_uepsilon_confocal_msgs_assembly">
+      <HintPath>Assets/Ros2ForUnity/Plugins/pm_uepsilon_confocal_msgs_assembly.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="unique_identifier_msgs_assembly">
