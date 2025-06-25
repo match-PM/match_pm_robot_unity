@@ -11070,7 +11070,7 @@ ArticulationBody:
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_MatchAnchors: 1
-  m_ArticulationJointType: 1
+  m_ArticulationJointType: 3
   m_LinearX: 2
   m_LinearY: 0
   m_LinearZ: 0
@@ -11080,8 +11080,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: 0
     upperLimit: 0
-    stiffness: 1e+25
-    damping: 0
+    stiffness: 100000
+    damping: 1000
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
@@ -11089,8 +11089,8 @@ ArticulationBody:
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
-    stiffness: 0
-    damping: 0
+    stiffness: 100000
+    damping: 1000
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
@@ -11098,13 +11098,13 @@ ArticulationBody:
   m_ZDrive:
     lowerLimit: 0
     upperLimit: 0
-    stiffness: 0
-    damping: 0
+    stiffness: 100000
+    damping: 1000
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
     driveType: 0
-  m_LinearDamping: 0
+  m_LinearDamping: 100000
   m_AngularDamping: 0
   m_JointFriction: 0
   m_CenterOfMass: {x: -0, y: 0.016061777, z: 5.517685e-11}
@@ -67303,7 +67303,7 @@ ArticulationBody:
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_MatchAnchors: 1
-  m_ArticulationJointType: 1
+  m_ArticulationJointType: 3
   m_LinearX: 2
   m_LinearY: 0
   m_LinearZ: 0
@@ -67313,8 +67313,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: 0
     upperLimit: 0
-    stiffness: 1e+25
-    damping: 0
+    stiffness: 100000
+    damping: 1000
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
@@ -67322,8 +67322,8 @@ ArticulationBody:
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
-    stiffness: 0
-    damping: 0
+    stiffness: 100000
+    damping: 1000
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
@@ -67331,13 +67331,13 @@ ArticulationBody:
   m_ZDrive:
     lowerLimit: 0
     upperLimit: 0
-    stiffness: 0
-    damping: 0
+    stiffness: 100000
+    damping: 1000
     forceLimit: 3.4028235e+38
     target: 0
     targetVelocity: 0
     driveType: 0
-  m_LinearDamping: 0
+  m_LinearDamping: 10000
   m_AngularDamping: 0
   m_JointFriction: 0
   m_CenterOfMass: {x: -0.00007602441, y: 0.008810612, z: -1.2918679e-21}
@@ -67353,7 +67353,7 @@ ArticulationBody:
   m_ImplicitTensor: 1
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 2
+  m_CollisionDetectionMode: 0
 --- !u!114 &1430436518
 MonoBehaviour:
   m_ObjectHideFlags: 0
