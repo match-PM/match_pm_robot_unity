@@ -64,7 +64,7 @@ namespace ROS2
         {
             Debug.Log(msg.Cad_data);
             Debug.Log("About to spawn Object with name: " + msg.Obj_name + " and parent frame: " + msg.Parent_frame +
-                      ", at position: " + string.Join(", ", msg.Translation) + " and rotation: " + string.Join(", ", msg.Rotation) + ". CAD-Data: " + msg.Cad_data);
+                      ", at position: " + string.Join(", ", msg.Translation) + " and rotation: " + string.Join(", ", msg.Rotation) + ". CAD-Data: " + msg.Cad_data + " Color: " + string.Join(", ", msg.Apperance_color.R));
 
             assembly_manager_interfaces_unity.srv.SpawnObjectUnity_Response response = new assembly_manager_interfaces_unity.srv.SpawnObjectUnity_Response();
 
@@ -115,6 +115,7 @@ namespace ROS2
             
             // Append "SpawndeGameObject" script to GameObject
             var sgo = spawnedGameObject.AddComponent<SpawnGameObject>();
+            sgo.color = recievedRequest.Apperance_color;
             float[] translation = new float[3];
             // Unpack Vector3 into translation List
             translation[0] = (float)recievedRequest.Translation.X;

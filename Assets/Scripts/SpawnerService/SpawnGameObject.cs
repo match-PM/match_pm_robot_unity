@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Robotics.UrdfImporter;
 using ROS2;
+using std_msgs.msg;
 
 public class SpawnGameObject : MonoBehaviour
 {
     public float[] targetPosition;
     public float[] targetRotation;
     public string cadDataPath;
+    public ColorRGBA color;
 
     private Mesh[] meshes;
 
@@ -94,10 +96,7 @@ public class SpawnGameObject : MonoBehaviour
 
         Material mat = new Material(Shader.Find("Standard"));
 
-        // 2) Set the material color; for example, make it red:
-        // mat.color = Color.red;
-        // or choose any color e.g. new Color(r, g, b, a)
-        mat.color = new Color(0.1f, 0.5f, 0.8f, 1.0f); 
+        mat.color = new Color(color.R, color.G, color.B, color.A);
     
         mechRenderer.material = mat;
 
