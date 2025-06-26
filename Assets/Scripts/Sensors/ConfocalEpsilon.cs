@@ -33,10 +33,10 @@ namespace ROS2
         public string ServiceName = "/pm_uepsilon_confocal/get_value";
         public string PublisherName = "/pm_uepsilon_confocal/value";
         private const float measureToleranceFactor = 0.0003f; // This factor is used to add some tolerance to raycast calculations, because after moving with laser too close to the part the measurement reaches high values.
-        public const float WorkingDistance = 0.041f; // The distance at which the confocal sensor is calibrated to work, in meters (41mm).
-        public const float MaxDistanceFromWorkingDistance = 0.006f; 
-        public const float MinDistance = -0.003f;
-        public const float MaxDistance = 0.003f;
+        public float WorkingDistance = 0.041f; // The distance at which the confocal sensor is calibrated to work, in meters (41mm).
+        public float MaxDistanceFromWorkingDistance = 0.006f; 
+        // public const float MinDistance = -0.003f;
+        // public const float MaxDistance = 0.003f;
 
 
         // Start is called before the first frame update
@@ -88,7 +88,6 @@ namespace ROS2
 
             response.Data = GetMeasurement().Data;
             response.Success = true;
-
             return response;
         }
 
@@ -102,6 +101,11 @@ namespace ROS2
                 distance_prev = distance;
 
                 measurement.Data = distance * 1000000; // Convert to micrometers
+            }
+            else
+            {
+                // If the distance has not changed, return the previous measurement
+                measurement.Data = 1000000 * distance_prev; // Convert to micrometers
             }
 
             return measurement;
@@ -140,7 +144,7 @@ namespace ROS2
         private void CalculateDistance()
         {
             distance = transform.position.y - hit.point.y;
-            distance = Mathf.Clamp((float)distance, MinDistance, MaxDistance);
+            distance = Mathf.Clamp((float)distance, 0, MaxDistanceFromWorkingDistance);
         }
 
         // Update is called once per frame
