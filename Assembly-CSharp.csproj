@@ -104,6 +104,7 @@
     <Compile Include="Assets/Scripts/ShowArticulationNames.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/DotnetTimeSource.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/TimeUtils.cs" />
+    <Compile Include="Assets/Scripts/SpawnerService/UnityComponentSpawner.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ROS2ScalableTimeSource.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/OPCUA_Client.cs" />
     <Compile Include="Assets/Scripts/Sensors/ForceSensor.cs" />
@@ -152,6 +153,7 @@
     <None Include="Assets/Ros2ForUnity/Plugins/nav_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/tf2_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/statistics_msgs_assembly.dll" />
+    <None Include="Assets/Ros2ForUnity/Plugins/assembly_manager_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/test_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/example_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/std_msgs_assembly.dll" />
@@ -608,6 +610,10 @@
     </Reference>
     <Reference Include="statistics_msgs_assembly">
       <HintPath>Assets/Ros2ForUnity/Plugins/statistics_msgs_assembly.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="assembly_manager_interfaces_assembly">
+      <HintPath>Assets/Ros2ForUnity/Plugins/assembly_manager_interfaces_assembly.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="test_msgs_assembly">

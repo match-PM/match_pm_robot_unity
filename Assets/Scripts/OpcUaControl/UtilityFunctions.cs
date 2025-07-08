@@ -218,6 +218,12 @@ namespace UtilityFunctions
         {
             foreach (GameObject objectToHide in objectsToHide)
             {
+                if (objectToHide.name.Equals("t_axis_tool") ||
+                    objectToHide.name.Equals("Visuals") ||
+                    objectToHide.name.Equals("Collisions"))
+                {
+                    continue;
+                }
                 objectToHide.SetActive(false);
             }
         }

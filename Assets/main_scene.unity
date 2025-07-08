@@ -61029,6 +61029,7 @@ GameObject:
   - component: {fileID: 1218182275}
   - component: {fileID: 1218182276}
   - component: {fileID: 1218182277}
+  - component: {fileID: 1218182278}
   m_Layer: 0
   m_Name: pm_robot
   m_TagString: robot
@@ -61043,7 +61044,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1218182265}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b7cbb7ad08c6a122b92827a8bbd3c9c2, type: 3}
   m_Name: 
@@ -61150,7 +61151,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1218182265}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f517f782065174a3992549b840229439, type: 3}
   m_Name: 
@@ -61174,7 +61175,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1218182265}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88048aa7f90a2f11289bd05d1c4a7bf5, type: 3}
   m_Name: 
@@ -61204,6 +61205,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6766e4dda11ae5ca910651779c5344c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1218182278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218182265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f908639552b01f1fbf856b4d8ef4567, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  withRefFrame: 0
 --- !u!1 &1220666853
 GameObject:
   m_ObjectHideFlags: 8

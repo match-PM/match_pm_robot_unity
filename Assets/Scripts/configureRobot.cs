@@ -108,7 +108,9 @@ public class configureRobot : MonoBehaviour
             for (int i = 0; i < objectsToHide.Count; i++)
             {
                 string childName = objectsToHide[i].name;
-                if (childName.Equals("t_axis_tool"))
+                if (childName.Equals("t_axis_tool")||
+                    childName.Equals("Visuals") ||
+                    childName.Equals("Collisions"))
                 {
                     objectsToHide.RemoveAt(i);
                 }
