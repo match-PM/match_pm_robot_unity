@@ -125,7 +125,7 @@ public class UnityComponentSpawner : MonoBehaviour
                 if (parentObj != null && parentObj.activeInHierarchy)
                 {
                     Debug.Log($"Setting parent for {obj.Obj_name} to {parentObj.name}");
-                    spawnedDict[obj.Obj_name].transform.SetParent(parentObj.transform, true);
+                    spawnedDict[obj.Obj_name].transform.SetParent(parentObj.transform, false);
                 }
                 else
                 {
