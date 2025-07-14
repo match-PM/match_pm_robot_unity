@@ -56,7 +56,14 @@ public class RobotAxisControl : MonoBehaviour
 
         if (axis.articulationBody.jointType == ArticulationJointType.RevoluteJoint)
         {
-            value = new Variant((int)(position * 180 / Math.PI / (float)unitsPerIncrement));
+            if (axis.articulationBody.transform.name == "RobotAxisR" || axis.articulationBody.transform.name == "RobotAxisQ")
+            {
+                value = new Variant((int)(position * 180 / Math.PI / (float)unitsPerIncrement)*-1);
+            }
+            else
+            {
+                value = new Variant((int)(position * 180 / Math.PI / (float)unitsPerIncrement));
+            }
         }
         else
         {

@@ -166,7 +166,16 @@ namespace UtilityFunctions
                 }
                 else if (articulationBody.jointType == ArticulationJointType.RevoluteJoint)
                 {
-                    newTarget = (float)readTarget * (float)unitsPerIncrement;
+                    if (articulationBody.transform.name == "RobotAxisR" || articulationBody.transform.name == "RobotAxisQ")
+                    {
+                        Debug.Log($"[DriveComponent] Converting readTarget {readTarget} for RobotAxisR");
+                        newTarget = (float)readTarget * (float)unitsPerIncrement *-1;
+                    }
+                    else
+                    {
+                        newTarget = (float)readTarget * (float)unitsPerIncrement;
+                    }
+                    
                 }
 
                 return newTarget;

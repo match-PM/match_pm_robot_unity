@@ -67,9 +67,7 @@
     <Compile Include="Assets/Scripts/Sensors/LaserRay.cs" />
     <Compile Include="Assets/Scripts/Sensors/Camera1LightControl.cs" />
     <Compile Include="Assets/Scripts/MainCamController.cs" />
-    <Compile Include="Assets/Scripts/SpawnerService/Destroy_Object.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/RobotAxisControl.cs" />
-    <Compile Include="Assets/Scripts/SpawnerService/TF_Listener.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ListenerExample.cs" />
     <Compile Include="Assets/Scripts/Sensors/ConfigureCamera.cs" />
     <Compile Include="Assets/Scripts/Smarpod.cs" />
@@ -80,13 +78,13 @@
     <Compile Include="Assets/OpcUaServerExample.cs" />
     <Compile Include="Assets/Scripts/enableArticualtionBodies.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2UnityComponent.cs" />
-    <Compile Include="Assets/Scripts/SpawnerService/Spawn_Object.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2UnityCore.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Transformations.cs" />
     <Compile Include="Assets/Scripts/RefFrames/UpdateRefFrames.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ForUnity.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/UtilityFunctions.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/NozzleControl.cs" />
+    <Compile Include="Assets/Scripts/SpawnerService/GlueTFSpawner.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ROS2TimeSource.cs" />
     <Compile Include="Assets/Scripts/Sensors/ConfocalEpsilon.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ITimeSource.cs" />
