@@ -180,6 +180,27 @@ public class configureRobot : MonoBehaviour
                 candidates.Add(candidate);
             }
         }
+        // Find all candidates with max matches
+        if (candidates.Count > 1)
+        {
+            // Try to find candidate with same number of parts
+            int targetLength = inputString.Count;
+            var sameLengthCandidates = candidates.Where(c => c.Split('_').Length == targetLength).ToList();
+            if (sameLengthCandidates.Count == 1)
+            {
+                bestMatch = sameLengthCandidates[0];
+                candidates = sameLengthCandidates;
+            }
+            else if (sameLengthCandidates.Count > 1)
+            {
+                // If still ambiguous, check for exact string match
+                if (sameLengthCandidates.Contains(stringToCompare))
+                {
+                    bestMatch = stringToCompare;
+                    candidates = new List<string> { stringToCompare };
+                }
+            }
+        }
         if (maxMatches == 0)
         {
             Debug.LogError("No similar compontents found for: " + stringToCompare + " under component: " + componentName);
