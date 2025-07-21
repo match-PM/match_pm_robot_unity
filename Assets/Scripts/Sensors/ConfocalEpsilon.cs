@@ -28,7 +28,6 @@ namespace ROS2
         private IService<valueReq, valueResp> GetValueService;
         private IPublisher<std_msgs.msg.Float64> valuePublisher;
         private bool ros2Initialized = false;
-        private assembly_manager_interfaces_unity.srv.SpawnObjectUnity_Request recievedRequest;
         public string NodeName = "ROS2UnityConfocalEpsilonNode";
         public string ServiceName = "/pm_uepsilon_confocal/get_value";
         public string PublisherName = "/pm_uepsilon_confocal/value";

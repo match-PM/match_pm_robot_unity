@@ -139,7 +139,6 @@
     <None Include="Assets/Resources/Shader/Greyscale.shader" />
     <None Include="Assets/Ros2ForUnity/Plugins/trajectory_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/builtin_interfaces_assembly.dll" />
-    <None Include="Assets/Ros2ForUnity/Plugins/assembly_manager_interfaces_unity_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/action_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/smarpod_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/metadata_ros2_for_unity.xml" />
@@ -552,10 +551,6 @@
     </Reference>
     <Reference Include="builtin_interfaces_assembly">
       <HintPath>Assets/Ros2ForUnity/Plugins/builtin_interfaces_assembly.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="assembly_manager_interfaces_unity_assembly">
-      <HintPath>Assets/Ros2ForUnity/Plugins/assembly_manager_interfaces_unity_assembly.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="action_msgs_assembly">
