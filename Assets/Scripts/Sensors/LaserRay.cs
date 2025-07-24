@@ -16,8 +16,9 @@ using JetBrains.Annotations;
 public class LaserRay : MonoBehaviour
 {
     private LineRenderer lineRenderer;
-    private double distance;
-    private double distance_prev;
+    private float distance;
+    private float calc_distance;
+    private float distance_prev;
     private bool isInitialized = false;
     private List<OPCUAWriteContainer> containerList;
     private OPCUA_Client OPCUA_Client;
@@ -30,14 +31,23 @@ public class LaserRay : MonoBehaviour
     private GameObject laserPointInstance;
 
     // This factor is used to add some tolerance to raycast calculations, because after moving with laser too close to the part the measurement reaches high values.
-    private float measureToleranceFactor = 10;
+    private float measureToleranceFactor = 10e-6f; 
     private const float MinDistance = -0.0003f;
     private const float MaxDistance = 0.0003f;
+    private const float startPositionOffset = 0.001f;
+    private float zeroOffset;
 
     private void CalculateDistance()
     {
-        distance = transform.position.y - hit.point.y;
-        distance = Mathf.Clamp((float)distance, MinDistance, MaxDistance);
+
+        distance = hit.point.y - transform.position.y;
+
+        // Debug.Log("Raw Distance: " + distance);
+        // deviation from our “zero”:
+        float centered = distance + startPositionOffset;
+        // Debug.Log("Centered Distance: " + centered);
+        calc_distance = Mathf.Clamp((float)centered, MinDistance, MaxDistance);
+        // Debug.Log("Clamped Distance: " + distance);
         // Debug.Log("Distance: " + distance);
         // Debug.Log("Hit point: " + hit.point);
     }
@@ -47,7 +57,7 @@ public class LaserRay : MonoBehaviour
         lineRenderer.SetPosition(0, transform.position);
 
         // Set the start position of the line renderer to the transform position
-        if (Physics.Raycast(transform.position + new Vector3(0.0f, measureToleranceFactor * 0.0003f, 0.0f), -transform.up, out hit))
+        if (Physics.Raycast(transform.position + new Vector3(0.0f, 0.0f, 0.0f), -transform.up, out hit))
         {
             // If a collider is hit, set the end position of the line renderer to the hit point
             if (hit.collider)
@@ -76,14 +86,12 @@ public class LaserRay : MonoBehaviour
     {
         CalculateDistance();
         // Check if the distance has changed since the previous measurement
-        if (distance != distance_prev)
+        if (System.Math.Abs(calc_distance - distance_prev) > float.Epsilon) // Use a small epsilon for float/double comparisons
         {
-            // Debug.Log("Distance: " + distance);
-            // Create a variant to hold the distance value
-            Variant value = new Variant(distance*1000000);
+            Variant value = new Variant(Convert.ToDouble(calc_distance) * 1000000.0); 
 
             // Update the previous distance with the current distance
-            distance_prev = distance;
+            distance_prev = calc_distance;
 
             // Write the distance measurement to the OPC UA server
             OPCUA_Client.writeToServer(gameObject.name, "Measurement", value);
@@ -99,6 +107,7 @@ public class LaserRay : MonoBehaviour
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
         mode = robotGameObject.GetComponent<chooseMode>().mode;
 
+
         if (laserPointPrefab != null)
         {
             laserPointInstance = Instantiate(laserPointPrefab);
@@ -110,6 +119,9 @@ public class LaserRay : MonoBehaviour
         }
 
         yield return new WaitUntil(() => OPCUA_Client.IsConnected);
+
+        // move the laser 1mm up
+        // transform.position = new Vector3(transform.position.x, transform.position.y + startPositionOffset, transform.position.z);
 
         if (mode == 0)
         {
