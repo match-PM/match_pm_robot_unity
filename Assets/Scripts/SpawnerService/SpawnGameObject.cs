@@ -96,15 +96,23 @@ public class SpawnGameObject : MonoBehaviour
 
         Material mat = new Material(Shader.Find("Standard"));
 
-        mat.color = new Color(color.R, color.G, color.B, color.A);
-    
-        mechRenderer.material = mat;
-
-        // if (partName.Contains("UFC"))
-        // {
-        //     mat.color = Color.white;
-        //     mechRenderer.material = mat;
-        // }
+        if (partName.Contains("Modulcarrier"))
+        {
+            // find the "aluminium" material in the Resources folder
+            Material aluminiumMat = Resources.Load<Material>("Materials/Aluminium");
+            mechRenderer.material = aluminiumMat;
+        }
+        else if (partName.Contains("Sensor"))
+        {
+            // find the "CdTe" material in the Resources folder
+            Material cdteMat = Resources.Load<Material>("Materials/CdTe");
+            mechRenderer.material = cdteMat;
+        }
+        else
+        {
+            mat.color = new Color(color.R, color.G, color.B, color.A);
+            mechRenderer.material = mat;
+        }
 
         // Add a mesh collider to the part and set convex to true
         var mc = spawnedPart.AddComponent<MeshCollider>();
