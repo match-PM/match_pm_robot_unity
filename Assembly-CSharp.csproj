@@ -78,6 +78,7 @@
     <Compile Include="Assets/OpcUaServerExample.cs" />
     <Compile Include="Assets/Scripts/enableArticualtionBodies.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2UnityComponent.cs" />
+    <Compile Include="Assets/Scripts/ApplyCalibrationConfig.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2UnityCore.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Transformations.cs" />
     <Compile Include="Assets/Scripts/RefFrames/UpdateRefFrames.cs" />
@@ -95,7 +96,6 @@
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/UnityTimeSource.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2TalkerExample.cs" />
     <Compile Include="Assets/Scripts/RefFrames/setName.cs" />
-    <Compile Include="Assets/Scripts/Update_Robot_URDF.cs" />
     <Compile Include="Assets/Scripts/configureRobot.cs" />
     <Compile Include="Assets/Scripts/Sensors/Camera2LightControl.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/tf_Ref/DrawCoordinates.cs" />
