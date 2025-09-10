@@ -23,6 +23,7 @@ public class JointMapping
 
     [Tooltip("If true, add offsets to current local pose; otherwise replace local pose.")]
     public bool addToCurrentPose = false;
+
 }
 
 public class ApplyCalibrationConfig : MonoBehaviour
@@ -31,12 +32,17 @@ public class ApplyCalibrationConfig : MonoBehaviour
     public string packageName = "pm_robot_description";
     public string fileName = "/pm_robot_joint_calibration.yaml";
 
+    [Header("Axis")]
+    public ArticulationBody xAxis;
+    public ArticulationBody yAxis;
+    public ArticulationBody zAxis;
+
     [Header("Manual Mapping (YAML key → Unity Transform)")]
     public List<JointMapping> mappings = new List<JointMapping>();
 
     Dictionary<string, object> _root; // raw YAML dictionary
 
-    void Start()
+    void Awake()
     {
         string filepath = GetConfigFilePath(packageName, fileName);
         _root = GenericFunctions.YamlLoader.LoadYaml(filepath);
@@ -46,8 +52,10 @@ public class ApplyCalibrationConfig : MonoBehaviour
             Debug.LogError($"[configureRobot] Error loading YAML file: {filepath}");
             return;
         }
+        // Apply XYZ calibration offsets
+        // ApplyCalibrationXYZ();
 
-        ApplyOffsets();
+        // ApplyOffsets();
     }
 
     void ApplyOffsets()
@@ -90,22 +98,24 @@ public class ApplyCalibrationConfig : MonoBehaviour
             Vector3 posUnity = posROS_m.Ros2Unity();
             Quaternion rotUnity = rotROS.Ros2Unity();
 
+            ArticulationBody map_body = map.target.GetComponent<ArticulationBody>();
+
             // Apply (local)
             if (map.addToCurrentPose)
             {
                 // check, if ArticulationBody is active
-                if (map.target.GetComponent<ArticulationBody>() != null && map.target.GetComponent<ArticulationBody>().isActiveAndEnabled)
+                if (map_body != null && map_body.isActiveAndEnabled)
                 {
-                    map.target.GetComponent<ArticulationBody>().matchAnchors = false;
-                    map.target.GetComponent<ArticulationBody>().parentAnchorPosition += posUnity;
-                    // map.target.GetComponent<ArticulationBody>().parentAnchorRotation = map.target.localRotation * rotUnity;
+                    map_body.matchAnchors = false;
+                    map_body.parentAnchorPosition += posUnity;
+                    map_body.parentAnchorRotation = map_body.parentAnchorRotation * rotUnity;
                 }
                 else
                 {
                     map.target.localPosition += posUnity;
                     map.target.localRotation *= rotUnity;
                 }
-                
+
             }
             else
             {
@@ -137,17 +147,56 @@ public class ApplyCalibrationConfig : MonoBehaviour
         return 0f;
     }
 
-    [ContextMenu("Reload & Apply")]
-    public void ReloadAndApply()
+    // [ContextMenu("Reload & Apply")]
+    // public void ReloadAndApply()
+    // {
+    //     string filepath = GetConfigFilePath(packageName, fileName);
+    //     _root = GenericFunctions.YamlLoader.LoadYaml(filepath);
+    //     if (_root == null)
+    //     {
+    //         Debug.LogError($"[configureRobot] Error reloading YAML file: {filepath}");
+    //         return;
+    //     }
+    //     ApplyOffsets();
+    // }
+
+    private void ApplyCalibrationXYZ()
     {
-        string filepath = GetConfigFilePath(packageName, fileName);
-        _root = GenericFunctions.YamlLoader.LoadYaml(filepath);
-        if (_root == null)
+        // Get the PM_Robot_XYZ_Calibration from the YAML
+        if (!_root.TryGetValue("PM_Robot_XYZ_Calibration", out var sectionObj) || !(sectionObj is Dictionary<string, object> section))
         {
-            Debug.LogError($"[configureRobot] Error reloading YAML file: {filepath}");
+            Debug.LogWarning($"[configureRobot] YAML key not found or not a map: 'PM_Robot_XYZ_Calibration'");
             return;
         }
-        ApplyOffsets();
+
+        // Read offsets (µm and degrees)
+        float x_um = ReadFloat(section, "x_offset");
+        float y_um = ReadFloat(section, "y_offset");
+        float z_um = ReadFloat(section, "z_offset");
+
+        // Apply the offsets to the respective ArticulationBodies
+        if (xAxis != null)
+        {
+            xAxis.matchAnchors = false;
+            var xPos = xAxis.parentAnchorPosition;
+            xPos.z += x_um * 1e-6f; // Convert µm to m
+            xAxis.parentAnchorPosition = xPos;
+        }
+        if (yAxis != null)
+        {
+            yAxis.matchAnchors = false;
+            var yPos = yAxis.parentAnchorPosition;
+            yPos.x += y_um * 1e-6f; // Convert µm to m
+            yAxis.parentAnchorPosition = yPos;
+        }
+        if (zAxis != null)
+        {
+            zAxis.matchAnchors = false;
+            var zPos = zAxis.parentAnchorPosition;
+            zPos.y += z_um * 1e-6f; // Convert µm to m
+            zAxis.parentAnchorPosition = zPos;
+        }
+
     }
 
     public static string GetROS2PackagePath(string packageName)

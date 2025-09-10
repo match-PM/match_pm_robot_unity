@@ -106,6 +106,7 @@
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ROS2ScalableTimeSource.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/OPCUA_Client.cs" />
     <Compile Include="Assets/Scripts/Sensors/ForceSensor.cs" />
+    <Compile Include="Assets/Scripts/OpcUaControl/UvCartController.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ServiceExample.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2Node.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ROS2Clock.cs" />

@@ -42,12 +42,12 @@ public class LaserRay : MonoBehaviour
 
         distance = hit.point.y - transform.position.y;
 
-        // Debug.Log("Raw Distance: " + distance);
+        Debug.Log("Raw Distance: " + distance*1e6);
         // deviation from our “zero”:
         float centered = distance + startPositionOffset;
         // Debug.Log("Centered Distance: " + centered);
         calc_distance = Mathf.Clamp((float)centered, MinDistance, MaxDistance);
-        // Debug.Log("Clamped Distance: " + distance);
+        Debug.Log("Clamped Distance: " + calc_distance*1e6);
         // Debug.Log("Distance: " + distance);
         // Debug.Log("Hit point: " + hit.point);
     }
@@ -92,6 +92,7 @@ public class LaserRay : MonoBehaviour
 
             // Update the previous distance with the current distance
             distance_prev = calc_distance;
+            Debug.Log("Writing Distance: " + value);
 
             // Write the distance measurement to the OPC UA server
             OPCUA_Client.writeToServer(gameObject.name, "Measurement", value);
