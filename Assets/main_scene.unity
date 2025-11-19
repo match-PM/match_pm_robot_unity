@@ -77047,6 +77047,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8928263275650230060, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1522394085}
+    - targetCorrespondingSourceObject: {fileID: 8928263275650230060, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1522394086}
   m_SourcePrefab: {fileID: 100100000, guid: a61a26dc3fa345cb99bbc438c7979fc4, type: 3}
 --- !u!4 &1522394084 stripped
 Transform:
@@ -77073,6 +77076,21 @@ MonoBehaviour:
   numberOfLights: 4
   distanceFromFocusPoint: 0.05
   radius: 0
+--- !u!114 &1522394086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857022049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8120cf6450b6ce2aa04538d3be1ff42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dofMaterial: {fileID: 2100000, guid: 2d7bdce6f57dc6922807b01483b48a36, type: 2}
+  maxDepthDifference: 0.02
+  maxBlurRadius: 2
 --- !u!1001 &1522506983
 PrefabInstance:
   m_ObjectHideFlags: 0

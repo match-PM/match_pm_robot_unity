@@ -74,6 +74,7 @@
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2PerformanceTest.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/OpcUaServer.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/UVLightControl.cs" />
+    <Compile Include="Assets/Scripts/Sensors/TelecentricDepthOfField.cs" />
     <Compile Include="Assets/Scripts/Sensors/ReferenceCubeTrigger.cs" />
     <Compile Include="Assets/OpcUaServerExample.cs" />
     <Compile Include="Assets/Scripts/enableArticualtionBodies.cs" />
@@ -153,6 +154,7 @@
     <None Include="Assets/Ros2ForUnity/Plugins/statistics_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/assembly_manager_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/test_msgs_assembly.dll" />
+    <None Include="Assets/Resources/Shader/TelecentricDepthOfField.shader" />
     <None Include="Assets/Ros2ForUnity/Plugins/example_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/std_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/ros2cs_core.dll" />
