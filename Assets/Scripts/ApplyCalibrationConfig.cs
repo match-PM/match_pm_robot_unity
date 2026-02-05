@@ -30,7 +30,7 @@ public class ApplyCalibrationConfig : MonoBehaviour
 {
     [Header("YAML Config (loaded with your utility)")]
     public string packageName = "pm_robot_description";
-    public string fileName = "/pm_robot_joint_calibration.yaml";
+    public string fileName = "pm_robot_path_real_HW.yaml";
 
     [Header("Axis")]
     public ArticulationBody xAxis;
@@ -40,22 +40,54 @@ public class ApplyCalibrationConfig : MonoBehaviour
     [Header("Manual Mapping (YAML key → Unity Transform)")]
     public List<JointMapping> mappings = new List<JointMapping>();
 
-    Dictionary<string, object> _root; // raw YAML dictionary
+    Dictionary<string, object> _root;               
+    Dictionary<string, object> _calibrationRoot;    
 
     void Awake()
     {
+        // 1. Load main config
         string filepath = GetConfigFilePath(packageName, fileName);
-        _root = GenericFunctions.YamlLoader.LoadYaml(filepath);
+        _calibrationRoot = GenericFunctions.YamlLoader.LoadYaml(filepath);
+
+        if (_calibrationRoot == null)
+        {
+            Debug.LogError("Failed to load main YAML config.");
+            return;
+        }
+
+        // 2. Extract calibration file path
+        if (!_calibrationRoot.TryGetValue("pm_robot_calibration_file_path", out object calibPathObj))
+        {
+            Debug.LogError("Key 'pm_robot_calibration_file_path' not found in YAML.");
+            return;
+        }
+
+        string calibrationFilePath = calibPathObj.ToString();
+
+        if (!File.Exists(calibrationFilePath))
+        {
+            Debug.LogError($"Calibration YAML not found at: {calibrationFilePath}");
+            return;
+        }
+
+        // 3. Load calibration YAML
+        _root = GenericFunctions.YamlLoader.LoadYaml(calibrationFilePath);
 
         if (_root == null)
         {
-            Debug.LogError($"[configureRobot] Error loading YAML file: {filepath}");
+            Debug.LogError("Failed to load calibration YAML.");
             return;
         }
-        // Apply XYZ calibration offsets
-        // ApplyCalibrationXYZ();
 
-        // ApplyOffsets();
+        // if (_root == null)
+        // {
+        //     Debug.LogError($"[configureRobot] Error loading YAML file: {filepath}");
+        //     return;
+        // }
+        // Apply XYZ calibration offsets
+        ApplyCalibrationXYZ();
+
+        ApplyOffsets();
     }
 
     void ApplyOffsets()
@@ -193,6 +225,7 @@ public class ApplyCalibrationConfig : MonoBehaviour
         {
             zAxis.matchAnchors = false;
             var zPos = zAxis.parentAnchorPosition;
+            Debug.LogWarning($"Applying Z offset: {z_um} µm → {z_um * 1e-6f} m");
             zPos.y += z_um * 1e-6f; // Convert µm to m
             zAxis.parentAnchorPosition = zPos;
         }

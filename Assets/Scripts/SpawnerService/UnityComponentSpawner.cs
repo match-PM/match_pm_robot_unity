@@ -28,7 +28,7 @@ public class UnityComponentSpawner : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (ros2Node == null && ros2Unity.Ok())
         {
