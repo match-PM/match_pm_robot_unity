@@ -225,7 +225,6 @@ public class ApplyCalibrationConfig : MonoBehaviour
         {
             zAxis.matchAnchors = false;
             var zPos = zAxis.parentAnchorPosition;
-            Debug.LogWarning($"Applying Z offset: {z_um} µm → {z_um * 1e-6f} m");
             zPos.y += z_um * 1e-6f; // Convert µm to m
             zAxis.parentAnchorPosition = zPos;
         }
