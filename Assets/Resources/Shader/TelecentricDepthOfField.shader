@@ -1,11 +1,14 @@
 Shader "Custom/TelecentricDepthOfField"
 {
+    // _MaxBlurRadius controls sample distance.
+    // _BlurAmount controls linear blend amount (0..1).
+    // Both are set from TelecentricDepthOfField.cs.
     Properties
     {
         _MainTex ("Source", 2D) = "white" {}
-        _FocusZ ("Focus Distance (camera space)", Float) = 1.0
-        _MaxDepthDiff ("Max Depth Difference", Float) = 0.02
-        _MaxBlurRadius ("Max Blur Radius (pixels)", Float) = 2.0
+        _MaxDepthDiff ("Max Depth Difference", Float) = 0.01
+        _MaxBlurRadius ("Max Blur Radius (pixels)", Float) = 5.0
+        _BlurAmount ("Blur Amount (0-1)", Float) = 0.0
     }
 
     SubShader
@@ -27,11 +30,9 @@ Shader "Custom/TelecentricDepthOfField"
 
             sampler2D _MainTex;
             float4 _MainTex_TexelSize;
-            sampler2D _CameraDepthTexture;
-
-            float _FocusZ;
             float _MaxDepthDiff;
             float _MaxBlurRadius;
+            float _BlurAmount;
 
             struct appdata
             {
@@ -53,30 +54,10 @@ Shader "Custom/TelecentricDepthOfField"
                 return o;
             }
 
-            float fragDepth(float2 uv)
-            {
-                #if UNITY_REVERSED_Z
-                    float raw = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, uv);
-                    return LinearEyeDepth(raw);
-                #else
-                    float raw = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, uv);
-                    return LinearEyeDepth(raw);
-                #endif
-            }
-
             fixed4 frag (v2f i) : SV_Target
             {
-                // Tiefe im Blick Raum
-                float depth = fragDepth(i.uv);
-
-                // Differenz zur Fokus Ebene
-                float dz = abs(depth - _FocusZ);
-
-                // Normierte Unschärfe von 0 bis 1
-                float blur01 = saturate(dz / max(_MaxDepthDiff, 1e-5));
-
-                // Radius in Pixeln
-                float radius = blur01 * _MaxBlurRadius;
+                // Radius in Pixeln, direkt aus dem Skript gesteuert
+                float radius = _MaxBlurRadius;
 
                 // Wenn Radius fast null, direkt Originalfarbe zurückgeben
                 if (radius < 0.001)
@@ -87,7 +68,7 @@ Shader "Custom/TelecentricDepthOfField"
                 // Texel Schritte
                 float2 texel = _MainTex_TexelSize.xy * radius;
 
-                // Mehrere Samples in einem Kreis
+                // Mehrere Samples in zwei Ringen für stärkeren Effekt
                 fixed4 col = 0;
                 float weightSum = 0;
 
@@ -104,24 +85,31 @@ Shader "Custom/TelecentricDepthOfField"
                 offsets[6] = float2( 0.7071, -0.7071);
                 offsets[7] = float2(-0.7071, -0.7071);
 
-                // Kernpunkt stärker gewichten
+                // Kernpunkt schwächer gewichten für deutlichere Unschärfe
                 fixed4 center = tex2D(_MainTex, i.uv);
-                col += center * 2.0;
-                weightSum += 2.0;
+                col += center * 0.5;
+                weightSum += 0.5;
 
                 for (int k = 0; k < sampleCount; k++)
                 {
-                    float2 duv = offsets[k] * texel;
-                    float2 suv = i.uv + duv;
-                    fixed4 s = tex2D(_MainTex, suv);
-                    col += s;
+                    float2 duv1 = offsets[k] * texel;
+                    float2 suv1 = i.uv + duv1;
+                    fixed4 s1 = tex2D(_MainTex, suv1);
+                    col += s1;
                     weightSum += 1.0;
+
+                    float2 duv2 = offsets[k] * texel * 2.0;
+                    float2 suv2 = i.uv + duv2;
+                    fixed4 s2 = tex2D(_MainTex, suv2);
+                    col += s2 * 0.8;
+                    weightSum += 0.8;
                 }
 
                 col /= weightSum;
 
-                // Unschärfe abhängig von blur01 mit Original mischen
-                return lerp(center, col, blur01);
+                // Lineare Mischstärke aus dem Skript (distanzabhängig)
+                float blurMix = saturate(_BlurAmount);
+                return lerp(center, col, blurMix);
             }
             ENDCG
         }
