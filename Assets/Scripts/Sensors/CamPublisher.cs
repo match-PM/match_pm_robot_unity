@@ -107,8 +107,11 @@ namespace ROS2
             cam_1.targetTexture = null;
 
 
-            // string path = Path.Combine(Application.dataPath, "SavedImage.png");
+            // string path = Path.Combine("/home/match-pm/Desktop", "published_image.png");
             // File.WriteAllBytes(path, mainCameraTexture.EncodeToPNG());
+
+            // string rawPath = Path.Combine("/home/match-pm/Desktop", "published_image_raw.bytes");
+            // File.WriteAllBytes(rawPath, mainCameraTexture.GetRawTextureData());
 
             msg.Data = mainCameraTexture.GetRawTextureData();
             cam_pub.Publish(msg);
