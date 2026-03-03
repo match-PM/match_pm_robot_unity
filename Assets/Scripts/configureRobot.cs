@@ -225,6 +225,8 @@ public class configureRobot : MonoBehaviour
             }
         }
 
+        Debug.Log($"Comparing '{stringToCompare}'");
+
         if (maxMatches == 0)
         {
             Debug.LogError("No similar components found for: " + stringToCompare + " under component: " + componentName);
