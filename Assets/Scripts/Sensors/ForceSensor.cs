@@ -40,7 +40,7 @@ public class ForceSensor : MonoBehaviour
 
         if (parent.gameObject == forceSensor.transform.parent.gameObject)
         {    
-            Debug.Log($"Ignoring collision with {collision.gameObject.name} (same parent)");
+            // Debug.Log($"Ignoring collision with {collision.gameObject.name} (same parent)");
             return true;            
         }
 
@@ -70,8 +70,8 @@ public class ForceSensor : MonoBehaviour
         if (IsRobotCollider(collision))
         {
             // reset force
-            lastContactForce = Vector3.zero;
-            lastContactTorque = Vector3.zero;
+            // lastContactForce = Vector3.zero;
+            // lastContactTorque = Vector3.zero;
             return;
         }
             

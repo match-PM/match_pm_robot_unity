@@ -13,8 +13,12 @@ namespace ROS2
 {
     public class ConfocalEpsilon : MonoBehaviour
     {
+        public enum LaserDirection { Down, Up, Left, Right, Forward, Back }
+        public LaserDirection Direction = LaserDirection.Down;
+
         private LineRenderer lineRenderer;
         private double distance;
+        private double calc_distance;
         private double distance_prev;
         private GameObject robotGameObject;
         private chooseMode.Mode mode;
@@ -31,11 +35,23 @@ namespace ROS2
         public string NodeName = "ROS2UnityConfocalEpsilonNode";
         public string ServiceName = "/pm_uepsilon_confocal/get_value";
         public string PublisherName = "/pm_uepsilon_confocal/value";
-        private const float measureToleranceFactor = 0.0003f; // This factor is used to add some tolerance to raycast calculations, because after moving with laser too close to the part the measurement reaches high values.
-        public float WorkingDistance = 0.041f; // The distance at which the confocal sensor is calibrated to work, in meters (41mm).
-        public float MaxDistanceFromWorkingDistance = 0.006f; 
-        // public const float MinDistance = -0.003f;
-        // public const float MaxDistance = 0.003f;
+        private const float startPositionOffset = 0.003f;
+
+        private Vector3 GetRayDirection()
+        {
+            switch (Direction)
+            {
+                case LaserDirection.Up:      return transform.up;
+                case LaserDirection.Down:    return -transform.up;
+                case LaserDirection.Left:    return -transform.right;
+                case LaserDirection.Right:   return transform.right;
+                case LaserDirection.Forward: return transform.forward;
+                case LaserDirection.Back:    return -transform.forward;
+                default:                     return -transform.up;
+            }
+        }
+        private const float MinDistance = -0.0006f;
+        private const float MaxDistance = 0.0006f;
 
 
         // Start is called before the first frame update
@@ -77,6 +93,9 @@ namespace ROS2
                 }
             }
 
+            // Move the laser object in the opposite laser direction by startPositionOffset
+            transform.position -= GetRayDirection() * startPositionOffset;
+
             ros2Initialized = true;
         }
 
@@ -93,20 +112,7 @@ namespace ROS2
         Float64 GetMeasurement()
         {
             Float64 measurement = new Float64();
-
-            if (distance != distance_prev)
-            {
-                // If the distance has changed, update the previous distance
-                distance_prev = distance;
-
-                measurement.Data = distance * 1000000; // Convert to micrometers
-            }
-            else
-            {
-                // If the distance has not changed, return the previous measurement
-                measurement.Data = 1000000 * distance_prev; // Convert to micrometers
-            }
-
+            measurement.Data = calc_distance * 1000000; // Convert to micrometers
             return measurement;
         }
 
@@ -115,7 +121,8 @@ namespace ROS2
             lineRenderer.SetPosition(0, transform.position);
 
             // Set the start position of the line renderer to the transform position
-            if (Physics.Raycast(transform.position + new Vector3(0.0f, measureToleranceFactor, 0.0f), -transform.up, out hit))
+            Vector3 rayDir = GetRayDirection();
+            if (Physics.Raycast(transform.position, rayDir, out hit))
             {
                 // If a collider is hit, set the end position of the line renderer to the hit point
                 if (hit.collider)
@@ -132,7 +139,7 @@ namespace ROS2
             }
             else
             {
-                lineRenderer.SetPosition(1, -transform.up * 5000);
+                lineRenderer.SetPosition(1, rayDir * 5000);
                 if (laserPointInstance != null)
                 {
                     laserPointInstance.SetActive(false);
@@ -142,8 +149,13 @@ namespace ROS2
 
         private void CalculateDistance()
         {
-            distance = transform.position.y - hit.point.y;
-            distance = Mathf.Clamp((float)distance, 0, MaxDistanceFromWorkingDistance);
+            // Project hit distance onto the ray direction axis
+            distance = Vector3.Dot(hit.point - transform.position, GetRayDirection());
+            // Deviation from zero (TCP position):
+            // Debug.Log($"name of the hit object: {hit.collider.gameObject.name}");
+            double centered = distance - startPositionOffset;
+            calc_distance = Mathf.Clamp((float)centered, MinDistance, MaxDistance);
+            // Debug.Log($"distance: {distance*1e6} µm, centered: {centered*1e6} µm, calc_distance: {calc_distance*1e6} µm");
         }
 
         // Update is called once per frame

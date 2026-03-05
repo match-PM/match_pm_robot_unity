@@ -158,7 +158,14 @@ namespace UtilityFunctions
 
                 if (unitsPerIncrement == null)
                 {
-                    unitsPerIncrement = articulationBody.xDrive.upperLimit * (float)Math.Pow(10, 6);
+                    if (articulationBody.xDrive.upperLimit == 0)
+                    {
+                        unitsPerIncrement = articulationBody.xDrive.lowerLimit * (float)Math.Pow(10, 6);
+                    }
+                    else
+                    {
+                        unitsPerIncrement = articulationBody.xDrive.upperLimit * (float)Math.Pow(10, 6);
+                    }
                 }
                 if (articulationBody.jointType == ArticulationJointType.PrismaticJoint)
                 {

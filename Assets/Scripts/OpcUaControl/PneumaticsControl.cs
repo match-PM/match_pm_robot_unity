@@ -28,11 +28,13 @@ public class PneumaticsControl : MonoBehaviour
     private List<OPCUAWriteContainer> containerList;
 
     public bool invertMovement = false;
+    public bool moveToLowerLimit = false;
 
-    void updateDispenserPosition()
+    void updatePneumaticsPosition()
     {
         // Retrieve the move command value from the OPC UA client
         move = (int)OPCUA_Client.allNodes[gameObject.name + "/" + "MoveCommand"].dataValue.Value;
+        // Debug.Log($"PneumaticsControl: Received MoveCommand={move} for {gameObject.name}");
 
         if (invertMovement)
         {
@@ -58,7 +60,7 @@ public class PneumaticsControl : MonoBehaviour
     void writeState()
     {
 
-        // Check if the dispenser is at the upper limit position
+        // Check if the pneumatics is at the upper limit position
         if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.upperLimit) < 0.001)
         {
             currentState = 1; // Set the current state to 1 (upper limit reached)
@@ -66,12 +68,20 @@ public class PneumaticsControl : MonoBehaviour
             {
                 currentState = -1;
             }
+            if (moveToLowerLimit)
+            {
+                currentState = -1;
+            }
         }
-        // Check if the dispenser is at the lower limit position
+        // Check if the pneumatics is at the lower limit position
         else if (Mathf.Abs(pneumaticComponent.articulationBody.jointPosition[0] - pneumaticComponent.articulationBody.xDrive.lowerLimit) < 0.001)
         {
             currentState = -1; // Set the current state to -1 (lower limit reached)
             if (invertMovement)
+            {
+                currentState = 1;
+            }
+            if (moveToLowerLimit)
             {
                 currentState = 1;
             }
@@ -113,10 +123,10 @@ public class PneumaticsControl : MonoBehaviour
         // Check if the OPC UA client has new data ready
         if (isInitialized && OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
         {
-            // Update the dispenser's position
-            updateDispenserPosition();
+            // Update the pneumatics' position
+            updatePneumaticsPosition();
             
-            // If the mode is 0, write the current state of the dispenser
+            // If the mode is 0, write the current state of the pneumatics
             if (mode == 0)
             {
                 writeState();
