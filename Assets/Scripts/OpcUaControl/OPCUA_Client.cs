@@ -20,20 +20,27 @@ public class OPCUA_Client : MonoBehaviour
     public CancellationTokenSource cts;
     private Subscription subscription;
     private Dictionary<string, Tuple<string, string>> monitoredItems;
-    public bool updateReady = true;
+    public bool updateReady = false;
     public bool IsConnected => session != null && session.Connected;
     public OPCUAWriteContainer writeContainer = new OPCUAWriteContainer();
 
     public bool nodesAreReady = false;
+    private bool isWritePending = false;
+    private bool writeValuesDirty = false;
+    private string serverUrl = "opc.tcp://localhost";
+    private bool isReconnecting = false;
 
     private async void Start()
     {
+        cts = new CancellationTokenSource();
         await InitClient();
         // await ConnectToServer("opc.tcp://PC1M0484-1:4840/"); // Real OPCUA Server
-        await ConnectToServer("opc.tcp://localhost"); // localhost
+        await ConnectToServer(serverUrl); // localhost
         getAllNodes(session);
         startSubscription();
         addMonitoredItems();
+        // Signal that OPC UA is fully initialised — controllers wait on this flag
+        nodesAreReady = true;
     }
 
     public void addToWriteContainer(string parentName, string childName)
@@ -45,7 +52,6 @@ public class OPCUA_Client : MonoBehaviour
         Variant initalValue = allNodes[parentName + "/" + childName].dataValue.WrappedValue;
         // Add the node to the write container.
         writeContainer.addToCollection(nId, parentName, childName, initalValue);
-        nodesAreReady = true;
     }
 
     public void removeFromWriteContainer(string parentName, string childName)
@@ -55,27 +61,86 @@ public class OPCUA_Client : MonoBehaviour
         writeContainer.removeFromColection(parentName, childName);
     }
 
-    public async void writeToServer(string parentName, string childName, Variant value)
+    /// <summary>
+    /// Set a value to be written. The actual write is coalesced into one call per frame.
+    /// </summary>
+    public void writeToServer(string parentName, string childName, Variant value)
     {
-        // Set the value of the node in the write container.
+        // Just update the value in the write container — no network call yet
         writeContainer.container[parentName + "/" + childName].Value.WrappedValue = value;
-        await WriteValues();
+        writeValuesDirty = true;
     }
 
     void Update()
     {
-        // New value you want to write
-        object newValue = 100;
-
-        // CancellationTokenSource
-        cts = new CancellationTokenSource();
-
-        if (!updateReady)
+        // Only check once nodes are loaded; gate prevents false-positive on empty allNodes
+        if (nodesAreReady && !updateReady)
         {
-            // Check if all the data values of nodes in the 'allNodes' collection are not null.
-            updateReady = allNodes.Values.All(item => item.dataValue.Value != null);
-        };
-        
+            bool allReady = true;
+            foreach (var item in allNodes.Values)
+            {
+                if (item.dataValue.Value == null)
+                {
+                    allReady = false;
+                    break;
+                }
+            }
+            updateReady = allReady;
+        }
+
+        // Coalesce all write requests into a single OPC UA write per frame
+        if (updateReady && writeValuesDirty && !isWritePending && IsConnected)
+        {
+            writeValuesDirty = false;
+            CoalescedWrite();
+        }
+    }
+
+    private async void CoalescedWrite()
+    {
+        isWritePending = true;
+        try
+        {
+            if (session != null && session.Connected && writeContainer.nodesToWrite != null)
+            {
+                await session.WriteAsync(null, writeContainer.nodesToWrite, cts.Token);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Error writing data: " + e.Message);
+        }
+        finally
+        {
+            isWritePending = false;
+        }
+    }
+
+    void OnDestroy()
+    {
+        nodesAreReady = false;
+        updateReady = false;
+        cts?.Cancel();
+        cts?.Dispose();
+        cts = null;
+
+        try
+        {
+            if (subscription != null)
+            {
+                subscription.Delete(true);
+                subscription = null;
+            }
+            if (session != null && session.Connected)
+            {
+                session.Close();
+                session = null;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Error during cleanup: " + e.Message);
+        }
     }
 
     async void OnApplicationQuit()
@@ -156,6 +221,7 @@ public class OPCUA_Client : MonoBehaviour
                 var endpoint = new ConfiguredEndpoint(null, selectedEndpoint, endpointConfiguration);
 
                 session = await Session.Create(config, endpoint, false, "", 60000, null, null);
+                session.KeepAlive += OnSessionKeepAlive;
                 Debug.Log("Connected to OPC UA server" + session.Connected);
 
                 // Exit the retry loop once connected
@@ -234,26 +300,6 @@ public class OPCUA_Client : MonoBehaviour
         }
     }
 
-    async public Task WriteValues()
-    {
-        if (session == null || session.Connected == false)
-        {
-            Debug.LogError("Not connected to a server");
-        }
-        else
-        {
-            try
-            {
-                WriteResponse response = await session.WriteAsync(null, writeContainer.nodesToWrite, cts.Token);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("Error writing data: " + e.Message);
-            }
-        }
-    }
-
-
     void startSubscription()
     {
         if (subscription == null)
@@ -263,7 +309,7 @@ public class OPCUA_Client : MonoBehaviour
             subscription.PublishingInterval = 100;
             session.AddSubscription(subscription);
             subscription.Create();
-            Debug.Log("Subscrtiption initialized...");
+            Debug.Log("Subscription initialized...");
         }
         else
         {
@@ -276,63 +322,32 @@ public class OPCUA_Client : MonoBehaviour
         List<MonitoredItem> monitoredItems = new List<MonitoredItem>();
         Debug.Log("Adding Monitored Items...");
 
-        // Iterate through all the nodes in the 'allNodes' collection.
         foreach (KeyValuePair<string, NodeData> node in allNodes)
         {
-            // Create a new MonitoredItem for each node.
             MonitoredItem monitoredItem = new MonitoredItem(subscription.DefaultItem);
-
-            // Set the StartNodeId for the MonitoredItem to the node's NodeId.
             monitoredItem.StartNodeId = node.Value.nodeId;
-
-            // Set the AttributeId to Attributes.Value, indicating that it's monitoring the value of the node.
             monitoredItem.AttributeId = Attributes.Value;
-
-            // Set the MonitoringMode to Reporting, indicating that updates will be reported.
             monitoredItem.MonitoringMode = MonitoringMode.Reporting;
-
-            // Set the SamplingInterval to 10 milliseconds (the frequency of data sampling).
             monitoredItem.SamplingInterval = 10;
-
-            // Set the QueueSize to 1, indicating that only the most recent value is stored.
             monitoredItem.QueueSize = 1;
-
-            // Set DiscardOldest to true, meaning that if the queue is full, the oldest value is discarded.
             monitoredItem.DiscardOldest = true;
-
-            // Set the DisplayName of the monitored item, typically used to identify it.
             monitoredItem.DisplayName = node.Key;
-
-            // Attach the 'updateNodeCallback' method as a notification handler.
             monitoredItem.Notification += new MonitoredItemNotificationEventHandler(updateNodeCallback);
-
-            // Add the MonitoredItem to the list of monitored items.
             monitoredItems.Add(monitoredItem);
         }
 
-        // Add all monitored items to the OPC UA subscription.
         subscription.AddItems(monitoredItems);
-
-        // Apply changes to the subscription to finalize the configuration.
         subscription.ApplyChanges();
-
         Debug.Log("Monitored Items added!");
     }
 
     void updateNodeCallback(MonitoredItem item, MonitoredItemNotificationEventArgs e)
     {
-        // // Dequeue the latest value update from the MonitoredItem.
-        // var value = item.DequeueValues()[0];
-
-        // // Update the data value associated with the MonitoredItem's corresponding node.
-        // allNodes[item.DisplayName].dataValue = value;
         var notifications = item.DequeueValues();
         try
         {
-            // Check if the notifications are not null.
             foreach (var val in notifications)
             {
-                // Debug.Log($"updateNodeCallback fired for {item.DisplayName} with value: {val.Value}");
                 allNodes[item.DisplayName].dataValue = val;
             }
         }
@@ -340,6 +355,46 @@ public class OPCUA_Client : MonoBehaviour
         {
             Debug.LogError("Error updating node: " + ex.Message);
         }
+    }
 
+    /// <summary>
+    /// Called by OPC UA SDK on the background thread when the session keep-alive fires.
+    /// If the server is unreachable the session enters a reconnecting state.
+    /// </summary>
+    private void OnSessionKeepAlive(ISession sender, KeepAliveEventArgs e)
+    {
+        if (e.CurrentState != ServerState.Running)
+        {
+            if (!isReconnecting)
+            {
+                isReconnecting = true;
+                Debug.LogWarning("OPC UA session lost — attempting reconnect…");
+                _ = TryReconnectAsync();
+            }
+        }
+    }
+
+    private async Task TryReconnectAsync()
+    {
+        int attempt = 0;
+        while (attempt < 20)
+        {
+            attempt++;
+            try
+            {
+                Debug.Log($"Reconnect attempt {attempt}…");
+                session.Reconnect();
+                Debug.Log("Reconnected to OPC UA server.");
+                isReconnecting = false;
+                return;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"Reconnect attempt {attempt} failed: {ex.Message}");
+                await Task.Delay(2000);
+            }
+        }
+        Debug.LogError("Could not reconnect after 20 attempts.");
+        isReconnecting = false;
     }
 }

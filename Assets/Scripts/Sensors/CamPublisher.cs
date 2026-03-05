@@ -35,6 +35,12 @@ namespace ROS2
 
         private sensor_msgs.msg.Image msg = new sensor_msgs.msg.Image();
 
+        // Throttle / guard fields
+        private bool isCapturing = false;
+        [Tooltip("Seconds between published frames (default 0.1 = 10 fps)")]
+        public float publishInterval = 0.1f;
+        private float timeSinceLastCapture = 0f;
+
         void Start()
         {
             ros2Unity = GetComponent<ROS2UnityComponent>();
@@ -83,13 +89,20 @@ namespace ROS2
                     ros2Node = ros2Unity.CreateNode(nodeName);
                     cam_pub = ros2Node.CreatePublisher<sensor_msgs.msg.Image>(topicName);
                 }
-
             }
 
-            StartCoroutine(CaptureAndPublish());
+            // Only launch a new capture when the previous one finished and enough time has passed
+            timeSinceLastCapture += Time.deltaTime;
+            if (!isCapturing && timeSinceLastCapture >= publishInterval)
+            {
+                timeSinceLastCapture = 0f;
+                StartCoroutine(CaptureAndPublish());
+            }
         }
         IEnumerator CaptureAndPublish()
         {
+            isCapturing = true;
+
             // Wait for end of frame to capture
             yield return new WaitForEndOfFrame();
 
@@ -116,8 +129,21 @@ namespace ROS2
             msg.Data = mainCameraTexture.GetRawTextureData();
             cam_pub.Publish(msg);
 
+            isCapturing = false;
         }
 
+        void OnDestroy()
+        {
+            if (renderTexture != null)
+            {
+                renderTexture.Release();
+                Destroy(renderTexture);
+            }
+            if (mainCameraTexture != null)
+            {
+                Destroy(mainCameraTexture);
+            }
+        }
 
     }
 
