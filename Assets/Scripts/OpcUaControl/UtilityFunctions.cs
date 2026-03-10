@@ -243,6 +243,14 @@ namespace UtilityFunctions
             }
         }
 
+        public static void showGameObjects(List<GameObject> objectsToShow)
+        {
+            foreach (GameObject objectToShow in objectsToShow)
+            {
+                objectToShow.SetActive(true);
+            }
+        }
+
         public static class YamlLoader
         {
             public static Dictionary<string, object> LoadYaml(string filepath)

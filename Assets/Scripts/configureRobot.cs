@@ -1,17 +1,32 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using ROS2;
 using UtilityFunctions; // GetConfigFilePath, GenericFunctions.YamlLoader
+
+using ConfigureRobotReq = pm_msgs.srv.EmptyWithSuccess_Request;
+using ConfigureRobotResp = pm_msgs.srv.EmptyWithSuccess_Response;
 
 public class configureRobot : MonoBehaviour
 {
     private Dictionary<string, object> dictionary;
     private string componentName = null;
 
+    // ROS2
+    private ROS2UnityComponent ros2Unity;
+    private ROS2Node ros2Node;
+    private IService<ConfigureRobotReq, ConfigureRobotResp> srvConfigureRobot;
+
+    // Thread-safe queue for Unity main-thread execution
+    private readonly ConcurrentQueue<Action> mainThreadActions = new ConcurrentQueue<Action>();
+
     void Start()
     {
+        ros2Unity = GetComponent<ROS2UnityComponent>();
+
         string filepath = GetConfigFilePath("pm_robot_bringup", "pm_robot_bringup_config.yaml");
         dictionary = GenericFunctions.YamlLoader.LoadYaml(filepath);
 
@@ -25,7 +40,48 @@ public class configureRobot : MonoBehaviour
         }
     }
 
-    void Update() { }
+    void Update()
+    {
+        // Drain main-thread action queue (needed for service callbacks)
+        while (mainThreadActions.TryDequeue(out var action))
+            action?.Invoke();
+
+        if (ros2Unity != null && ros2Unity.Ok())
+        {
+            if (ros2Node == null)
+            {
+                ros2Node = ros2Unity.CreateNode("configure_robot_node");
+                srvConfigureRobot = ros2Node.CreateService<ConfigureRobotReq, ConfigureRobotResp>(
+                    "~/configure_robot", ConfigureRobotServiceCallback);
+                Debug.Log("configureRobot: ROS2 service '~/configure_robot' registered.");
+            }
+        }
+    }
+
+    private ConfigureRobotResp ConfigureRobotServiceCallback(ConfigureRobotReq request)
+    {
+        var response = new ConfigureRobotResp();
+        bool success = false;
+
+        // Reload the YAML and run configuration on the main thread
+        mainThreadActions.Enqueue(() =>
+        {
+            string filepath = GetConfigFilePath("pm_robot_bringup", "pm_robot_bringup_config.yaml");
+            dictionary = GenericFunctions.YamlLoader.LoadYaml(filepath);
+            if (dictionary != null)
+            {
+                chooseComponentsFormConfig(dictionary);
+                Debug.Log("configureRobot: Reconfigured via ROS2 service.");
+            }
+            else
+            {
+                Debug.LogError("configureRobot service: Error loading yaml file: " + filepath);
+            }
+        });
+
+        response.Success = true;
+        return response;
+    }
 
     void chooseComponentsFormConfig(Dictionary<string, object> dict, string parent = null, bool isTool = false)
     {
@@ -111,6 +167,9 @@ public class configureRobot : MonoBehaviour
 
                 if (!string.IsNullOrEmpty(bestMatch))
                 {
+                    // First show all children so previously hidden tools become visible again
+                    GenericFunctions.showGameObjects(childrenGameObjects);
+
                     List<GameObject> objectsToHide = childrenGameObjects.Where(child => child.gameObject.name != bestMatch).ToList();
 
                     // Do not hide structural nodes
@@ -144,6 +203,9 @@ public class configureRobot : MonoBehaviour
 
                 if (!string.IsNullOrEmpty(bestMatch))
                 {
+                    // First show all children so previously hidden components become visible again
+                    GenericFunctions.showGameObjects(childrenGameObjects);
+
                     List<GameObject> objectsToHide = childrenGameObjects.Where(child => child.gameObject.name != bestMatch).ToList();
                     GenericFunctions.hideGameObjects(objectsToHide);
                 }
