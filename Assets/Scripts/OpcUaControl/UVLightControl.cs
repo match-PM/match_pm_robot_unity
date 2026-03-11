@@ -67,10 +67,22 @@ public class UVLightControl : MonoBehaviour
         Variant value = new Variant(stateReading);
         // Write the updated state to the OPC UA server
         OPCUA_Client.writeToServer("HoenleUV", "OnOff", value);
-        // Remove the UV light state from the write container of the OPC UA client
-        OPCUA_Client.removeFromWriteContainer("HoenleUV", "OnOff");
+        // Update the local allNodes cache so the next frame reads the correct false state
+        // before the server confirms the write (prevents the light from immediately turning back on)
+        OPCUA_Client.allNodes["HoenleUV/OnOff"].dataValue.Value = stateReading;
+        // Defer the removal so OPCUA_Client.Update has a chance to flush the write
+        // before the node is removed from nodesToWrite (removing immediately would send an empty collection)
+        StartCoroutine(DeferredRemoveFromWriteContainer());
         // Log the shutdown of the UV light and the elapsed time
         Debug.Log("Shutting "+ (ArrayIndex+1)+ "." + " UV light down. Elapsed UV light time: " + elapsedTime.ToString("0.00") + " seconds.");
+    }
+
+    // Wait two frames so OPCUA_Client.Update fires CoalescedWrite before we remove the node
+    IEnumerator DeferredRemoveFromWriteContainer()
+    {
+        yield return null; // let current frame finish
+        yield return null; // let OPCUA_Client.Update trigger CoalescedWrite
+        OPCUA_Client.removeFromWriteContainer("HoenleUV", "OnOff");
     }
 
     IEnumerator Start()
