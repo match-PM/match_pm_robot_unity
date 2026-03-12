@@ -71,6 +71,33 @@ public class OPCUA_Client : MonoBehaviour
         writeValuesDirty = true;
     }
 
+    /// <summary>
+    /// Write a single value directly to the OPC UA server, bypassing the shared write container.
+    /// Use this for one-shot writes that should not be repeated every frame.
+    /// </summary>
+    public async void WriteNodeDirectly(string parentName, string childName, Variant value)
+    {
+        try
+        {
+            NodeId nId = allNodes[parentName + "/" + childName].nodeId;
+            var writeValue = new WriteValue()
+            {
+                NodeId = nId,
+                AttributeId = Attributes.Value,
+                Value = new DataValue(value)
+            };
+            var collection = new WriteValueCollection { writeValue };
+            if (session != null && session.Connected)
+            {
+                await session.WriteAsync(null, collection, cts.Token);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Error in direct write: " + e.Message);
+        }
+    }
+
     void Update()
     {
         // Only check once nodes are loaded; gate prevents false-positive on empty allNodes

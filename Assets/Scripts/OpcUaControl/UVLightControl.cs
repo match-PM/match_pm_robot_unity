@@ -59,30 +59,19 @@ public class UVLightControl : MonoBehaviour
     // Function to write the updated state of the UV light to the OPC UA server
     void writeUVValues()
     {
-        // Add the UV light state to the write container of the OPC UA client
-        OPCUA_Client.addToWriteContainer("HoenleUV", "OnOff");
         // Update the state reading array with the current state
         stateReading[ArrayIndex] = currentState;
         // Create a variant to hold the updated state reading
         Variant value = new Variant(stateReading);
-        // Write the updated state to the OPC UA server
-        OPCUA_Client.writeToServer("HoenleUV", "OnOff", value);
+        // Write directly to the server (one-shot, bypasses the shared write container
+        // so the false value is not continuously re-sent and external true writes are preserved)
+        OPCUA_Client.WriteNodeDirectly("HoenleUV", "OnOff", value);
         // Update the local allNodes cache so the next frame reads the correct false state
         // before the server confirms the write (prevents the light from immediately turning back on)
+        // Store the bool[] directly (not the Variant) so the (bool[]) cast in updateUVLight keeps working
         OPCUA_Client.allNodes["HoenleUV/OnOff"].dataValue.Value = stateReading;
-        // Defer the removal so OPCUA_Client.Update has a chance to flush the write
-        // before the node is removed from nodesToWrite (removing immediately would send an empty collection)
-        StartCoroutine(DeferredRemoveFromWriteContainer());
         // Log the shutdown of the UV light and the elapsed time
-        Debug.Log("Shutting "+ (ArrayIndex+1)+ "." + " UV light down. Elapsed UV light time: " + elapsedTime.ToString("0.00") + " seconds.");
-    }
-
-    // Wait two frames so OPCUA_Client.Update fires CoalescedWrite before we remove the node
-    IEnumerator DeferredRemoveFromWriteContainer()
-    {
-        yield return null; // let current frame finish
-        yield return null; // let OPCUA_Client.Update trigger CoalescedWrite
-        OPCUA_Client.removeFromWriteContainer("HoenleUV", "OnOff");
+        Debug.Log("Shutting "+ (ArrayIndex+1)+ "." + " UV light down. stateReading: " + stateReading[ArrayIndex] + ", elapsedTime: " + elapsedTime.ToString("0.00") + " seconds");
     }
 
     IEnumerator Start()
@@ -90,8 +79,8 @@ public class UVLightControl : MonoBehaviour
         robotGameObject = GameObject.Find("pm_robot");
         OPCUA_Client = robotGameObject.GetComponent<OPCUA_Client>();
 
-        yield return new WaitUntil(() => OPCUA_Client.IsConnected);
-        
+        yield return new WaitUntil(() => OPCUA_Client.IsConnected && OPCUA_Client.nodesAreReady && OPCUA_Client.updateReady);
+
         UVLight = GetComponent<Light>();
         UVLight.enabled = false;
     }
