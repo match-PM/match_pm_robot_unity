@@ -24,6 +24,14 @@ public class SpawnGameObject : MonoBehaviour
         // Instead of "transform.localPosition = transform.localPosition += ...",
         // simply set the localPosition:
         Vector3 unityPosition = new Vector3(targetPosition[0], targetPosition[1], targetPosition[2]);
+
+        // spawn with a random offset (0.1-0.5mm) in x and y to refect real-world variability in the placement of the object.
+        System.Random rand = new System.Random();
+        float offsetX = (float)(rand.NextDouble() * 0.0002 + 0.0001); // 0.1mm to 0.5mm in meters
+        float offsetY = (float)(rand.NextDouble() * 0.0002 + 0.0001); // 0.1mm to 0.5mm in meters
+        unityPosition.x += offsetX;
+        unityPosition.y += offsetY;
+
         // If needed, do: unityPosition = unityPosition.Ros2Unity();
         transform.localPosition = unityPosition.Ros2Unity();
 
