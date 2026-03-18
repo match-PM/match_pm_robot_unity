@@ -12,6 +12,7 @@ public class SpawnGameObject : MonoBehaviour
     public float[] targetRotation;
     public string cadDataPath;
     public ColorRGBA color;
+    public string uuid;
 
     private Mesh[] meshes;
 
@@ -25,12 +26,27 @@ public class SpawnGameObject : MonoBehaviour
         // simply set the localPosition:
         Vector3 unityPosition = new Vector3(targetPosition[0], targetPosition[1], targetPosition[2]);
 
-        // spawn with a random offset (0.1-0.5mm) in x and y to refect real-world variability in the placement of the object.
-        System.Random rand = new System.Random();
-        float offsetX = (float)(rand.NextDouble() * 0.0002 + 0.0001); // 0.1mm to 0.5mm in meters
-        float offsetY = (float)(rand.NextDouble() * 0.0002 + 0.0001); // 0.1mm to 0.5mm in meters
-        unityPosition.x += offsetX;
-        unityPosition.y += offsetY;
+        // Check if this object has been spawned before by checking if its UUID is in PlayerPrefs
+        string playerPrefKey = $"Spawned_UUID_{uuid}";
+        bool hasBeenSpawnedBefore = PlayerPrefs.HasKey(playerPrefKey);
+
+        if (!hasBeenSpawnedBefore)
+        {
+            Debug.Log($"Spawning new object with UUID: {uuid}. Applying random offset to position.");
+            // spawn with a random offset (0.1-0.5mm) in x and y to reflect real-world variability in the placement of the object.
+            System.Random rand = new System.Random();
+            float offsetX = (float)(rand.NextDouble() * 0.0002 + 0.0001); // 0.1mm to 0.5mm in meters
+            float offsetY = (float)(rand.NextDouble() * 0.0002 + 0.0001); // 0.1mm to 0.5mm in meters
+            // float offsetRotZ = (float)(rand.NextDouble() * 2 - 1) * 0.01f; // Random rotation offset between -0.01 and 0.01 degrees
+            unityPosition.x += offsetX;
+            unityPosition.y += offsetY;
+            // targetRotation[2] += offsetRotZ;
+
+            // Mark this UUID as spawned so it doesn't get offset again on respawn
+            PlayerPrefs.SetInt(playerPrefKey, 1);
+            PlayerPrefs.Save();
+        }
+        
 
         // If needed, do: unityPosition = unityPosition.Ros2Unity();
         transform.localPosition = unityPosition.Ros2Unity();

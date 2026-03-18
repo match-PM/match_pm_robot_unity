@@ -98,12 +98,13 @@ public class UnityComponentSpawner : MonoBehaviour
 
             sgo.cadDataPath = obj.Cad_data;
             sgo.tag = "spawned";
+            sgo.uuid = obj.Uuid;
 
             if (withRefFrame)
             {
                 Instantiate(Resources.Load<GameObject>("Prefabs/RefFrame"), spawnedGameObject.transform);
             }
-            Debug.Log($"Spawning GameObject: {obj.Obj_name}");
+            // Debug.Log($"Spawning GameObject: {obj.Obj_name}, uuid: {sgo.uuid}");
             // Add to dictionary
             spawnedDict[obj.Obj_name] = spawnedGameObject;
         }
