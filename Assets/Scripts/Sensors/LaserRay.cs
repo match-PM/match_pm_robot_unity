@@ -42,12 +42,12 @@ public class LaserRay : MonoBehaviour
 
         distance = hit.point.y - transform.position.y;
 
-        Debug.Log("Raw Distance: " + distance*1e6);
+        // Debug.Log("Raw Distance: " + distance*1e6);
         // deviation from our “zero”:
         float centered = distance + startPositionOffset;
         // Debug.Log("Centered Distance: " + centered);
         calc_distance = Mathf.Clamp((float)centered, MinDistance, MaxDistance);
-        Debug.Log("Clamped Distance: " + calc_distance*1e6);
+        // Debug.Log("Clamped Distance: " + calc_distance*1e6);
         // Debug.Log("Distance: " + distance);
         // Debug.Log("Hit point: " + hit.point);
     }
