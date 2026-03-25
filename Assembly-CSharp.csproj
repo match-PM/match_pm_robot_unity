@@ -89,6 +89,7 @@
     <Compile Include="Assets/Scripts/SpawnerService/GlueTFSpawner.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ROS2TimeSource.cs" />
     <Compile Include="Assets/Scripts/Sensors/ConfocalEpsilon.cs" />
+    <Compile Include="Assets/Scripts/Dispense2K.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ITimeSource.cs" />
     <Compile Include="Assets/Scripts/Sensors/CamPublisher.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/LaunchOpcUaServer.cs" />

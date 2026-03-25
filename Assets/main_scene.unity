@@ -69155,6 +69155,7 @@ GameObject:
   - component: {fileID: 1218182278}
   - component: {fileID: 1218182279}
   - component: {fileID: 1218182280}
+  - component: {fileID: 1218182281}
   m_Layer: 0
   m_Name: pm_robot
   m_TagString: robot
@@ -69395,6 +69396,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uvCartFront: {fileID: 456300200}
   uvCartBack: {fileID: 1328694326}
+--- !u!114 &1218182281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218182265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc5d2c5d09733beb3b6beaf372a526c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AxisX: {fileID: 1249734995}
+  AxisY: {fileID: 1092978866}
+  AxisZ: {fileID: 1588346923}
+  Dispenser: {fileID: 598417689}
+  mmToUnity: 0.001
+  speed: 0.01
+  positionTolerance: 0.0005
 --- !u!1 &1218703001
 GameObject:
   m_ObjectHideFlags: 8
