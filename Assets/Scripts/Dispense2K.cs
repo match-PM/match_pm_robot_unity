@@ -17,9 +17,9 @@ public class Dispense2K : MonoBehaviour
     public ArticulationBody AxisZ;
     public ArticulationBody Dispenser;
 
-    // G-code values are in mm; Unity uses meters
+    // G-code positions are in mm; Unity uses meters
     public float mmToUnity = 0.001f;
-    // Default movement speed in m/s (used when F=0 in G-code)
+    // Default movement speed in m/s (used when per-axis speed is 0)
     public float speed = 0.01f;
     // Tolerance in Unity units to consider an axis at its target
     public float positionTolerance = 0.0005f;
@@ -37,10 +37,10 @@ public class Dispense2K : MonoBehaviour
 
     private readonly ConcurrentQueue<Action> mainThreadActions = new ConcurrentQueue<Action>();
 
-    // Target interpolation state
+    // Per-axis interpolation state
     private float currentTargetX, currentTargetY, currentTargetZ;
     private float goalTargetX, goalTargetY, goalTargetZ;
-    private float interpolationSpeed;
+    private float speedX, speedY, speedZ; // m/s per axis
     private bool isInterpolating = false;
 
     // Bead visualization state
@@ -51,9 +51,15 @@ public class Dispense2K : MonoBehaviour
 
     private struct GCodeCommand
     {
-        public int type; // 10 = move with dispenser on, 20 = move only
-        public float x, y, z;
-        public float f; // feed rate in mm/min (0 = use default speed)
+        public int type;             // 10=Move, 20=Dispenser, 30=Dip, 40=Wait, 50=SetDispenser
+        public float x, y, z;       // target position (mm)
+        public float fx, fy, fz;    // move/dispenser speeds (mm/s)
+        public float fxd, fyd, fzd; // G30 down speeds (mm/s)
+        public float fxu, fyu, fzu; // G30 up speeds (mm/s)
+        public float moveTime;      // G20: total move duration (ms)
+        public float turnOffTime;   // G20: turn off dispenser this many ms before end
+        public float t;             // G30: dip rest time (ms), G40: wait time (ms)
+        public float a;             // G50: dispenser activation (0=off, 1=on)
     }
 
     void Start()
@@ -97,40 +103,16 @@ public class Dispense2K : MonoBehaviour
 
         float dt = Time.fixedDeltaTime;
 
-        float dx = goalTargetX - currentTargetX;
-        float dy = goalTargetY - currentTargetY;
-        float dz = goalTargetZ - currentTargetZ;
-        float totalDistance = Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
-
-        if (totalDistance < 1e-7f)
-        {
-            currentTargetX = goalTargetX;
-            currentTargetY = goalTargetY;
-            currentTargetZ = goalTargetZ;
-            isInterpolating = false;
-        }
-        else
-        {
-            float stepDistance = interpolationSpeed * dt;
-            if (stepDistance >= totalDistance)
-            {
-                currentTargetX = goalTargetX;
-                currentTargetY = goalTargetY;
-                currentTargetZ = goalTargetZ;
-                isInterpolating = false;
-            }
-            else
-            {
-                float ratio = stepDistance / totalDistance;
-                currentTargetX += dx * ratio;
-                currentTargetY += dy * ratio;
-                currentTargetZ += dz * ratio;
-            }
-        }
+        bool xDone = StepAxis(ref currentTargetX, goalTargetX, speedX, dt);
+        bool yDone = StepAxis(ref currentTargetY, goalTargetY, speedY, dt);
+        bool zDone = StepAxis(ref currentTargetZ, goalTargetZ, speedZ, dt);
 
         if (AxisX != null) AxisX.SetDriveTarget(ArticulationDriveAxis.X, currentTargetX);
         if (AxisY != null) AxisY.SetDriveTarget(ArticulationDriveAxis.X, currentTargetY);
         if (AxisZ != null) AxisZ.SetDriveTarget(ArticulationDriveAxis.X, currentTargetZ);
+
+        if (xDone && yDone && zDone)
+            isInterpolating = false;
 
         if (isDispensing && DispenserTip != null)
         {
@@ -141,6 +123,25 @@ public class Dispense2K : MonoBehaviour
                 RebuildBeadMesh();
             }
         }
+    }
+
+    // Returns true when the axis has reached its goal.
+    private bool StepAxis(ref float current, float goal, float axisSpeed, float dt)
+    {
+        float diff = goal - current;
+        if (Mathf.Abs(diff) < 1e-7f)
+        {
+            current = goal;
+            return true;
+        }
+        float step = axisSpeed * dt;
+        if (step >= Mathf.Abs(diff))
+        {
+            current = goal;
+            return true;
+        }
+        current += Mathf.Sign(diff) * step;
+        return false;
     }
 
     void Update()
@@ -192,35 +193,71 @@ public class Dispense2K : MonoBehaviour
         foreach (string line in lines)
         {
             string trimmed = line.Trim();
-            if (string.IsNullOrEmpty(trimmed)) continue;
+            if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith(";")) continue;
 
-            string[] parts = trimmed.Split(' ');
+            string[] parts = trimmed.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 0) continue;
+
             int type;
-            if      (parts[0] == "G20") type = 20;
-            else if (parts[0] == "G10") type = 10;
+            if      (parts[0] == "G10") type = 10;
+            else if (parts[0] == "G20") type = 20;
             else if (parts[0] == "G30") type = 30;
+            else if (parts[0] == "G40") type = 40;
+            else if (parts[0] == "G50") type = 50;
             else continue;
 
-            float x = 0f, y = 0f, z = 0f, f = 0f;
+            var cmd = new GCodeCommand { type = type };
+
             foreach (string part in parts)
             {
                 if (part.Length < 2) continue;
-                if (!float.TryParse(part.Substring(1), NumberStyles.Float, CultureInfo.InvariantCulture, out float val))
+
+                // Resolve multi-character keys (longest match first)
+                if (part.Length > 3 && TryMatchKey(part, 3, out string key, out string valueStr)) { }
+                else if (part.Length > 2 && TryMatchKey(part, 2, out key, out valueStr)) { }
+                else { key = part.Substring(0, 1).ToUpperInvariant(); valueStr = part.Substring(1); }
+
+                if (!float.TryParse(valueStr, NumberStyles.Float, CultureInfo.InvariantCulture, out float val))
                     continue;
 
-                switch (part[0])
+                switch (key)
                 {
-                    case 'X': x = val; break;
-                    case 'Y': y = val; break;
-                    case 'Z': z = val; break;
-                    case 'F': f = val; break;
+                    case "X":   cmd.x          = val; break;
+                    case "Y":   cmd.y          = val; break;
+                    case "Z":   cmd.z          = val; break;
+                    case "FX":  cmd.fx         = val; break;
+                    case "FY":  cmd.fy         = val; break;
+                    case "FZ":  cmd.fz         = val; break;
+                    case "FXD": cmd.fxd        = val; break;
+                    case "FYD": cmd.fyd        = val; break;
+                    case "FZD": cmd.fzd        = val; break;
+                    case "FXU": cmd.fxu        = val; break;
+                    case "FYU": cmd.fyu        = val; break;
+                    case "FZU": cmd.fzu        = val; break;
+                    case "MT":  cmd.moveTime   = val; break;
+                    case "TF":  cmd.turnOffTime= val; break;
+                    case "T":   cmd.t          = val; break;
+                    case "A":   cmd.a          = val; break;
                 }
             }
 
-            commands.Add(new GCodeCommand { type = type, x = x, y = y, z = z, f = f });
+            commands.Add(cmd);
         }
 
         return commands;
+    }
+
+    private static bool TryMatchKey(string part, int keyLen, out string key, out string valueStr)
+    {
+        key = part.Substring(0, keyLen).ToUpperInvariant();
+        valueStr = part.Substring(keyLen);
+
+        if (keyLen == 3)
+            return key == "FXD" || key == "FYD" || key == "FZD" || key == "FXU" || key == "FYU" || key == "FZU";
+        if (keyLen == 2)
+            return key == "FX" || key == "FY" || key == "FZ" || key == "MT" || key == "TF";
+
+        return false;
     }
 
     private IEnumerator ExecuteGCode(List<GCodeCommand> commands)
@@ -234,33 +271,110 @@ public class Dispense2K : MonoBehaviour
 
         foreach (var cmd in commands)
         {
-            isDispensing = cmd.type == 10;
+            switch (cmd.type)
+            {
+                case 10: // G10 - Move
+                    Debug.Log($"Dispense2K: G10 → X={cmd.x} Y={cmd.y} Z={cmd.z} FX={cmd.fx} FY={cmd.fy} FZ={cmd.fz} mm/s");
+                    yield return StartCoroutine(DoMove(cmd.x, cmd.y, cmd.z, cmd.fx, cmd.fy, cmd.fz));
+                    break;
 
-            float moveSpeed = cmd.f > 0f ? cmd.f / 60000f : speed; // mm/min → m/s
-            // if (Dispenser != null) Dispenser.SetDriveTarget(ArticulationDriveAxis.X, isDispensing ? 1f : 0f);
+                case 20: // G20 - Dispenser (move while dispensing)
+                    Debug.Log($"Dispense2K: G20 → X={cmd.x} Y={cmd.y} Z={cmd.z} FX={cmd.fx} FY={cmd.fy} FZ={cmd.fz} MT={cmd.moveTime} TF={cmd.turnOffTime}");
+                    yield return StartCoroutine(DoDispenseMove(cmd));
+                    break;
 
-            goalTargetX = cmd.x * mmToUnity;
-            goalTargetY = cmd.y * mmToUnity;
-            goalTargetZ = cmd.z * mmToUnity;
-            interpolationSpeed = moveSpeed;
-            isInterpolating = true;
+                case 30: // G30 - Dip
+                    Debug.Log($"Dispense2K: G30 → X={cmd.x} Y={cmd.y} Z={cmd.z} T={cmd.t}ms");
+                    yield return StartCoroutine(DoDip(cmd));
+                    break;
 
-            Debug.Log($"Dispense2K: G{cmd.type} → X={cmd.x} Y={cmd.y} Z={cmd.z} F={moveSpeed * 60000f} mm/min dispense={isDispensing}");
+                case 40: // G40 - Wait
+                    Debug.Log($"Dispense2K: G40 → wait {cmd.t} ms");
+                    yield return new WaitForSeconds(cmd.t / 1000f);
+                    break;
 
-            yield return new WaitUntil(() => !isInterpolating && AxesAtTarget(cmd));
+                case 50: // G50 - Set Dispenser (A0=off, A1=on)
+                    isDispensing = cmd.a != 0f;
+                    Debug.Log($"Dispense2K: G50 A{cmd.a} → dispenser {(isDispensing ? "ON" : "OFF")}");
+                    break;
+            }
         }
 
         isDispensing = false;
-        // if (Dispenser != null) Dispenser.SetDriveTarget(ArticulationDriveAxis.X, 0f);
-
         Debug.Log("Dispense2K: G-code execution complete.");
     }
 
-    private bool AxesAtTarget(GCodeCommand cmd)
+    // G10 - Move to target, no dispensing.
+    private IEnumerator DoMove(float x, float y, float z, float fx, float fy, float fz)
     {
-        bool xOk = AxisX == null || Mathf.Abs(AxisX.jointPosition[0] - cmd.x * mmToUnity) < positionTolerance;
-        bool yOk = AxisY == null || Mathf.Abs(AxisY.jointPosition[0] - cmd.y * mmToUnity) < positionTolerance;
-        bool zOk = AxisZ == null || Mathf.Abs(AxisZ.jointPosition[0] - cmd.z * mmToUnity) < positionTolerance;
+        BeginMove(x, y, z, fx, fy, fz);
+        yield return new WaitUntil(() => !isInterpolating && AxesAtTarget(goalTargetX, goalTargetY, goalTargetZ));
+    }
+
+    // G20 - Move to target while dispensing. Turn off dispenser (moveTime - turnOffTime) ms into the move.
+    private IEnumerator DoDispenseMove(GCodeCommand cmd)
+    {
+        isDispensing = true;
+        BeginMove(cmd.x, cmd.y, cmd.z, cmd.fx, cmd.fy, cmd.fz);
+
+        // Turn off dispenser early if timing parameters are provided
+        if (cmd.moveTime > 0f)
+        {
+            float waitSeconds = (cmd.moveTime - cmd.turnOffTime) / 1000f;
+            if (waitSeconds > 0f)
+                yield return new WaitForSeconds(waitSeconds);
+        }
+
+        isDispensing = false;
+
+        // Wait for axes to reach target
+        yield return new WaitUntil(() => !isInterpolating && AxesAtTarget(goalTargetX, goalTargetY, goalTargetZ));
+    }
+
+    // G30 - Dip: move down to target, wait rest time, return to start position.
+    private IEnumerator DoDip(GCodeCommand cmd)
+    {
+        float startX = currentTargetX;
+        float startY = currentTargetY;
+        float startZ = currentTargetZ;
+
+        // Move down with down speeds
+        BeginMove(cmd.x, cmd.y, cmd.z, cmd.fxd, cmd.fyd, cmd.fzd);
+        yield return new WaitUntil(() => !isInterpolating && AxesAtTarget(goalTargetX, goalTargetY, goalTargetZ));
+
+        // Dip rest
+        if (cmd.t > 0f)
+            yield return new WaitForSeconds(cmd.t / 1000f);
+
+        // Move back up with up speeds (in Unity units — already converted)
+        goalTargetX = startX;
+        goalTargetY = startY;
+        goalTargetZ = startZ;
+        speedX = cmd.fxu > 0f ? cmd.fxu * mmToUnity : speed;
+        speedY = cmd.fyu > 0f ? cmd.fyu * mmToUnity : speed;
+        speedZ = cmd.fzu > 0f ? cmd.fzu * mmToUnity : speed;
+        isInterpolating = true;
+
+        yield return new WaitUntil(() => !isInterpolating && AxesAtTarget(startX, startY, startZ));
+    }
+
+    // Set goal and per-axis speeds, start interpolation. Speeds in mm/s (0 = use default).
+    private void BeginMove(float x, float y, float z, float fx, float fy, float fz)
+    {
+        goalTargetX = x * mmToUnity;
+        goalTargetY = y * mmToUnity;
+        goalTargetZ = z * mmToUnity;
+        speedX = fx > 0f ? fx * mmToUnity : speed;
+        speedY = fy > 0f ? fy * mmToUnity : speed;
+        speedZ = fz > 0f ? fz * mmToUnity : speed;
+        isInterpolating = true;
+    }
+
+    private bool AxesAtTarget(float tx, float ty, float tz)
+    {
+        bool xOk = AxisX == null || Mathf.Abs(AxisX.jointPosition[0] - tx) < positionTolerance;
+        bool yOk = AxisY == null || Mathf.Abs(AxisY.jointPosition[0] - ty) < positionTolerance;
+        bool zOk = AxisZ == null || Mathf.Abs(AxisZ.jointPosition[0] - tz) < positionTolerance;
         return xOk && yOk && zOk;
     }
 
@@ -275,14 +389,12 @@ public class Dispense2K : MonoBehaviour
 
         for (int i = 0; i < n; i++)
         {
-            // Direction along the path
             Vector3 fwd;
             if (i < n - 1)
                 fwd = (beadPoints[i + 1] - beadPoints[i]).normalized;
             else
                 fwd = (beadPoints[i] - beadPoints[i - 1]).normalized;
 
-            // Build a perpendicular frame
             Vector3 side = Vector3.Cross(fwd, Vector3.up);
             if (side.sqrMagnitude < 0.001f)
                 side = Vector3.Cross(fwd, Vector3.right);

@@ -100,6 +100,32 @@ public class UnityComponentSpawner : MonoBehaviour
             sgo.tag = "spawned";
             sgo.uuid = obj.Uuid;
 
+            var refFrames = obj.Ref_frames;
+            foreach (var rf in refFrames)
+            {
+                if (rf.Frame_name.Contains("Glue"))
+                {
+                    // Check if glue point already exists
+                    if (spawnedGameObject.transform.Find(rf.Frame_name) != null)
+                    {
+                        Debug.Log($"[UnityComponentSpawner] Glue point {rf.Frame_name} already exists, skipping creation.");
+                        continue;
+                    }
+                    
+                    // Create glue point GameObject
+                    GameObject gluePoint = new GameObject(rf.Frame_name);
+                    gluePoint.tag = "spawned";
+                    gluePoint.transform.SetParent(spawnedGameObject.transform, false);
+                    gluePoint.transform.localPosition = new Vector3(
+                        (float)(rf.Pose.Position.Y * -1), // ROS Y -> Unity X
+                        (float)rf.Pose.Position.Z,         // ROS Z -> Unity Y
+                        (float)rf.Pose.Position.X          // ROS X -> Unity Z
+                    );
+                    
+                    Debug.Log($"[UnityComponentSpawner] Created glue point: {rf.Frame_name} under {obj.Obj_name}");
+                }
+            }
+
             if (withRefFrame)
             {
                 Instantiate(Resources.Load<GameObject>("Prefabs/RefFrame"), spawnedGameObject.transform);
