@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using ROS2;
 using assembly_manager_interfaces.msg;
@@ -11,11 +12,13 @@ public class UnityComponentSpawner : MonoBehaviour
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
     private ISubscription<ObjectScene> objectSceneSub;
-    private List<assembly_manager_interfaces.msg.Object> object_list = new List<assembly_manager_interfaces.msg.Object>();
+    private Dictionary<string, assembly_manager_interfaces.msg.Object> objectsByUuid = new Dictionary<string, assembly_manager_interfaces.msg.Object>();
+    private Dictionary<string, GameObject> spawnedByUuid = new Dictionary<string, GameObject>();
+    private List<assembly_manager_interfaces.msg.Object> pendingObjectList = null;
     private bool scene_has_changed = false;
     public bool withRefFrame = false;
+    public GameObject adhesivePointPrefab;
 
-    // Start is called before the first frame update
     void Start()
     {
         ros2Unity = GetComponent<ROS2UnityComponent>();
@@ -27,7 +30,6 @@ public class UnityComponentSpawner : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         if (ros2Node == null && ros2Unity.Ok())
@@ -40,178 +42,286 @@ public class UnityComponentSpawner : MonoBehaviour
             Debug.Log($"Subscribed to {ObjectScene} and ready to receive objects.");
         }
 
-        if (scene_has_changed)
+        if (scene_has_changed && pendingObjectList != null)
         {
-            Debug.Log("Scene has changed, applying objects to Unity.");
-            ClearScene(); // Clear the scene before applying new objects
-            if (ApplyObjectsToUnity())
-            {
-                Debug.Log("Objects applied successfully.");
-            }
-            else
-            {
-                Debug.LogError("Failed to apply objects to Unity.");
-            }
-            scene_has_changed = false; // Reset the flag after processing
+            ApplySceneIncrementally(pendingObjectList);
+            pendingObjectList = null;
+            scene_has_changed = false;
         }
     }
 
     private void ObjectSceneCallback(ObjectScene msg)
     {
-        if (CheckSceneHasChanged(msg.Objects_in_scene))
+        var newList = new List<assembly_manager_interfaces.msg.Object>(msg.Objects_in_scene);
+        if (CheckSceneHasChanged(newList))
         {
-            object_list = new List<assembly_manager_interfaces.msg.Object>(msg.Objects_in_scene);
+            pendingObjectList = newList;
             scene_has_changed = true;
-        }
-        else
-        {
-            // Scene has not changed, do nothing
-            scene_has_changed = false;
         }
     }
 
-    private bool ApplyObjectsToUnity()
+    private void ApplySceneIncrementally(List<assembly_manager_interfaces.msg.Object> newObjectList)
     {
-        // Keep track of all spawned objects by name for easy parenting
-        Dictionary<string, GameObject> spawnedDict = new Dictionary<string, GameObject>();
+        var newByUuid = new Dictionary<string, assembly_manager_interfaces.msg.Object>();
+        foreach (var obj in newObjectList)
+            newByUuid[obj.Uuid] = obj;
 
-        // First pass: create all GameObjects
-        foreach (var obj in object_list)
+        // Remove objects that no longer exist
+        var removedUuids = objectsByUuid.Keys.Where(uuid => !newByUuid.ContainsKey(uuid)).ToList();
+        foreach (var uuid in removedUuids)
         {
-            var spawnedGameObject = new GameObject(obj.Obj_name);
-
-            // (Optional: Add stuff here like components)
-            var sgo = spawnedGameObject.AddComponent<SpawnGameObject>();
-            sgo.color = obj.Apperance_color;
-            float[] translation = new float[3];
-            translation[0] = (float)obj.Obj_pose.Position.X;
-            translation[1] = (float)obj.Obj_pose.Position.Y;
-            translation[2] = (float)obj.Obj_pose.Position.Z;
-            sgo.targetPosition = translation;
-
-            float[] rotation = new float[4];
-            rotation[0] = (float)obj.Obj_pose.Orientation.X;
-            rotation[1] = (float)obj.Obj_pose.Orientation.Y;
-            rotation[2] = (float)obj.Obj_pose.Orientation.Z;
-            rotation[3] = (float)obj.Obj_pose.Orientation.W;
-            sgo.targetRotation = rotation;
-
-            sgo.cadDataPath = obj.Cad_data;
-            sgo.tag = "spawned";
-            sgo.uuid = obj.Uuid;
-
-            var refFrames = obj.Ref_frames;
-            foreach (var rf in refFrames)
+            if (spawnedByUuid.TryGetValue(uuid, out var go))
             {
-                if (rf.Frame_name.Contains("Glue"))
-                {
-                    // Check if glue point already exists
-                    if (spawnedGameObject.transform.Find(rf.Frame_name) != null)
-                    {
-                        Debug.Log($"[UnityComponentSpawner] Glue point {rf.Frame_name} already exists, skipping creation.");
-                        continue;
-                    }
-                    
-                    // Create glue point GameObject
-                    GameObject gluePoint = new GameObject(rf.Frame_name);
-                    gluePoint.tag = "spawned";
-                    gluePoint.transform.SetParent(spawnedGameObject.transform, false);
-                    gluePoint.transform.localPosition = new Vector3(
-                        (float)(rf.Pose.Position.Y * -1), // ROS Y -> Unity X
-                        (float)rf.Pose.Position.Z,         // ROS Z -> Unity Y
-                        (float)rf.Pose.Position.X          // ROS X -> Unity Z
-                    );
-                    
-                    Debug.Log($"[UnityComponentSpawner] Created glue point: {rf.Frame_name} under {obj.Obj_name}");
-                }
+                Debug.Log($"[UnityComponentSpawner] Removing object: {objectsByUuid[uuid].Obj_name}");
+                Destroy(go);
+                spawnedByUuid.Remove(uuid);
             }
-
-            if (withRefFrame)
-            {
-                Instantiate(Resources.Load<GameObject>("Prefabs/RefFrame"), spawnedGameObject.transform);
-            }
-            // Debug.Log($"Spawning GameObject: {obj.Obj_name}, uuid: {sgo.uuid}");
-            // Add to dictionary
-            spawnedDict[obj.Obj_name] = spawnedGameObject;
+            objectsByUuid.Remove(uuid);
         }
 
-        // Second pass: set parent
-        foreach (var obj in object_list)
+        // Add new objects or update existing ones
+        // We need a name->GO dict for parenting (includes both new and existing)
+        Dictionary<string, GameObject> spawnedByName = new Dictionary<string, GameObject>();
+        foreach (var kvp in spawnedByUuid)
         {
-            if (!string.IsNullOrEmpty(obj.Parent_frame))
+            if (kvp.Value != null)
+                spawnedByName[kvp.Value.name] = kvp.Value;
+        }
+
+        foreach (var obj in newObjectList)
+        {
+            if (spawnedByUuid.ContainsKey(obj.Uuid) && spawnedByUuid[obj.Uuid] != null)
             {
-                GameObject parentObj = null;
-
-                // First try the newly spawned objects
-                if (!spawnedDict.TryGetValue(obj.Parent_frame, out parentObj))
+                // Object exists — check if it needs a full rebuild or just a property update
+                var oldObj = objectsByUuid[obj.Uuid];
+                if (NeedsRebuild(oldObj, obj))
                 {
-                    // Fallback: try to find it in the scene
-                    parentObj = GameObject.Find(obj.Parent_frame);
-                }
-
-                if (parentObj != null && parentObj.activeInHierarchy)
-                {
-                    Debug.Log($"Setting parent for {obj.Obj_name} to {parentObj.name}");
-                    spawnedDict[obj.Obj_name].transform.SetParent(parentObj.transform, false);
+                    // Full rebuild for this object
+                    Debug.Log($"[UnityComponentSpawner] Rebuilding object: {obj.Obj_name}");
+                    Destroy(spawnedByUuid[obj.Uuid]);
+                    var newGo = SpawnObject(obj);
+                    spawnedByUuid[obj.Uuid] = newGo;
+                    spawnedByName[obj.Obj_name] = newGo;
                 }
                 else
                 {
-                    Debug.LogWarning($"Parent frame {obj.Parent_frame} for {obj.Obj_name} does not exist!");
+                    // Only update ref_frame properties (adhesive points)
+                    UpdateRefFrameProperties(spawnedByUuid[obj.Uuid], oldObj, obj);
+                }
+            }
+            else
+            {
+                // New object — spawn it
+                Debug.Log($"[UnityComponentSpawner] Spawning new object: {obj.Obj_name}");
+                var newGo = SpawnObject(obj);
+                spawnedByUuid[obj.Uuid] = newGo;
+                spawnedByName[obj.Obj_name] = newGo;
+            }
+
+            objectsByUuid[obj.Uuid] = obj;
+        }
+
+        // Set parents
+        foreach (var obj in newObjectList)
+        {
+            if (string.IsNullOrEmpty(obj.Parent_frame))
+                continue;
+
+            if (!spawnedByUuid.TryGetValue(obj.Uuid, out var childGo) || childGo == null)
+                continue;
+
+            GameObject parentObj = null;
+            if (!spawnedByName.TryGetValue(obj.Parent_frame, out parentObj))
+            {
+                parentObj = GameObject.Find(obj.Parent_frame);
+            }
+
+            if (parentObj != null && parentObj.activeInHierarchy)
+            {
+                if (childGo.transform.parent != parentObj.transform)
+                {
+                    childGo.transform.SetParent(parentObj.transform, false);
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"Parent frame {obj.Parent_frame} for {obj.Obj_name} does not exist!");
+            }
+        }
+    }
+
+    private GameObject SpawnObject(assembly_manager_interfaces.msg.Object obj)
+    {
+        var spawnedGameObject = new GameObject(obj.Obj_name);
+        var sgo = spawnedGameObject.AddComponent<SpawnGameObject>();
+        sgo.color = obj.Apperance_color;
+
+        float[] translation = new float[3];
+        translation[0] = (float)obj.Obj_pose.Position.X;
+        translation[1] = (float)obj.Obj_pose.Position.Y;
+        translation[2] = (float)obj.Obj_pose.Position.Z;
+        sgo.targetPosition = translation;
+
+        float[] rotation = new float[4];
+        rotation[0] = (float)obj.Obj_pose.Orientation.X;
+        rotation[1] = (float)obj.Obj_pose.Orientation.Y;
+        rotation[2] = (float)obj.Obj_pose.Orientation.Z;
+        rotation[3] = (float)obj.Obj_pose.Orientation.W;
+        sgo.targetRotation = rotation;
+
+        sgo.cadDataPath = obj.Cad_data;
+        sgo.tag = "spawned";
+        sgo.uuid = obj.Uuid;
+
+        foreach (var rf in obj.Ref_frames)
+        {
+            if (rf.Properties.Glue_pt_frame_properties.Is_glue_point)
+            {
+                GameObject gluePoint = CreateGluePoint(spawnedGameObject, rf, obj.Obj_name);
+
+                if (rf.Properties.Glue_pt_frame_properties.Has_been_placed)
+                {
+                    // CreateAdhesivePoint(gluePoint, rf.Frame_name);
+                    continue;
                 }
             }
         }
 
-        return true;
+        if (withRefFrame)
+        {
+            Instantiate(Resources.Load<GameObject>("Prefabs/RefFrame"), spawnedGameObject.transform);
+        }
+
+        return spawnedGameObject;
     }
 
-    private bool CheckSceneHasChanged(IList<assembly_manager_interfaces.msg.Object> msgObjectList)
+    private void UpdateRefFrameProperties(GameObject go, assembly_manager_interfaces.msg.Object oldObj, assembly_manager_interfaces.msg.Object newObj)
     {
-        if (object_list.Count != msgObjectList.Count)
+        foreach (var newRf in newObj.Ref_frames)
         {
-            return true;
-        }
-        for (int i = 0; i < object_list.Count; i++)
-        {
-            var a = object_list[i];
-            var b = msgObjectList[i];
+            if (!newRf.Properties.Glue_pt_frame_properties.Is_glue_point)
+                continue;
 
-            if (a.Obj_name != b.Obj_name)
-                return true;
-            if (a.Parent_frame != b.Parent_frame)
-                return true;
-            if (a.Obj_pose.Position.X != b.Obj_pose.Position.X)
-                return true;
-            if (a.Obj_pose.Position.Y != b.Obj_pose.Position.Y)
-                return true;
-            if (a.Obj_pose.Position.Z != b.Obj_pose.Position.Z)
-                return true;
-            if (a.Obj_pose.Orientation.X != b.Obj_pose.Orientation.X)
-                return true;
-            if (a.Obj_pose.Orientation.Y != b.Obj_pose.Orientation.Y)
-                return true;
-            if (a.Obj_pose.Orientation.Z != b.Obj_pose.Orientation.Z)
-                return true;
-            if (a.Obj_pose.Orientation.W != b.Obj_pose.Orientation.W)
-                return true;
+            // Find matching old ref_frame
+            bool wasPlaced = false;
+            foreach (var oldRf in oldObj.Ref_frames)
+            {
+                if (oldRf.Frame_name == newRf.Frame_name)
+                {
+                    wasPlaced = oldRf.Properties.Glue_pt_frame_properties.Has_been_placed;
+                    break;
+                }
+            }
+
+            bool isNowPlaced = newRf.Properties.Glue_pt_frame_properties.Has_been_placed;
+
+            // Ensure glue point exists
+            Transform gluePointTransform = go.transform.Find(newRf.Frame_name);
+            GameObject gluePoint;
+            if (gluePointTransform == null)
+            {
+                gluePoint = CreateGluePoint(go, newRf, newObj.Obj_name);
+            }
+            else
+            {
+                gluePoint = gluePointTransform.gameObject;
+            }
+
+            if (!wasPlaced && isNowPlaced)
+            {
+                // Adhesive was just placed
+                // CreateAdhesivePoint(gluePoint, newRf.Frame_name);
+                continue;
+            }
+            else if (wasPlaced && !isNowPlaced)
+            {
+                // Adhesive was removed
+                Transform adhesiveTransform = gluePoint.transform.Find(newRf.Frame_name + "_adhesive");
+                if (adhesiveTransform != null)
+                {
+                    Debug.Log($"[UnityComponentSpawner] Removing adhesive point at: {newRf.Frame_name}");
+                    Destroy(adhesiveTransform.gameObject);
+                }
+            }
         }
+    }
+
+    private GameObject CreateGluePoint(GameObject parent, assembly_manager_interfaces.msg.RefFrame rf, string objName)
+    {
+        GameObject gluePoint = new GameObject(rf.Frame_name);
+        gluePoint.tag = "spawned";
+        gluePoint.transform.SetParent(parent.transform, false);
+        gluePoint.transform.localPosition = new Vector3(
+            (float)(rf.Pose.Position.Y * -1),
+            (float)rf.Pose.Position.Z,
+            (float)rf.Pose.Position.X
+        );
+        Debug.Log($"[UnityComponentSpawner] Created glue point: {rf.Frame_name} under {objName}");
+        return gluePoint;
+    }
+
+    private void CreateAdhesivePoint(GameObject gluePoint, string frameName)
+    {
+        if (gluePoint.transform.Find(frameName + "_adhesive") != null)
+            return;
+
+        if (adhesivePointPrefab != null)
+        {
+            GameObject adhesivePoint = Instantiate(adhesivePointPrefab, gluePoint.transform);
+            adhesivePoint.tag = "AdhesivePoint";
+            adhesivePoint.name = frameName + "_adhesive";
+            adhesivePoint.transform.localPosition = Vector3.zero;
+            Debug.Log($"[UnityComponentSpawner] Created adhesive point at: {frameName}");
+        }
+        else
+        {
+            Debug.LogWarning("[UnityComponentSpawner] adhesivePointPrefab is not assigned!");
+        }
+    }
+
+    private bool NeedsRebuild(assembly_manager_interfaces.msg.Object oldObj, assembly_manager_interfaces.msg.Object newObj)
+    {
+        if (oldObj.Obj_name != newObj.Obj_name) return true;
+        if (oldObj.Parent_frame != newObj.Parent_frame) return true;
+        if (oldObj.Cad_data != newObj.Cad_data) return true;
+        if (oldObj.Obj_pose.Position.X != newObj.Obj_pose.Position.X) return true;
+        if (oldObj.Obj_pose.Position.Y != newObj.Obj_pose.Position.Y) return true;
+        if (oldObj.Obj_pose.Position.Z != newObj.Obj_pose.Position.Z) return true;
+        if (oldObj.Obj_pose.Orientation.X != newObj.Obj_pose.Orientation.X) return true;
+        if (oldObj.Obj_pose.Orientation.Y != newObj.Obj_pose.Orientation.Y) return true;
+        if (oldObj.Obj_pose.Orientation.Z != newObj.Obj_pose.Orientation.Z) return true;
+        if (oldObj.Obj_pose.Orientation.W != newObj.Obj_pose.Orientation.W) return true;
+        if (oldObj.Ref_frames.Length != newObj.Ref_frames.Length) return true;
         return false;
     }
-    
-    private bool ClearScene()
+
+    private bool CheckSceneHasChanged(List<assembly_manager_interfaces.msg.Object> msgObjectList)
     {
-        // Find all GameObjects with the tag "spawned"
-        GameObject[] spawnedObjects = GameObject.FindGameObjectsWithTag("spawned");
+        if (objectsByUuid.Count != msgObjectList.Count)
+            return true;
 
-        // Destroy each spawned object
-        foreach (GameObject obj in spawnedObjects)
+        foreach (var newObj in msgObjectList)
         {
-            Destroy(obj);
+            if (!objectsByUuid.TryGetValue(newObj.Uuid, out var oldObj))
+                return true;
+
+            if (NeedsRebuild(oldObj, newObj))
+                return true;
+
+            // Check ref_frame properties
+            for (int j = 0; j < oldObj.Ref_frames.Length; j++)
+            {
+                var rfA = oldObj.Ref_frames[j];
+                var rfB = newObj.Ref_frames[j];
+
+                if (rfA.Frame_name != rfB.Frame_name)
+                    return true;
+
+                if (rfA.Properties.Glue_pt_frame_properties.Has_been_placed !=
+                    rfB.Properties.Glue_pt_frame_properties.Has_been_placed)
+                    return true;
+            }
         }
-
-        // Clear the object list
-        // object_list.Clear();
-
-        Debug.Log("Scene cleared of all spawned objects.");
-        return true;
+        return false;
     }
 }

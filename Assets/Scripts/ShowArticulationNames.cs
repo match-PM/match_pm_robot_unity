@@ -3,15 +3,10 @@ using System.Collections.Generic;
 
 public class ShowArticulationNames : MonoBehaviour
 {
-    private ArticulationBody[] articulationBodies;
+    public List<GameObject> targets = new List<GameObject>();
     private GUIStyle labelStyle;
     private Texture2D backgroundTex;
     private Texture2D lineTex;
-
-    void Start()
-    {
-        articulationBodies = FindObjectsOfType<ArticulationBody>();
-    }
 
     void OnGUI()
     {
@@ -41,17 +36,16 @@ public class ShowArticulationNames : MonoBehaviour
         List<Rect> usedRects = new List<Rect>();
         float offsetDistance = 40f;
 
-        foreach (var ab in articulationBodies)
+        foreach (var go in targets)
         {
-            // Check if the ArticulationBody is active and has a valid transform
-            if (ab == null || !ab.gameObject.activeInHierarchy || ab.transform == null)
+            if (go == null || !go.activeInHierarchy)
                 continue;
-            Vector3 worldPos = ab.transform.position;
+            Vector3 worldPos = go.transform.position;
             Vector3 screenPos = cam.WorldToScreenPoint(worldPos);
 
             if (screenPos.z > 0)
             {
-                string label = ab.gameObject.name;
+                string label = go.name;
 
                 // Dynamically calculate label size
                 Vector2 labelSize = labelStyle.CalcSize(new GUIContent(label));
