@@ -25,6 +25,7 @@ public class UVLightControl : MonoBehaviour
     private double[] time;
     private double elapsedTime = 0.0;
     int[] power;
+    private GameObject UVLightGameObject;
   
     // Function to update the state of the UV light based on OPC UA data
     void updateUVLight()
@@ -40,6 +41,7 @@ public class UVLightControl : MonoBehaviour
             // Turn off the UV light
             currentState = !currentState;
             UVLight.enabled = currentState;
+            UVLightGameObject.SetActive(currentState);
             // Write the updated state to the OPC UA server
             writeUVValues();
         }
@@ -48,6 +50,7 @@ public class UVLightControl : MonoBehaviour
             // Turn on the UV light
             currentState = stateReading[ArrayIndex];
             UVLight.enabled = currentState;
+            UVLightGameObject.SetActive(currentState);
             // Adjust the intensity of the UV light based on the power value
             UVLight.intensity = power[ArrayIndex] / 1.0f;
             // Reset the elapsed time
@@ -83,6 +86,7 @@ public class UVLightControl : MonoBehaviour
 
         UVLight = GetComponent<Light>();
         UVLight.enabled = false;
+        UVLightGameObject = UVLight.transform.GetChild(0).gameObject; // Assuming the light source is the first child of the UV light GameObject
     }
 
     // Update is called once per frame

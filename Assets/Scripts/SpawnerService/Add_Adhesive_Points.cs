@@ -125,11 +125,13 @@ public class Add_Adhesive_Points : MonoBehaviour
                 if (createdPoints.Contains(trimmedName))
                 {   
                     // We already created it
+                    // Debug.Log($"Point '{trimmedName}' already exists. Skipping.");
                     continue;
                 }
                 if (pendingPoints.ContainsKey(trimmedName))
                 {
                     // It's still waiting for its parent from a previous message
+                    // Debug.Log($"Point '{trimmedName}' is already pending. Skipping.");
                     continue;
                 }
 

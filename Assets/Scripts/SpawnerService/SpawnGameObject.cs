@@ -134,9 +134,12 @@ public class SpawnGameObject : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Applying color from ROS message to {partName}: R={color.R}, G={color.G}, B={color.B}, A={color.A}");
+            // Debug.LogWarning($"Part name {partName} does not contain 'Modulcarrier' or 'Sensor'. {color.R}, {color.G}, {color.B}, {color.A} will be applied to the default material.");
+            Material aluminiumMat = Resources.Load<Material>("Materials/Aluminium");
+            mechRenderer.material = aluminiumMat;
             mat.color = new Color(color.R, color.G, color.B, color.A);
-            mechRenderer.material = mat;
+            // mat.color = new Color(color.R, color.G, color.B, color.A);
+            // mechRenderer.material = mat;
         }
 
         // Add a mesh collider to the part and set convex to true

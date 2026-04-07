@@ -28,6 +28,7 @@ public class ForceSensor : MonoBehaviour
     private Vector3 lastContactTorque = Vector3.zero;
     private int activeCollisions = 0;
     private bool frameHasImpulse = false;
+    private bool setZero = false;
 
     /// <summary>
     /// Returns true if the colliding object is part of the robot's own hierarchy.
@@ -140,6 +141,13 @@ public class ForceSensor : MonoBehaviour
         forceSensor.twistLock = ArticulationDofLock.LockedMotion;
     }
 
+    void zeroForceSensor()
+    {   
+        // simply resets the last known contact forces to zero.
+        lastContactForce = Vector3.zero;
+        lastContactTorque = Vector3.zero;
+    }
+
     IEnumerator Start()
     {
         robotGameObject = GameObject.Find("pm_robot");
@@ -153,6 +161,7 @@ public class ForceSensor : MonoBehaviour
         if (mode == 0)
         {
             OPCUA_Client.addToWriteContainer("ForceSensor", "Measurements");
+            OPCUA_Client.addToWriteContainer("ForceSensor", "SetZero");
         }
         isInitialized = true;
     }
@@ -162,6 +171,13 @@ public class ForceSensor : MonoBehaviour
         if (isInitialized && mode == 0 && OPCUA_Client.updateReady && OPCUA_Client.IsConnected)
         {
             writeForceValues();
+            // setZero = (bool)OPCUA_Client.allNodes["ForceSensor/SetZero"].dataValue.Value;
+            // if (setZero)
+            // {
+            //     zeroForceSensor();
+            //     OPCUA_Client.writeToServer("ForceSensor", "SetZero", new Variant(false));
+            // }
+            // Debug.Log($"ForceSensor SetZero: {setZero}");
         }
     }
 }
