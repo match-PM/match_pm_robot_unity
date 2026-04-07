@@ -134,6 +134,7 @@ public class SpawnGameObject : MonoBehaviour
         }
         else
         {
+            Debug.Log($"Applying color from ROS message to {partName}: R={color.R}, G={color.G}, B={color.B}, A={color.A}");
             mat.color = new Color(color.R, color.G, color.B, color.A);
             mechRenderer.material = mat;
         }

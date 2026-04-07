@@ -82,6 +82,7 @@ public class UnityComponentSpawner : MonoBehaviour
 
             // (Optional: Add stuff here like components)
             var sgo = spawnedGameObject.AddComponent<SpawnGameObject>();
+             sgo.color = obj.Apperance_color;
             sgo.color = obj.Apperance_color;
             float[] translation = new float[3];
             translation[0] = (float)obj.Obj_pose.Position.X;
