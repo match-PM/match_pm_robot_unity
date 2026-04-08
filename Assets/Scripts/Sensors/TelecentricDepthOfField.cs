@@ -22,7 +22,7 @@ public class TelecentricDepthOfField : MonoBehaviour
     public float maxDepthDifference = 0.01f;
 
     [Tooltip("Linear blur slope: blur radius increase per 1.0 Y distance")]
-    public float blurIncreasePerY = 1500.0f;
+    public float blurIncreasePerY = 200.0f;
 
     [Header("Distance To Blur Mapping")]
     [Tooltip("World Y at full sharpness (distance 0 => blur 0)")]
@@ -50,7 +50,7 @@ public class TelecentricDepthOfField : MonoBehaviour
 
     void OnValidate()
     {
-        maxDepthDifference = Mathf.Max(0.0001f, maxDepthDifference);
+        maxDepthDifference = Mathf.Max(0.001f, maxDepthDifference);
         blurIncreasePerY = Mathf.Clamp(blurIncreasePerY, 0.0f, 50000.0f);
         blurSmoothSpeed = Mathf.Max(0.0f, blurSmoothSpeed);
         blurStrengthMultiplier = Mathf.Clamp(blurStrengthMultiplier, 0.1f, 20.0f);
