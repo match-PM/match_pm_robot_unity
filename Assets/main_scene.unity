@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4366756, g: 0.48427194, b: 0.5645252, a: 1}
+  m_IndirectSpecularColor: {r: 0.43668708, g: 0.48427868, b: 0.56453013, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -7263,7 +7263,6 @@ Transform:
   - {fileID: 397832687}
   - {fileID: 306139294}
   - {fileID: 1543197362}
-  - {fileID: 1117580827}
   m_Father: {fileID: 1325324031}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &119849283
@@ -25560,7 +25559,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 0.00011847629
-  m_ParentAnchorPosition: {x: 0, y: -0.000000052154064, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: -0.000000029802322, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -32329,7 +32328,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: -0.000000052154064, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: -0.000000029802322, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -60543,7 +60542,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: -0.0015000105, y: -0.031800084, z: -0.0055000186}
+  m_ParentAnchorPosition: {x: -0.0015000105, y: -0.03180006, z: -0.0055000186}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -63481,7 +63480,7 @@ GameObject:
   - component: {fileID: 1117580828}
   - component: {fileID: 1218182282}
   m_Layer: 0
-  m_Name: Tool_Parallel_Gripper_Base_flat
+  m_Name: SmarAct_Piezo_Gripper_Flat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63496,7 +63495,7 @@ Transform:
   m_GameObject: {fileID: 1117580826}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.04542, z: 0}
+  m_LocalPosition: {x: 0, y: -0.04542002, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -63504,7 +63503,7 @@ Transform:
   - {fileID: 236176616}
   - {fileID: 1091649633}
   - {fileID: 1213372770}
-  m_Father: {fileID: 119849282}
+  m_Father: {fileID: 1325324031}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1117580828
 MonoBehaviour:
@@ -69387,7 +69386,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 0.00012569975
-  m_ParentAnchorPosition: {x: -0.0015000105, y: -0.031800084, z: -0.00048589706}
+  m_ParentAnchorPosition: {x: -0.0015000105, y: -0.03180006, z: -0.00048589706}
   m_ParentAnchorRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
@@ -69595,6 +69594,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b07bcc15facc48bffbc060feca1b74ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  measuringSystem_ConfocalBottom: {fileID: 806031842}
+  measuringSystem_ConfocalHead: {fileID: 1172001301}
+  measuringSystem_KeyenceBottom: {fileID: 1172001301}
+  dispenser_Tip_Yellow_I_100_A240_L12700: {fileID: 1824694884}
+  dispenser_Tip_Lavender_I_150_A310_L12700: {fileID: 995405963}
+  dispenser_Tip_Red_I_250_A520_L12700: {fileID: 45052039}
+  assembly_GonioLeft: {fileID: 600362593}
+  gonioLeft_Chuck_Siemens_Carrier: {fileID: 930769740}
+  gonioLeft_Chuck_Siemens_Carrier_SIN: {fileID: 1333950212}
+  gonioLeft_Chuck_Siemens_Sensor: {fileID: 74807735}
+  gonioLeft_Chuck_Siemens_Carrier_P39: {fileID: 2054865169}
+  gonioLeft_Chuck_IPEG_Demonstrator: {fileID: 423071473}
+  gonioLeft_Chuck_Siemens_Carrier_P39_V2: {fileID: 215261122}
+  gonioLeft_Chuck_Carrier_Demo: {fileID: 2131451351}
+  assembly_GonioRight: {fileID: 1365244153}
+  gonioRight_Chuck_Siemens_UFC: {fileID: 533578698}
+  gonioRight_Chuck_DoubleLensHolder_12_7: {fileID: 1307877866}
+  gonioRight_Chuck_IPEG_ActiveAlignment: {fileID: 2074227660}
+  gonioRight_Chuck_Siemens_SIN: {fileID: 1777345695}
+  assembly_SmarpodStation: {fileID: 381563003}
+  smarpod_Chuck_DiodePlacement: {fileID: 0}
+  pg1_Tool_SmarAct_Piezo_Gripper: {fileID: 0}
+  pg1_Tool_SmarAct_Piezo_Gripper_flat: {fileID: 1117580826}
+  pg1_Jaw_SmarActGripper_Default: {fileID: 0}
+  pg1_Jaw_SmarActGripperFlat_Default: {fileID: 0}
+  pg1_Jaw_SmarActGripperFlat_Flat: {fileID: 0}
+  pg2_Tool_Schunk_MPG_10_plus: {fileID: 0}
+  pg2_Jaw_SchunkMPG_Jaw3mmLens: {fileID: 0}
+  vac_Tool_SPT_Toolholder: {fileID: 0}
+  vac_Tool_Schunk_SPT_Tool_old: {fileID: 0}
+  vac_Tool_Siemens_Vacuum_Array: {fileID: 709279462}
+  vac_Tool_Siemens_Vacuum_Array_short: {fileID: 149906087}
+  vac_Tool_Siemens_Vacuum_Array_angled: {fileID: 1762484097}
+  vac_Tool_Schunk_Lens_Gripper: {fileID: 847094379}
+  vac_Tool_Schunk_Lens_Gripper_long: {fileID: 453490713}
 --- !u!114 &1218182276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69639,7 +69673,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   withRefFrame: 0
-  adhesivePointPrefab: {fileID: 701800157617612592, guid: 5ea9773de79ae7e57b6da928cf86dae2, type: 3}
 --- !u!114 &1218182279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69758,15 +69791,20 @@ MonoBehaviour:
   movingJaw: {fileID: 1213372773}
   movingJawObjectName: SmarAct_Gripper_Jaw_flat
   autoResolveMovingJaw: 1
-  configureDrive: 1
-  driveStiffness: 20000
-  driveDamping: 5
-  driveForceLimit: 20
-  exaggerateMotionInSimulation: 1
-  simulationMotionScale: 20
   physicalLowerLimit: 0
   physicalUpperLimit: 0.001
-  minimumSimulationUpperLimit: 0.02
+  enableDebugPositionControl: 0
+  useDebugLimitInputs: 1
+  debugLowerLimit: 0
+  debugUpperLimit: 0.03
+  appliedLowerLimit: 0
+  appliedUpperLimit: 0
+  debugPosition01: 0
+  debugTargetPosition: 0
+  autoConfigureDriveForDebug: 1
+  debugDriveStiffness: 20000
+  debugDriveDamping: 200
+  debugDriveForceLimit: 1000
   nodeName: unity_parallel_gripper_service
   serviceNamespace: /pm_parallel_gripper_jaw_controller
 --- !u!1 &1218703001
@@ -73545,6 +73583,7 @@ Transform:
   - {fileID: 1725363112}
   - {fileID: 1762484098}
   - {fileID: 1670495299}
+  - {fileID: 1117580827}
   - {fileID: 119849282}
   m_Father: {fileID: 1588346919}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -81904,7 +81943,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 0.000117826996
-  m_ParentAnchorPosition: {x: 0, y: -0.000000052154064, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: -0.000000029802322, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
