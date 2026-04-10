@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.43668708, g: 0.48427868, b: 0.56453013, a: 1}
+  m_IndirectSpecularColor: {r: 0.4366756, g: 0.48427194, b: 0.5645252, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -63479,13 +63479,14 @@ GameObject:
   - component: {fileID: 1117580830}
   - component: {fileID: 1117580829}
   - component: {fileID: 1117580828}
+  - component: {fileID: 1218182282}
   m_Layer: 0
   m_Name: Tool_Parallel_Gripper_Base_flat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1117580827
 Transform:
   m_ObjectHideFlags: 0
@@ -69740,6 +69741,34 @@ MonoBehaviour:
   beadRadius: 0.001
   beadSampleDistance: 0.001
   tubeSegments: 20
+--- !u!114 &1218182282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1117580826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f5d7d9343e74e3f9bc0f73bc1d65061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ros2Unity: {fileID: 1218182269}
+  searchParentsForRos2Unity: 1
+  movingJaw: {fileID: 1213372773}
+  movingJawObjectName: SmarAct_Gripper_Jaw_flat
+  autoResolveMovingJaw: 1
+  configureDrive: 1
+  driveStiffness: 20000
+  driveDamping: 5
+  driveForceLimit: 20
+  exaggerateMotionInSimulation: 1
+  simulationMotionScale: 20
+  physicalLowerLimit: 0
+  physicalUpperLimit: 0.001
+  minimumSimulationUpperLimit: 0.02
+  nodeName: unity_parallel_gripper_service
+  serviceNamespace: /pm_parallel_gripper_jaw_controller
 --- !u!1 &1218703001
 GameObject:
   m_ObjectHideFlags: 8
@@ -81612,7 +81641,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dofMaterial: {fileID: 2100000, guid: 2d7bdce6f57dc6922807b01483b48a36, type: 2}
   maxDepthDifference: 0.02
-  maxBlurRadius: 2
+  blurIncreasePerY: 200
+  fullSharpnessY: 1.317974
+  blurSmoothSpeed: 5
+  blurStrengthMultiplier: 8
+  showDebugInfo: 0
+  debugInfoPosition: {x: 12, y: 12}
 --- !u!1001 &1522506983
 PrefabInstance:
   m_ObjectHideFlags: 0

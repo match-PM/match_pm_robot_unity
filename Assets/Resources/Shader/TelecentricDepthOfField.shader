@@ -3,9 +3,9 @@ Shader "Custom/TelecentricDepthOfField"
     Properties
     {
         _MainTex ("Source", 2D) = "white" {}
-        _FocusZ ("Focus Distance (camera space)", Float) = 1.0
-        _MaxDepthDiff ("Max Depth Difference", Float) = 0.02
-        _MaxBlurRadius ("Max Blur Radius (pixels)", Float) = 2.0
+        _MaxDepthDiff ("Max Depth Difference", Float) = 0.01
+        _MaxBlurRadius ("Max Blur Radius (pixels)", Float) = 0.0
+        _BlurAmount ("Blur Amount", Float) = 0.0
     }
 
     SubShader
@@ -27,11 +27,9 @@ Shader "Custom/TelecentricDepthOfField"
 
             sampler2D _MainTex;
             float4 _MainTex_TexelSize;
-            sampler2D _CameraDepthTexture;
-
-            float _FocusZ;
             float _MaxDepthDiff;
             float _MaxBlurRadius;
+            float _BlurAmount;
 
             struct appdata
             {
@@ -42,10 +40,10 @@ Shader "Custom/TelecentricDepthOfField"
             struct v2f
             {
                 float4 pos : SV_POSITION;
-                float2 uv  : TEXCOORD0;
+                float2 uv : TEXCOORD0;
             };
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
@@ -53,75 +51,68 @@ Shader "Custom/TelecentricDepthOfField"
                 return o;
             }
 
-            float fragDepth(float2 uv)
+            fixed4 frag(v2f i) : SV_Target
             {
-                #if UNITY_REVERSED_Z
-                    float raw = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, uv);
-                    return LinearEyeDepth(raw);
-                #else
-                    float raw = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, uv);
-                    return LinearEyeDepth(raw);
-                #endif
-            }
+                fixed4 center = tex2D(_MainTex, i.uv);
+                float blurPixels = _MaxBlurRadius;
 
-            fixed4 frag (v2f i) : SV_Target
-            {
-                // Tiefe im Blick Raum
-                float depth = fragDepth(i.uv);
-
-                // Differenz zur Fokus Ebene
-                float dz = abs(depth - _FocusZ);
-
-                // Normierte Unschärfe von 0 bis 1
-                float blur01 = saturate(dz / max(_MaxDepthDiff, 1e-5));
-
-                // Radius in Pixeln
-                float radius = blur01 * _MaxBlurRadius;
-
-                // Wenn Radius fast null, direkt Originalfarbe zurückgeben
-                if (radius < 0.001)
+                if (blurPixels < 0.001 || _BlurAmount <= 0.001)
                 {
-                    return tex2D(_MainTex, i.uv);
+                    return center;
                 }
 
-                // Texel Schritte
-                float2 texel = _MainTex_TexelSize.xy * radius;
+                // Use a circular multi-sample kernel so the image gets genuinely
+                // softened like defocus blur instead of being turned into blocks.
+                float2 texel = _MainTex_TexelSize.xy * max(blurPixels, 0.5);
 
-                // Mehrere Samples in einem Kreis
+                const int sampleCount = 16;
+                float2 offsets[sampleCount];
+                offsets[0]  = float2( 0.0000,  0.0000);
+                offsets[1]  = float2( 0.5278,  0.0000);
+                offsets[2]  = float2(-0.5278,  0.0000);
+                offsets[3]  = float2( 0.0000,  0.5278);
+                offsets[4]  = float2( 0.0000, -0.5278);
+                offsets[5]  = float2( 0.3730,  0.3730);
+                offsets[6]  = float2(-0.3730,  0.3730);
+                offsets[7]  = float2( 0.3730, -0.3730);
+                offsets[8]  = float2(-0.3730, -0.3730);
+                offsets[9]  = float2( 0.8750,  0.0000);
+                offsets[10] = float2(-0.8750,  0.0000);
+                offsets[11] = float2( 0.0000,  0.8750);
+                offsets[12] = float2( 0.0000, -0.8750);
+                offsets[13] = float2( 0.6187,  0.6187);
+                offsets[14] = float2(-0.6187,  0.6187);
+                offsets[15] = float2( 0.6187, -0.6187);
+
                 fixed4 col = 0;
                 float weightSum = 0;
 
-                const int sampleCount = 8;
-
-                // einfache feste Musterpunkte
-                float2 offsets[sampleCount];
-                offsets[0] = float2( 1,  0);
-                offsets[1] = float2(-1,  0);
-                offsets[2] = float2( 0,  1);
-                offsets[3] = float2( 0, -1);
-                offsets[4] = float2( 0.7071,  0.7071);
-                offsets[5] = float2(-0.7071,  0.7071);
-                offsets[6] = float2( 0.7071, -0.7071);
-                offsets[7] = float2(-0.7071, -0.7071);
-
-                // Kernpunkt stärker gewichten
-                fixed4 center = tex2D(_MainTex, i.uv);
-                col += center * 2.0;
-                weightSum += 2.0;
-
                 for (int k = 0; k < sampleCount; k++)
                 {
-                    float2 duv = offsets[k] * texel;
-                    float2 suv = i.uv + duv;
-                    fixed4 s = tex2D(_MainTex, suv);
-                    col += s;
-                    weightSum += 1.0;
+                    float2 uv = saturate(i.uv + offsets[k] * texel);
+                    float radius01 = saturate(length(offsets[k]));
+                    float weight = lerp(1.5, 0.75, radius01);
+                    col += tex2D(_MainTex, uv) * weight;
+                    weightSum += weight;
+                }
+
+                // Complete the outer ring symmetrically.
+                float2 extraOffsets[4];
+                extraOffsets[0] = float2(-0.6187, -0.6187);
+                extraOffsets[1] = float2( 0.8750,  0.0000);
+                extraOffsets[2] = float2(-0.8750,  0.0000);
+                extraOffsets[3] = float2( 0.0000,  0.8750);
+
+                for (int j = 0; j < 4; j++)
+                {
+                    float2 uv = saturate(i.uv + extraOffsets[j] * texel);
+                    float weight = 0.75;
+                    col += tex2D(_MainTex, uv) * weight;
+                    weightSum += weight;
                 }
 
                 col /= weightSum;
-
-                // Unschärfe abhängig von blur01 mit Original mischen
-                return lerp(center, col, blur01);
+                return lerp(center, col, saturate(_BlurAmount));
             }
             ENDCG
         }
