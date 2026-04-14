@@ -122,7 +122,7 @@ public class ForceSensor : MonoBehaviour
         forceData[5] = (double)rosTorque.z;
         forceData[6] = (double)rosForce.magnitude;
 
-        // Debug.Log($"ForceSensor [ROS2]: Force=({rosForce.x:F4}, {rosForce.y:F4}, {rosForce.z:F4}) | Mag={rosForce.magnitude:F4} | contacts={activeCollisions}");
+        //Debug.Log($"ForceSensor [ROS2]: Force=({rosForce.x:F4}, {rosForce.y:F4}, {rosForce.z:F4}) | Mag={rosForce.magnitude:F4} | contacts={activeCollisions}");
 
         Variant forceValues = new Variant(forceData);
         OPCUA_Client.writeToServer("ForceSensor", "Measurements", forceValues);

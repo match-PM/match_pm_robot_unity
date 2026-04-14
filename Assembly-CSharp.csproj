@@ -72,6 +72,7 @@
     <Compile Include="Assets/Scripts/Sensors/ConfigureCamera.cs" />
     <Compile Include="Assets/Scripts/Smarpod.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2PerformanceTest.cs" />
+    <Compile Include="Assets/Scripts/Sensors/ForceSensorPiezoGripper.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/OpcUaServer.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/UVLightControl.cs" />
     <Compile Include="Assets/Scripts/Sensors/TelecentricDepthOfField.cs" />

@@ -13,6 +13,10 @@ using GripperSetVelReq = pm_msgs.srv.GripperSetVel_Request;
 using GripperSetVelResp = pm_msgs.srv.GripperSetVel_Response;
 using GripperGetVelReq = pm_msgs.srv.GripperGetVel_Request;
 using GripperGetVelResp = pm_msgs.srv.GripperGetVel_Response;
+using GripperGetForcesReq = pm_msgs.srv.GripperGetForces_Request;
+using GripperGetForcesResp = pm_msgs.srv.GripperGetForces_Response;
+using GripperForceMoveReq = pm_msgs.srv.GripperForceMove_Request;
+using GripperForceMoveResp = pm_msgs.srv.GripperForceMove_Response;
 
 public class ParallelGripperServiceController : MonoBehaviour
 {
@@ -22,6 +26,10 @@ public class ParallelGripperServiceController : MonoBehaviour
     public ArticulationBody movingJaw;
     public string movingJawObjectName = "SmarAct_Gripper_Jaw_flat";
     public bool autoResolveMovingJaw = true;
+
+    [Header("Force Feedback")]
+    public ForceSensorPiezoGripper forceSensor;
+    public bool autoResolveForceSensor = true;
 
     [Header("Jaw Limits")]
     public float physicalLowerLimit = 0f;
@@ -33,7 +41,7 @@ public class ParallelGripperServiceController : MonoBehaviour
     [Tooltip("Use the debug lower/upper limit fields while debugging.")]
     public bool useDebugLimitInputs = true;
     public float debugLowerLimit = 0f;
-    public float debugUpperLimit = 0.03f;
+    public float debugUpperLimit = 0.06f;
     public float appliedLowerLimit;
     public float appliedUpperLimit;
     [Range(0f, 1f)]
@@ -56,24 +64,31 @@ public class ParallelGripperServiceController : MonoBehaviour
     private IService<GripperGetPositionReq, GripperGetPositionResp> srvGetPosition;
     private IService<GripperSetVelReq, GripperSetVelResp> srvSetVel;
     private IService<GripperGetVelReq, GripperGetVelResp> srvGetVel;
+    private IService<GripperGetForcesReq, GripperGetForcesResp> srvGetForces;
+    private IService<GripperForceMoveReq, GripperForceMoveResp> srvForceMove;
 
     private readonly ConcurrentQueue<Action> mainThreadActions = new ConcurrentQueue<Action>();
     private readonly object stateLock = new object();
 
     private float latestPosition;
     private double latestVelocity;
+    private Vector3 latestForce;
     private float cachedLowerLimit;
     private float cachedUpperLimit;
     private float cachedSimulationLowerLimit;
     private float cachedSimulationUpperLimit;
     private bool jawReady;
+    private bool forceSensorReady;
     private bool loggedMissingRos2Unity;
     private bool loggedMissingJaw;
+    private bool loggedMissingForceSensor;
+    private bool zeroPositionInitialized;
 
     void Start()
     {
         ResolveRos2Unity();
         ResolveMovingJaw();
+        ResolveForceSensor();
     }
 
     void Update()
@@ -83,7 +98,9 @@ public class ParallelGripperServiceController : MonoBehaviour
 
         ResolveRos2Unity();
         ResolveMovingJaw();
+        ResolveForceSensor();
         ApplyJawLimitsToDrive();
+        
         ApplyDebugPositionControl();
         UpdateCachedState();
 
@@ -95,6 +112,8 @@ public class ParallelGripperServiceController : MonoBehaviour
             srvGetPosition = ros2Node.CreateService<GripperGetPositionReq, GripperGetPositionResp>(BuildServiceName("GetPosition"), GetPosition);
             srvSetVel = ros2Node.CreateService<GripperSetVelReq, GripperSetVelResp>(BuildServiceName("SetVel"), SetVel);
             srvGetVel = ros2Node.CreateService<GripperGetVelReq, GripperGetVelResp>(BuildServiceName("GetVel"), GetVel);
+            srvGetForces = ros2Node.CreateService<GripperGetForcesReq, GripperGetForcesResp>(BuildServiceName("GetForces"), GetForces);
+            srvForceMove = ros2Node.CreateService<GripperForceMoveReq, GripperForceMoveResp>(BuildServiceName("ForceMove"), ForceMove);
             /////
             /// // Add more services here as needed, following the same pattern.
             /// Debug logs
@@ -162,6 +181,38 @@ public class ParallelGripperServiceController : MonoBehaviour
         }
     }
 
+    private void ResolveForceSensor()
+    {
+        if (forceSensor != null)
+        {
+            loggedMissingForceSensor = false;
+            return;
+        }
+
+        if (!autoResolveForceSensor)
+            return;
+
+        forceSensor = GetComponentInChildren<ForceSensorPiezoGripper>(true);
+
+        if (forceSensor == null)
+            forceSensor = GetComponentInParent<ForceSensorPiezoGripper>();
+
+        if (forceSensor == null)
+            forceSensor = FindObjectOfType<ForceSensorPiezoGripper>();
+
+        if (forceSensor == null && !loggedMissingForceSensor)
+        {
+            Debug.LogWarning(
+                "ParallelGripperServiceController: No ForceSensorPiezoGripper found. " +
+                "Assign one in the Inspector or keep the gripper force sensor in this hierarchy.");
+            loggedMissingForceSensor = true;
+            return;
+        }
+
+        if (forceSensor != null)
+            loggedMissingForceSensor = false;
+    }
+
     private void ApplyJawLimitsToDrive()
     {
         if (movingJaw == null || movingJaw.dofCount == 0)
@@ -182,8 +233,9 @@ public class ParallelGripperServiceController : MonoBehaviour
 
         var drive = movingJaw.xDrive;
         bool changed = false;
+        bool shouldAutoConfigureDrive = autoConfigureDriveForDebug;
 
-        if (enableDebugPositionControl && autoConfigureDriveForDebug)
+        if (shouldAutoConfigureDrive)
         {
             if (drive.driveType != ArticulationDriveType.Target)
             {
@@ -233,6 +285,7 @@ public class ParallelGripperServiceController : MonoBehaviour
             movingJaw.xDrive = drive;
     }
 
+   
     private void ApplyDebugPositionControl()
     {
         if (movingJaw == null || movingJaw.dofCount == 0)
@@ -257,10 +310,16 @@ public class ParallelGripperServiceController : MonoBehaviour
 
     private void UpdateCachedState()
     {
+        Vector3 measuredForce = Vector3.zero;
+        bool localForceReady = forceSensor != null && forceSensor.TryGetLatestForce(out measuredForce);
+        Vector3 localForce = localForceReady ? measuredForce : Vector3.zero;
+
         if (movingJaw == null || movingJaw.dofCount == 0)
         {
             lock (stateLock)
             {
+                latestForce = localForce;
+                forceSensorReady = localForceReady;
                 jawReady = false;
             }
             return;
@@ -272,11 +331,13 @@ public class ParallelGripperServiceController : MonoBehaviour
         {
             latestPosition = movingJaw.jointPosition[0];
             latestVelocity = movingJaw.jointVelocity[0];
+            latestForce = localForce;
             cachedLowerLimit = drive.lowerLimit;
             cachedUpperLimit = drive.upperLimit;
             cachedSimulationLowerLimit = drive.lowerLimit;
             cachedSimulationUpperLimit = drive.upperLimit;
             jawReady = true;
+            forceSensorReady = localForceReady;
         }
     }
 
@@ -338,6 +399,36 @@ public class ParallelGripperServiceController : MonoBehaviour
 
         errorMessage = null;
         return true;
+    }
+
+    private bool TryGetCachedForce(out Vector3 force, out string errorMessage)
+    {
+        lock (stateLock)
+        {
+            force = latestForce;
+            if (!forceSensorReady)
+            {
+                errorMessage = "Gripper force sensor is missing or not ready.";
+                return false;
+            }
+        }
+
+        errorMessage = null;
+        return true;
+    }
+
+    private static bool IsForceLimitExceeded(Vector3 currentForce, Vector3 maxForce)
+    {
+        if (maxForce.x > 0f && Mathf.Abs(currentForce.x) >= maxForce.x)
+            return true;
+
+        if (maxForce.y > 0f && Mathf.Abs(currentForce.y) >= maxForce.y)
+            return true;
+
+        if (maxForce.z > 0f && Mathf.Abs(currentForce.z) >= maxForce.z)
+            return true;
+
+        return false;
     }
 
     private static float ClampTarget(float requestedPosition, float lowerLimit, float upperLimit)
@@ -451,6 +542,144 @@ public class ParallelGripperServiceController : MonoBehaviour
         {
             response.Success = false;
             response.Error_msg = ex.Message;
+            return response;
+        }
+    }
+
+    private GripperGetForcesResp GetForces(GripperGetForcesReq _)
+    {
+        var response = new GripperGetForcesResp();
+
+        if (TryGetCachedForce(out Vector3 currentForce, out string _))
+        {
+            response.Fx = currentForce.x;
+            response.Fy = currentForce.y;
+            response.Fz = currentForce.z;
+        }
+        else
+        {
+            response.Fx = 0f;
+            response.Fy = 0f;
+            response.Fz = 0f;
+        }
+
+        return response;
+    }
+
+    private GripperForceMoveResp ForceMove(GripperForceMoveReq request)
+    {
+        var response = new GripperForceMoveResp
+        {
+            Completed = false,
+            Success = false,
+            Error = string.Empty
+        };
+
+        try
+        {
+            if (!TryGetCachedJawState(
+                    out float position,
+                    out float lowerLimit,
+                    out float upperLimit,
+                    out float simulationLowerLimit,
+                    out float simulationUpperLimit,
+                    out string errorMessage))
+            {
+                response.Error = errorMessage;
+                return response;
+            }
+
+            if (!TryGetCachedForce(out Vector3 currentForce, out errorMessage))
+            {
+                response.Error = errorMessage;
+                return response;
+            }
+
+            if (request.Target_joints_xyz == null || request.Target_joints_xyz.Length < 3)
+            {
+                response.Error = "Target_joints_xyz must contain 3 values.";
+                return response;
+            }
+
+            if (request.Max_f_xyz == null || request.Max_f_xyz.Length < 3)
+            {
+                response.Error = "Max_f_xyz must contain 3 values.";
+                return response;
+            }
+
+            if (!IsFinite(request.Target_joints_xyz[0]) ||
+                !IsFinite(request.Target_joints_xyz[1]) ||
+                !IsFinite(request.Target_joints_xyz[2]))
+            {
+                response.Error = "Target_joints_xyz values must be finite.";
+                return response;
+            }
+
+            if (!IsFinite(request.Max_f_xyz[0]) ||
+                !IsFinite(request.Max_f_xyz[1]) ||
+                !IsFinite(request.Max_f_xyz[2]))
+            {
+                response.Error = "Max_f_xyz values must be finite.";
+                return response;
+            }
+
+            if (!IsFinite(request.Step_size) || request.Step_size <= 0.0)
+            {
+                response.Error = "Step_size must be a positive finite value in um.";
+                return response;
+            }
+
+            if (Math.Abs(request.Target_joints_xyz[1]) > 1e-9 || Math.Abs(request.Target_joints_xyz[2]) > 1e-9)
+            {
+                response.Error = "Only the X jaw axis is supported in Unity. Y and Z targets must be 0.";
+                return response;
+            }
+
+            Vector3 maxForce = new Vector3(
+                Mathf.Abs((float)request.Max_f_xyz[0]),
+                Mathf.Abs((float)request.Max_f_xyz[1]),
+                Mathf.Abs((float)request.Max_f_xyz[2]));
+
+            if (IsForceLimitExceeded(currentForce, maxForce))
+            {
+                response.Success = true;
+                response.Error = "Force limit reached.";
+                return response;
+            }
+
+            float target = ClampTarget((float)request.Target_joints_xyz[0], lowerLimit, upperLimit);
+            float simulationTarget = ClampTarget(target, simulationLowerLimit, simulationUpperLimit);
+            float stepMeters = (float)(request.Step_size * 1e-6);
+            float distanceToTarget = simulationTarget - position;
+
+            if (Mathf.Abs(distanceToTarget) <= 1e-6f)
+            {
+                response.Completed = true;
+                response.Success = true;
+                return response;
+            }
+
+            float nextTarget = position + Mathf.Sign(distanceToTarget) * Mathf.Min(stepMeters, Mathf.Abs(distanceToTarget));
+            nextTarget = ClampTarget(nextTarget, simulationLowerLimit, simulationUpperLimit);
+            bool completed = Mathf.Abs(simulationTarget - nextTarget) <= 1e-6f;
+
+            EnqueueOnMainThread(() =>
+            {
+                if (movingJaw == null || movingJaw.dofCount == 0)
+                    return;
+
+                var drive = movingJaw.xDrive;
+                drive.target = nextTarget;
+                movingJaw.xDrive = drive;
+            });
+
+            response.Completed = completed;
+            response.Success = true;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.Error = ex.Message;
             return response;
         }
     }
