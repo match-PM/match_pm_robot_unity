@@ -535,7 +535,7 @@ public class ParallelGripperServiceController : MonoBehaviour
             });
 
             response.Success = true;
-            response.Error_msg = string.Empty;
+            response.Error_msg = "moved by " + request.Offset;
             return response;
         }
         catch (Exception ex)

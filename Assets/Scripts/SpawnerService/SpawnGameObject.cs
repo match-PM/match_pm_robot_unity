@@ -135,11 +135,11 @@ public class SpawnGameObject : MonoBehaviour
         else
         {
             // Debug.LogWarning($"Part name {partName} does not contain 'Modulcarrier' or 'Sensor'. {color.R}, {color.G}, {color.B}, {color.A} will be applied to the default material.");
-            Material aluminiumMat = Resources.Load<Material>("Materials/Aluminium");
-            mechRenderer.material = aluminiumMat;
-            mat.color = new Color(color.R, color.G, color.B, color.A);
+            // Material aluminiumMat = Resources.Load<Material>("Materials/Aluminium");
+            // mechRenderer.material = aluminiumMat;
             // mat.color = new Color(color.R, color.G, color.B, color.A);
-            // mechRenderer.material = mat;
+            mechRenderer.material = mat;
+            mat.color = new Color(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
         }
 
         // Add a mesh collider to the part and set convex to true

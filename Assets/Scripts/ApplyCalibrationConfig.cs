@@ -30,7 +30,11 @@ public class ApplyCalibrationConfig : MonoBehaviour
 {
     [Header("YAML Config (loaded with your utility)")]
     public string packageName = "pm_robot_description";
+<<<<<<< .merge_file_w42Se6
     public string fileName = "pm_robot_joint_calibration.yaml";
+=======
+    public string fileName = "pm_robot_path_real_HW.yaml";
+>>>>>>> .merge_file_a2o6Nm
 
     [Header("Axis")]
     public ArticulationBody xAxis;
@@ -40,17 +44,54 @@ public class ApplyCalibrationConfig : MonoBehaviour
     [Header("Manual Mapping (YAML key → Unity Transform)")]
     public List<JointMapping> mappings = new List<JointMapping>();
 
+<<<<<<< .merge_file_w42Se6
     Dictionary<string, object> _root;
 
     void Awake()
     {
         // Load calibration YAML directly
+=======
+    Dictionary<string, object> _root;               
+    Dictionary<string, object> _calibrationRoot;    
+
+    void Awake()
+    {
+        // 1. Load main config
+>>>>>>> .merge_file_a2o6Nm
         string filepath = GetConfigFilePath(packageName, fileName);
-        _root = GenericFunctions.YamlLoader.LoadYaml(filepath);
+        _calibrationRoot = GenericFunctions.YamlLoader.LoadYaml(filepath);
+
+        if (_calibrationRoot == null)
+        {
+            Debug.LogError("Failed to load main YAML config.");
+            return;
+        }
+
+        // 2. Extract calibration file path
+        if (!_calibrationRoot.TryGetValue("pm_robot_calibration_file_path", out object calibPathObj))
+        {
+            Debug.LogError("Key 'pm_robot_calibration_file_path' not found in YAML.");
+            return;
+        }
+
+        string calibrationFilePath = calibPathObj.ToString();
+
+        if (!File.Exists(calibrationFilePath))
+        {
+            Debug.LogError($"Calibration YAML not found at: {calibrationFilePath}");
+            return;
+        }
+
+        // 3. Load calibration YAML
+        _root = GenericFunctions.YamlLoader.LoadYaml(calibrationFilePath);
 
         if (_root == null)
         {
+<<<<<<< .merge_file_w42Se6
             Debug.LogError($"Failed to load calibration YAML from: {filepath}");
+=======
+            Debug.LogError("Failed to load calibration YAML.");
+>>>>>>> .merge_file_a2o6Nm
             return;
         }
 

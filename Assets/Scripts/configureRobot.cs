@@ -1,48 +1,32 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using ROS2;
 using UtilityFunctions; // GetConfigFilePath, GenericFunctions.YamlLoader
-
-using ConfigureRobotReq = pm_msgs.srv.EmptyWithSuccess_Request;
-using ConfigureRobotResp = pm_msgs.srv.EmptyWithSuccess_Response;
 
 public class configureRobot : MonoBehaviour
 {
     private Dictionary<string, object> dictionary;
     private string componentName = null;
 
-    // ROS2
-    private ROS2UnityComponent ros2Unity;
-    private ROS2Node ros2Node;
-    private IService<ConfigureRobotReq, ConfigureRobotResp> srvConfigureRobot;
-
-    // Thread-safe queue for Unity main-thread execution
-    private readonly ConcurrentQueue<Action> mainThreadActions = new ConcurrentQueue<Action>();
-
     void Start()
     {
         ros2Unity = GetComponent<ROS2UnityComponent>();
 
-        string filepath = GetConfigFilePath("pm_robot_bringup", "pm_robot_bringup_config.yaml");
-        dictionary = GenericFunctions.YamlLoader.LoadYaml(filepath);
+        BuildMaps();
 
-        if (dictionary != null)
-        {
-            chooseComponentsFormConfig(dictionary);
-        }
+        string filepath = GetConfigFilePath("pm_robot_bringup", "pm_robot_bringup_config.yaml");
+        _yamlRoot = GenericFunctions.YamlLoader.LoadYaml(filepath);
+
+        if (_yamlRoot != null)
+            ApplyConfiguration(_yamlRoot);
         else
-        {
-            Debug.LogError("Error loading yaml file: " + filepath);
-        }
+            Debug.LogError("configureRobot: Error loading yaml file: " + filepath);
     }
 
     void Update()
     {
-        // Drain main-thread action queue (needed for service callbacks)
         while (mainThreadActions.TryDequeue(out var action))
             action?.Invoke();
 
@@ -58,30 +42,7 @@ public class configureRobot : MonoBehaviour
         }
     }
 
-    private ConfigureRobotResp ConfigureRobotServiceCallback(ConfigureRobotReq request)
-    {
-        var response = new ConfigureRobotResp();
-        bool success = false;
-
-        // Reload the YAML and run configuration on the main thread
-        mainThreadActions.Enqueue(() =>
-        {
-            string filepath = GetConfigFilePath("pm_robot_bringup", "pm_robot_bringup_config.yaml");
-            dictionary = GenericFunctions.YamlLoader.LoadYaml(filepath);
-            if (dictionary != null)
-            {
-                chooseComponentsFormConfig(dictionary);
-                Debug.Log("configureRobot: Reconfigured via ROS2 service.");
-            }
-            else
-            {
-                Debug.LogError("configureRobot service: Error loading yaml file: " + filepath);
-            }
-        });
-
-        response.Success = true;
-        return response;
-    }
+    void Update() { }
 
     void chooseComponentsFormConfig(Dictionary<string, object> dict, string parent = null, bool isTool = false)
     {
@@ -167,9 +128,6 @@ public class configureRobot : MonoBehaviour
 
                 if (!string.IsNullOrEmpty(bestMatch))
                 {
-                    // First show all children so previously hidden tools become visible again
-                    GenericFunctions.showGameObjects(childrenGameObjects);
-
                     List<GameObject> objectsToHide = childrenGameObjects.Where(child => child.gameObject.name != bestMatch).ToList();
 
                     // Do not hide structural nodes
@@ -203,9 +161,6 @@ public class configureRobot : MonoBehaviour
 
                 if (!string.IsNullOrEmpty(bestMatch))
                 {
-                    // First show all children so previously hidden components become visible again
-                    GenericFunctions.showGameObjects(childrenGameObjects);
-
                     List<GameObject> objectsToHide = childrenGameObjects.Where(child => child.gameObject.name != bestMatch).ToList();
                     GenericFunctions.hideGameObjects(objectsToHide);
                 }
@@ -228,6 +183,19 @@ public class configureRobot : MonoBehaviour
                 chooseComponentsFormConfig(ConvertDictObject(objSubDict), null, subIsTool);
             }
         }
+        string useChuck = GetString(d, "use_chuck");
+        if (string.IsNullOrEmpty(useChuck) || useChuck == "empty")
+            DeactivateAll(_smarpodChucks);
+        else
+            ActivateSelected(_smarpodChucks, useChuck);
+    }
+
+    private void ConfigureTools(Dictionary<string, object> root)
+    {
+        if (!TryGetSubDict(root, "pm_robot_tools", out var toolsDict)) return;
+        ConfigurePG1(toolsDict);
+        ConfigurePG2(toolsDict);
+        ConfigureVacuumTools(toolsDict);
     }
 
     Dictionary<string, object> ConvertDict(Dictionary<string, object> oldDict)
@@ -245,15 +213,14 @@ public class configureRobot : MonoBehaviour
         var newDict = new Dictionary<string, object>();
         foreach (var kvp in oldDict)
         {
-            if (kvp.Key is string keyStr)
-            {
-                newDict[keyStr] = kvp.Value;
-            }
+            DeactivateAll(_pg2Tools);
+            DeactivateAll(_pg2Jaws);
+            return;
         }
         return newDict;
     }
 
-    string compareComponentNames(List<string> stringList, string stringToCompare)
+    private void ConfigureVacuumTools(Dictionary<string, object> toolsDict)
     {
         if (stringList == null || stringList.Count == 0 || string.IsNullOrEmpty(stringToCompare))
             return null;
@@ -269,7 +236,7 @@ public class configureRobot : MonoBehaviour
 
         var inputString = new HashSet<string>(stringToCompare.Split('_'));
 
-        foreach (var candidate in stringList)
+        if (!active)
         {
             var candidateStrings = new HashSet<string>(candidate.Split('_'));
             int matches = inputString.Intersect(candidateStrings).Count();
@@ -286,8 +253,6 @@ public class configureRobot : MonoBehaviour
                 candidates.Add(candidate);
             }
         }
-
-        Debug.Log($"Comparing '{stringToCompare}'");
 
         if (maxMatches == 0)
         {
@@ -319,15 +284,37 @@ public class configureRobot : MonoBehaviour
             }
         }
 
-        if (candidates.Count > 1)
+    private string GetString(Dictionary<string, object> dict, string key, string defaultValue = null)
+    {
+        if (dict.TryGetValue(key, out var val) && val != null)
+            return val.ToString();
+        Debug.LogWarning($"configureRobot: String key '{key}' not found or null; defaulting to '{defaultValue}'.");
+        return defaultValue;
+    }
+
+    private void ActivateSelected(Dictionary<string, GameObject> group, string selectedKey)
+    {
+        foreach (var kv in group)
         {
             Debug.LogError("Multiple components found for: " + stringToCompare +
                            ": " + string.Join(", ", candidates) +
                            ". Currently selected: " + bestMatch);
         }
-
-        return bestMatch;
     }
+
+    private void DeactivateAll(Dictionary<string, GameObject> group)
+    {
+        foreach (var kv in group)
+            if (kv.Value != null)
+            {
+                kv.Value?.SetActive(false);
+            }
+            
+    }
+
+    // =========================================================================
+    // ROS2 package / config file path utilities
+    // =========================================================================
 
     public static string GetROS2PackagePath(string packageName)
     {
@@ -349,16 +336,11 @@ public class configureRobot : MonoBehaviour
                 string packagePath = process.StandardOutput.ReadToEnd().Trim();
                 process.WaitForExit();
 
-                if (process.ExitCode == 0 && !string.IsNullOrEmpty(packagePath))
-                {
-                    return packagePath;
-                }
-                else
-                {
-                    Console.WriteLine($"Error finding ROS2 package '{packageName}': {process.StandardError.ReadToEnd()}");
-                    return null;
-                }
-            }
+            if (process.ExitCode == 0 && !string.IsNullOrEmpty(packagePath))
+                return packagePath;
+
+            Console.WriteLine($"Error finding ROS2 package '{packageName}': {process.StandardError.ReadToEnd()}");
+            return null;
         }
         catch (Exception ex)
         {
@@ -371,9 +353,7 @@ public class configureRobot : MonoBehaviour
     {
         string packagePath = GetROS2PackagePath(packageName);
         if (!string.IsNullOrEmpty(packagePath))
-        {
             return Path.Combine(packagePath, "share", packageName, "config", fileName);
-        }
         return null;
     }
 }

@@ -106,6 +106,7 @@
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/DotnetTimeSource.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/TimeUtils.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/UnityComponentSpawner.cs" />
+    <Compile Include="Assets/GripperController.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ROS2ScalableTimeSource.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/OPCUA_Client.cs" />
     <Compile Include="Assets/Scripts/ParallelGripperServiceController.cs" />

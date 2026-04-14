@@ -28,7 +28,11 @@ def modify_c_code_in_file(file_path, node_ids, **kwargs):
     with open(file_path, 'w') as file:
         file.write(c_code)
 
+<<<<<<< .merge_file_5wMB8O
 file_path = '/home/match-pm/pm_ros2_ws/src/match_pm_robot/opcua_server/src/pm_opcua_server.c'
+=======
+file_path = '/home/match-pm/ros2_ws_pm/src/match_pm_robot/opcua_server/src/pm_opcua_server.c'
+>>>>>>> .merge_file_HkvWpd
 ids = [50422, 50427, 50398, 50397, 50388, 50387, 50393, 50392, 50378, 50377, 50383, 50382, 50403, 50402, 50439, 50305, 50310, 50321, 50326, 50294, 50289, 50337, 50342, 50353, 50358, 50241, 50246, 50257, 50262, 50273, 50278]
 attr_to_change = {'attr.userAccessLevel': 3, 'attr.accessLevel': 3}
 modify_c_code_in_file(file_path, ids, **attr_to_change)
