@@ -61,26 +61,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-<<<<<<< .merge_file_A4WBbz
     - _BlurAmount: 1
-=======
-    - _BlurAmount: 0
->>>>>>> .merge_file_ILc5ot
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _FocusZ: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-<<<<<<< .merge_file_A4WBbz
     - _MaxBlurRadius: 61.941513
     - _MaxDepthDiff: 0.01
-=======
-    - _MaxBlurRadius: 0
-    - _MaxDepthDiff: 0.02
->>>>>>> .merge_file_ILc5ot
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
