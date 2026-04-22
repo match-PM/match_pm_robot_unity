@@ -69594,8 +69594,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b07bcc15facc48bffbc060feca1b74ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  measuringSystem_ConfocalBottom: {fileID: 806031842}
-  measuringSystem_ConfocalHead: {fileID: 1172001301}
+  measuringSystem_ConfocalBottom: {fileID: 1785132133}
+  measuringSystem_ConfocalHead: {fileID: 1861071544}
   measuringSystem_KeyenceBottom: {fileID: 1172001301}
   dispenser_Tip_Yellow_I_100_A240_L12700: {fileID: 1824694884}
   dispenser_Tip_Lavender_I_150_A310_L12700: {fileID: 995405963}
@@ -69614,7 +69614,7 @@ MonoBehaviour:
   gonioRight_Chuck_IPEG_ActiveAlignment: {fileID: 2074227660}
   gonioRight_Chuck_Siemens_SIN: {fileID: 1777345695}
   assembly_SmarpodStation: {fileID: 381563003}
-  smarpod_Chuck_DiodePlacement: {fileID: 0}
+  smarpod_Chuck_DiodePlacement: {fileID: 267479343}
   pg1_Tool_SmarAct_Piezo_Gripper: {fileID: 0}
   pg1_Tool_SmarAct_Piezo_Gripper_flat: {fileID: 1117580826}
   pg1_Jaw_SmarActGripper_Default: {fileID: 0}
@@ -69791,6 +69791,8 @@ MonoBehaviour:
   movingJaw: {fileID: 1213372773}
   movingJawObjectName: SmarAct_Gripper_Jaw_flat
   autoResolveMovingJaw: 1
+  forceSensor: {fileID: 0}
+  autoResolveForceSensor: 1
   physicalLowerLimit: 0
   physicalUpperLimit: 0.001
   enableDebugPositionControl: 0
