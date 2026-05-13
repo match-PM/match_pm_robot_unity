@@ -25492,6 +25492,7 @@ GameObject:
   - component: {fileID: 443300808}
   - component: {fileID: 443300807}
   - component: {fileID: 443300806}
+  - component: {fileID: 1534389804}
   m_Layer: 0
   m_Name: Default_Jaw_1
   m_TagString: Untagged
@@ -69639,7 +69640,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   withRefFrame: 0
-  adhesivePointPrefab: {fileID: 701800157617612592, guid: 5ea9773de79ae7e57b6da928cf86dae2, type: 3}
 --- !u!114 &1218182279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69753,20 +69753,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f5d7d9343e74e3f9bc0f73bc1d65061, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ros2Unity: {fileID: 1218182269}
+  ros2Unity: {fileID: 0}
   searchParentsForRos2Unity: 1
-  movingJaw: {fileID: 1213372773}
+  movingJaw: {fileID: 0}
   movingJawObjectName: SmarAct_Gripper_Jaw_flat
   autoResolveMovingJaw: 1
-  configureDrive: 1
-  driveStiffness: 20000
-  driveDamping: 5
-  driveForceLimit: 20
-  exaggerateMotionInSimulation: 1
-  simulationMotionScale: 20
+  forceSensor: {fileID: 0}
+  autoResolveForceSensor: 1
   physicalLowerLimit: 0
-  physicalUpperLimit: 0.001
-  minimumSimulationUpperLimit: 0.02
+  physicalUpperLimit: 0.03
+  enableDebugPositionControl: 0
+  useDebugLimitInputs: 1
+  debugLowerLimit: 0
+  debugUpperLimit: 0.06
+  appliedLowerLimit: 0
+  appliedUpperLimit: 0
+  debugPosition01: 0
+  debugTargetPosition: 0
+  autoConfigureDriveForDebug: 1
+  debugDriveStiffness: 20000
+  debugDriveDamping: 200
+  debugDriveForceLimit: 1000
   nodeName: unity_parallel_gripper_service
   serviceNamespace: /pm_parallel_gripper_jaw_controller
 --- !u!1 &1218703001
@@ -81973,6 +81980,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &1534389804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 443300804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f356019cd0720bca906d6f03c5c704, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NodeName: ROS2UnityGripperForceSensor
+  PublisherName: /pm_parallel_gripper_jaw_controller/forces
+  ignoredHierarchyRoot: {fileID: 0}
+  autoResolveIgnoredHierarchyRoot: 0
+  autoResolveIgnoredBranchName: RobotAxisZ
+  logContactEvents: 1
 --- !u!1 &1538196208
 GameObject:
   m_ObjectHideFlags: 0

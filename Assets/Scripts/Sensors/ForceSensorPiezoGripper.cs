@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using ROS2;
 
@@ -13,6 +14,11 @@ public class ForceSensorPiezoGripper : MonoBehaviour
     [Header("Gripper Collision Filtering")]
     [SerializeField] private Transform ignoredHierarchyRoot;
     [SerializeField] private bool autoResolveIgnoredHierarchyRoot = true;
+    [SerializeField] private string autoResolveIgnoredBranchName = "RobotAxisZ";
+    [SerializeField] private bool logContactEvents = true;
+    [SerializeField] private string[] externalContactTags = { "spawned", "AdhesivePoint" };
+
+    [SerializeField] private string robotRootObjectName = "pm_robot";
 
     private bool isInitialized = false;
     private ArticulationBody forceSensor;
@@ -29,6 +35,7 @@ public class ForceSensorPiezoGripper : MonoBehaviour
     private bool ignoredHierarchyResolved = false;
     private bool loggedMissingRos2Unity = false;
     private readonly object latestForceLock = new object();
+    private readonly HashSet<int> activeContactIds = new HashSet<int>();
     private Vector3 latestPublishedForce = Vector3.zero;
 
     void ResolveRos2Unity()
@@ -40,7 +47,7 @@ public class ForceSensorPiezoGripper : MonoBehaviour
         }
 
         if (robotGameObject == null)
-            robotGameObject = GameObject.Find("pm_robot");
+            robotGameObject = GameObject.Find(robotRootObjectName);
 
         if (robotGameObject != null)
             ros2Unity = robotGameObject.GetComponent<ROS2UnityComponent>();
@@ -48,8 +55,8 @@ public class ForceSensorPiezoGripper : MonoBehaviour
         if (ros2Unity == null && !loggedMissingRos2Unity)
         {
             Debug.LogWarning(
-                "ForceSensorPiezoGripper: No ROS2UnityComponent found on 'pm_robot'. " +
-                "Add the ROS2UnityComponent to the pm_robot object.");
+                $"ForceSensorPiezoGripper: No ROS2UnityComponent found on '{robotRootObjectName}'. " +
+                $"Add the ROS2UnityComponent to the {robotRootObjectName} object.");
             loggedMissingRos2Unity = true;
             return;
         }
@@ -65,58 +72,142 @@ public class ForceSensorPiezoGripper : MonoBehaviour
 
         ignoredHierarchyResolved = true;
 
-        ParallelGripperServiceController gripperController = GetComponentInParent<ParallelGripperServiceController>();
-        if (gripperController != null)
+        if (!string.IsNullOrWhiteSpace(autoResolveIgnoredBranchName))
         {
-            ignoredHierarchyRoot = gripperController.transform;
-            return;
+            GameObject ignoredBranch = GameObject.Find(autoResolveIgnoredBranchName);
+            if (ignoredBranch != null)
+            {
+                ignoredHierarchyRoot = ignoredBranch.transform;
+                return;
+            }
         }
-
-        if (transform.root != null)
-        {
-            ignoredHierarchyRoot = transform.root;
-            return;
-        }
-
-        if (transform.parent != null)
-            ignoredHierarchyRoot = transform.parent;
     }
 
+    Transform GetCollisionTransform(Collision collision)
+    {
+        if (collision == null)
+            return null;
+
+        if (collision.collider != null)
+            return collision.collider.transform;
+
+        return collision.transform;
+    }
+
+    int GetContactId(Collision collision)
+    {
+        Transform collisionTransform = GetCollisionTransform(collision);
+        if (collisionTransform == null)
+            return 0;
+
+        Rigidbody attachedRigidbody = collisionTransform.GetComponentInParent<Rigidbody>();
+        if (attachedRigidbody != null)
+            return attachedRigidbody.GetInstanceID();
+
+        ArticulationBody attachedArticulation = collisionTransform.GetComponentInParent<ArticulationBody>();
+        if (attachedArticulation != null)
+            return attachedArticulation.GetInstanceID();
+
+        return collisionTransform.GetInstanceID();
+    }
+
+    bool HasAllowedExternalTag(Transform collisionTransform)
+    {
+        if (collisionTransform == null || externalContactTags == null)
+            return false;
+
+        Transform current = collisionTransform;
+        while (current != null)
+        {
+            foreach (string tagName in externalContactTags)
+            {
+                if (!string.IsNullOrWhiteSpace(tagName) && current.CompareTag(tagName))
+                    return true;
+            }
+
+            current = current.parent;
+        }
+
+        return false;
+    }
+
+
     /// <summary>
-    /// Returns true if the colliding object is part of the gripper's own hierarchy.
-    /// These internal contacts should be ignored by the force sensor.
+    /// Count only external physical contacts. Anything inside the robot hierarchy
+    /// is treated as self-contact and ignored.
     /// </summary>
     bool IsRobotCollider(Collision collision)
     {
         if (collision == null)
             return false;
 
-        ResolveIgnoredHierarchyRoot();
-
-        Transform collisionTransform = collision.collider != null ? collision.collider.transform : collision.transform;
+        Transform collisionTransform = GetCollisionTransform(collision);
         if (collisionTransform == null)
             return false;
 
-        if (ignoredHierarchyRoot != null && collisionTransform.IsChildOf(ignoredHierarchyRoot))
+        Transform sensorParent = forceSensor != null
+            ? forceSensor.transform.parent
+            : transform.parent;
+
+        if (sensorParent != null && collisionTransform.parent == sensorParent)
             return true;
 
-        Transform parent = forceSensor != null ? forceSensor.transform.parent : transform.parent;
-        if (parent != null && collisionTransform.parent == parent)
+        if (HasAllowedExternalTag(collisionTransform))
+            return false;
+
+        if (robotGameObject == null && !string.IsNullOrWhiteSpace(robotRootObjectName))
+            robotGameObject = GameObject.Find(robotRootObjectName);
+
+        if (robotGameObject != null)
+        {
+            Transform robotRoot = robotGameObject.transform;
+            if (collisionTransform == robotRoot || collisionTransform.IsChildOf(robotRoot))
+                return true;
+        }
+
+        ResolveIgnoredHierarchyRoot();
+
+        if (ignoredHierarchyRoot != null && collisionTransform.IsChildOf(ignoredHierarchyRoot))
             return true;
 
         return false;
     }
 
+    string DescribeCollision(Collision collision)
+    {
+        if (collision == null)
+            return "<null>";
+
+        Transform collisionTransform = GetCollisionTransform(collision);
+
+        if (collisionTransform == null)
+            return collision.gameObject != null ? collision.gameObject.name : "<unknown>";
+
+        Transform root = collisionTransform.root != null ? collisionTransform.root : collisionTransform;
+        return $"collider='{collisionTransform.name}' root='{root.name}'";
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         if (IsRobotCollider(collision)) return;
-        activeCollisions++;
+
+        activeContactIds.Add(GetContactId(collision));
+        activeCollisions = activeContactIds.Count;
+
+        if (logContactEvents)
+            Debug.Log($"ForceSensorPiezoGripper: contact enter {DescribeCollision(collision)} activeContacts={activeCollisions}");
     }
 
     void OnCollisionExit(Collision collision)
     {
         if (IsRobotCollider(collision)) return;
-        activeCollisions = Mathf.Max(0, activeCollisions - 1);
+
+        activeContactIds.Remove(GetContactId(collision));
+        activeCollisions = activeContactIds.Count;
+
+        if (logContactEvents)
+            Debug.Log($"ForceSensorPiezoGripper: contact exit {DescribeCollision(collision)} activeContacts={activeCollisions}");
+
         if (activeCollisions == 0)
             lastContactForce = Vector3.zero;
     }
@@ -185,13 +276,15 @@ public class ForceSensorPiezoGripper : MonoBehaviour
     void zeroForceSensor()
     {
         lastContactForce = Vector3.zero;
+        activeContactIds.Clear();
+        activeCollisions = 0;
         lock (latestForceLock)
             latestPublishedForce = Vector3.zero;
     }
 
     IEnumerator Start()
     {
-        robotGameObject = GameObject.Find("pm_robot");
+        robotGameObject = GameObject.Find(robotRootObjectName);
         forceSensor = GetComponent<ArticulationBody>();
 
         if (forceSensor == null)
