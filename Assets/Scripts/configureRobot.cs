@@ -115,6 +115,9 @@ public class configureRobot : MonoBehaviour
     [Tooltip("YAML: available_tools[1].availabe_jaws[1] — Flat_Jaw")]
     public GameObject pg1_Jaw_SmarActGripperFlat_Flat;
 
+    [Tooltip("YAML: available_tools[1].availabe_jaws[1] — Sensing_Jaw")]
+    public GameObject pg1_Jaw_SmarActGripperFlat_Sensing;
+
     // -------------------------------------------------------------------------
     // Parallel Gripper 2 Jaws — PG2
     // -------------------------------------------------------------------------
@@ -289,6 +292,7 @@ public class configureRobot : MonoBehaviour
                 {
                     { "Default_Jaw", pg1_Jaw_SmarActGripperFlat_Default },
                     { "Flat_Jaw",    pg1_Jaw_SmarActGripperFlat_Flat },
+                    { "Sensing_Jaw", pg1_Jaw_SmarActGripperFlat_Sensing}, 
                 }
             },
         };

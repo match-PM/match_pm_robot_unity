@@ -264,7 +264,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/axis_base.STL" />
+        <mesh filename="meshes/axis_base_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -292,7 +292,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/X_Axis.STL" />
+        <mesh filename="meshes/X_Axis_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -320,7 +320,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Y_Axis.STL" />
+        <mesh filename="meshes/Y_Axis_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -348,7 +348,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Z_Axis.STL" />
+        <mesh filename="meshes/Z_Axis_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -380,7 +380,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Gripper_Rot_Plate.STL" />
+        <mesh filename="meshes/Gripper_Rot_Plate_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -393,7 +393,7 @@
     <parent link="Z_Axis" />
     <child link="Gripper_Rot_Plate" />
     <axis xyz="0 0 1" />
-    <limit effort="100" lower="-2.0" upper="2.0" velocity="15" />
+    <limit effort="100" lower="-2.6179938779916667" upper="3.490658503988889" velocity="15" />
   </joint>
   <link name="t_axis_tool">
     <inertial>
@@ -413,7 +413,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/t_axis_tool.STL" />
+        <mesh filename="meshes/t_axis_tool_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -445,7 +445,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Glue_Cartridge_Flap.STL" />
+        <mesh filename="meshes/Glue_Cartridge_Flap_Coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -477,7 +477,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/1K_Dispenser.STL" />
+        <mesh filename="meshes/1K_Dispenser_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -549,7 +549,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/2K_Glue_Cartridge.STL" />
+        <mesh filename="meshes/2K_Glue_Cartridge_Coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -591,7 +591,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Cam1_Toolhead_TCP.STL" />
+        <mesh filename="meshes/Cam1_Toolhead_TCP_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -682,7 +682,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Camera_Station.STL" />
+        <mesh filename="meshes/Camera_Station_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -774,7 +774,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Confocal_Sensor_Top.STL" />
+        <mesh filename="meshes/Confocal_Sensor_Top_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -809,7 +809,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Camera_Calibration_Platelet.STL" />
+        <mesh filename="meshes/Camera_Calibration_Platelet_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -879,76 +879,156 @@
   
   
   
+  
+  
+  <link name="Tool_Parallel_Gripper_Base_flat">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000310146269457783 0.0111566792086014 -0.0108754044082004" />
+      <mass value="0.0122161706567272" />
+      <inertia ixx="1.27374788059174E-06" ixy="-3.39601385359254E-05" ixz="2.0953297469927E-05" iyy="8.64679886349924E-05" iyz="1.56462306590584E-05" izz="1.76556119124177E-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Parallel_Gripper_1_Jaw/SmarAct_Piezo_Gripper/Tool_Parallel_Gripper_Base_flat.STL" />
+      </geometry>
+      <material name="grey" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Parallel_Gripper_1_Jaw/SmarAct_Piezo_Gripper/Tool_Parallel_Gripper_Base_flat.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Tool_Parallel_Gripper_Body">
+    <turnGravityOff>true</turnGravityOff>
+    <color>1.0 0 0.5 1.0</color>
+  </gazebo>
+  <joint name="Tool_Parallel_Gripper_Body_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 -0.04542" />
+    <parent link="t_axis_tool" />
+    <child link="Tool_Parallel_Gripper_Base_flat" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="SmarAct_Gripper_Jaw_flat">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000378376833032915 0.00363289819353893 -0.00384521007176003" />
+      <mass value="0.000125699746806344" />
+      <inertia ixx="1.46877530343563E-09" ixy="-1.08017427297462E-10" ixz="-1.55511351102192E-10" iyy="9.10321731673149E-10" iyz="-3.94221523852005E-10" izz="8.29097865963572E-10" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Parallel_Gripper_1_Jaw/SmarAct_Piezo_Gripper/SmarAct_Gripper_Jaw_flat.STL" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Parallel_Gripper_1_Jaw/SmarAct_Piezo_Gripper/SmarAct_Gripper_Jaw_flat.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="Tool_Parallel_Gripper_Jaw">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Tool_Parallel_Gripper_Jaw_Joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.01551408822663166 0.00150000018813439 -0.0318" />
+    <parent link="Tool_Parallel_Gripper_Base_flat" />
+    <child link="SmarAct_Gripper_Jaw_flat" />
+    <axis xyz="1 0 0" />
+    <limit effort="20" lower="0" upper="0.001" velocity="0.05" />
+  </joint>
+  <link name="Tool_Parallel_Gripper_Jaw_1_Point">
+    </link>
+  <joint name="Tool_Parallel_Gripper_Jaw_1_Point_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.00549999981186566 0.00150000018813442 -0.0318" />
+    <parent link="Tool_Parallel_Gripper_Base_flat" />
+    <child link="Tool_Parallel_Gripper_Jaw_1_Point" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link name="Tool_Parallel_Gripper_Jaw_2_Point">
+    </link>
+  <joint name="Tool_Parallel_Gripper_Jaw_2_Point_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0 0" />
+    <parent link="SmarAct_Gripper_Jaw_flat" />
+    <child link="Tool_Parallel_Gripper_Jaw_2_Point" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  
+  
+  <link name="Jaw_Flat_Config_big_stift_rund_ros">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.00222703440519818 -1.24600850470724E-13 -0.0015303266892263" />
+      <mass value="0.000118476289547731" />
+      <inertia ixx="5.50616566102928e-05" ixy="1.15823081964001e-05" ixz="1.51586534634799e-05" iyy="6.62228324828861e-05" iyz="2.68654227697881e-05" izz="4.05699592387869e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Parallel_Gripper_1_Jaw/SmarAct_Piezo_Gripper/Jaw_Flat_Config_big_stift_rund_ros.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.780392156862745 0.76078431372549 0.741176470588235 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Parallel_Gripper_1_Jaw/SmarAct_Piezo_Gripper/Jaw_Flat_Config_big_stift_rund_ros.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="Tool_Parallel_Gripper_Jaw_1_attachment">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Tool_Parallel_Gripper_Jaw_1_attachment_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0 " />
+    <parent link="Tool_Parallel_Gripper_Jaw_1_Point" />
+    <child link="Jaw_Flat_Config_big_stift_rund_ros" />
+  </joint>
+  <link name="Jaw_Flat_Config_big_r_ros">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.00224080580616211 -0.00152543365786503 1.2528765306995E-13" />
+      <mass value="0.000117826998616915" />
+      <inertia ixx="5.504084274466e-05" ixy="1.50894936754082e-05" ixz="-1.43349001887448e-05" iyy="4.00144751949544e-05" iyz="-2.68169098626193e-05" izz="6.58370363267184e-05" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Parallel_Gripper_1_Jaw/SmarAct_Piezo_Gripper/Jaw_Flat_Config_big_r_ros.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.780392156862745 0.76078431372549 0.741176470588235 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Tools/Parallel_Gripper_1_Jaw/SmarAct_Piezo_Gripper/Jaw_Flat_Config_big_r_ros.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="Tool_Parallel_Gripper_Jaw_2_attachment">
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="Tool_Parallel_Gripper_Jaw_2_attachment_Joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0 0 " />
+    <parent link="Tool_Parallel_Gripper_Jaw_2_Point" />
+    <child link="Jaw_Flat_Config_big_r_ros" />
+  </joint>
   <link name="PM_Robot_Tool_TCP">
   </link>
   <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
-    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.06342" />
+    <origin rpy="       0.0        0.0        0.0" xyz="       -0.007        -0.005        -0.09142" />
     <parent link="Gripper_Rot_Plate" />
     <child link="PM_Robot_Tool_TCP" />
-    <axis xyz="0 0 0" />
-  </joint>
-  <link name="Tool_Holder_Siemens_Vacuum_Array_short">
-    <inertial>
-      <origin rpy="0 0 0" xyz="0.0001252666624285 -8.73670257350925E-05 0.0143350430460158" />
-      <mass value="0.0221301374746933" />
-      <inertia ixx="3.46416743890629e-05" ixy="-5.11326964427359e-05" ixz="-3.3181423255289e-05" iyy="2.42108157991381e-05" iyz="-5.95705687984465e-05" izz="5.35218008422331e-05" />
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Holder_Siemens_Vacuum_Array_short.STL" />
-      </geometry>
-      <material name="grey">
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Holder_Siemens_Vacuum_Array_short.STL" />
-      </geometry>
-    </collision>
-  </link>
-  
-  <gazebo reference="PM_Robot_Vacuum_Tool">
-    <turnGravityOff>true</turnGravityOff>
-    <color>1.0 0 0.5 1.0</color>
-  </gazebo>
-  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP" />
-    <child link="Tool_Holder_Siemens_Vacuum_Array_short" />
-    <axis xyz="0 0 0" />
-  </joint>
-  <link name="Tool_Tip_Vacuum_Array">
-    <inertial>
-      <origin rpy="0 0 0" xyz="-1.29186788957441E-21 7.60244056032738E-20 0.00881061215391388" />
-      <mass value="0.00384481220269709" />
-      <inertia ixx="2.45892988803428e-05" ixy="-2.98920423975232e-05" ixz="-3.90727092319594e-05" iyy="3.52128939197889e-05" iyz="-1.17218991534775e-05" izz="5.82868910775811e-05" />
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Tip_Vacuum_Array.STL" />
-      </geometry>
-      <material name="white">
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Tip_Vacuum_Array.STL" />
-      </geometry>
-    </collision>
-  </link>
-  
-  <gazebo reference="PM_Robot_Vacuum_Tool_Tip">
-    <turnGravityOff>true</turnGravityOff>
-    <color>1.0 0 0.5 1.0</color>
-  </gazebo>
-  <joint name="PM_Robot_Vacuum_Tool_Tip_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP" />
-    <child link="Tool_Tip_Vacuum_Array" />
     <axis xyz="0 0 0" />
   </joint>
   
@@ -970,12 +1050,12 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Gonio_Right/Gonio_Base_Right.STL" />
+        <mesh filename="meshes/Gonio_Right/Gonio_Base_Right_Coll.STL" />
       </geometry>
     </collision>
   </link>
   <joint name="Gonio_Base_Right_Joint" type="fixed">
-    <origin rpy="         0.0          0.0          0.0" xyz="         0.7505000000000029          0.311          0.0015" />
+    <origin rpy="         0.0          0.0          0.0" xyz="         0.750000000000003          0.31          0.0" />
     <parent link="pm_robot_base_link" />
     <child link="Gonio_Base_Right" />
     <axis xyz="0 0 0" />
@@ -1121,15 +1201,6 @@
     <axis xyz="0 0 0" />
   </joint>
   
-  <link name="Gonio_Right_Part_2_Origin">
-    </link>
-  <joint name="Gonio_Right_Part_2_Origin_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0.0 0.0 0.0" />
-    <parent link="Gonio_Right_Chuck_Origin" />
-    <child link="Gonio_Right_Part_2_Origin" />
-    <axis xyz="0 0 0" />
-  </joint>
-  
   
   
   <link name="Gonio_Left_Base">
@@ -1148,7 +1219,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Gonio_Left/Gonio_Left_Base.STL" />
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Base_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -1248,7 +1319,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Gonio_Left/Gonio_Left_Chucks/Chuck_Siemens_Carrier_P39_V2.STL" />
+        <mesh filename="meshes/Gonio_Left/Gonio_Left_Chucks/Chuck_Siemens_Carrier_P39_V2_coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -1288,7 +1359,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Gonio_Left/UV_Cart_X_Front.STL" />
+        <mesh filename="meshes/Gonio_Left/UV_Cart_X_Front_Coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -1345,7 +1416,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Gonio_Left/UV_Cart_X_Back.STL" />
+        <mesh filename="meshes/Gonio_Left/UV_Cart_X_Back_Coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -1374,7 +1445,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Gonio_Left/UV_Cart_Back.STL" />
+        <mesh filename="meshes/Gonio_Left/UV_Cart_Back_Coll.STL" />
       </geometry>
     </collision>
   </link>
@@ -1592,6 +1663,11 @@
     <joint name="Calibration_Qube_Joint">
       <command_interface name="position">
                 </command_interface>
+      <state_interface name="position" />
+    </joint>
+    <joint name="Tool_Parallel_Gripper_Jaw_Joint">
+      <command_interface name="position">
+                    </command_interface>
       <state_interface name="position" />
     </joint>
   </ros2_control>
@@ -1902,6 +1978,8 @@
     <axis xyz="0 0 0" />
   </joint>
   
+  
+  
   <link name="Chuck_Double_Lens_Holder_12_7">
     <inertial>
       <origin rpy="0 0 0" xyz="-9.19297095559313E-19 -2.27077957540206E-18 0.0172248900305356" />
@@ -1936,7 +2014,8 @@
     <child link="Gonio_Right_Part_1_Origin" />
     <axis xyz="0 0 0" />
   </joint>
-  
+  <link name="Gonio_Right_Part_2_Origin">
+      </link>
   <joint name="Gonio_Right_Part_2_Origin_Joint" type="fixed">
     <origin rpy="0 0 0" xyz="-0.009782273 0.0 0.056053231" />
     <parent link="Gonio_Right_Chuck_Origin" />
@@ -1981,235 +2060,36 @@
     <axis xyz="0 0 0" />
   </joint>
   
+  
+  
   <link name="PM_Robot_Tool_TCP_Tip_R_A1000_I500">
   </link>
   <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
-    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.07442" />
+    <origin rpy="       0.0        0.0        0.0" xyz="       -0.007        -0.005        -0.09142" />
     <parent link="Gripper_Rot_Plate" />
     <child link="PM_Robot_Tool_TCP_Tip_R_A1000_I500" />
     <axis xyz="0 0 0" />
   </joint>
-  <link name="Tool_Schunk_SPT_Holder">
-    <inertial>
-      <origin rpy="0 0 0" xyz="-5.23913406004772E-05 3.02196159816615E-05 0.0222290213656595" />
-      <mass value="0.0172841989183379" />
-      <inertia ixx="0.0734343917353869" ixy="-5.65230035141878e-06" ixz="-0.000161953758832679" iyy="0.0377139193260435" iyz="0.00720112978111611" izz="0.0598441739891415" />
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/SPT_Toolholder/Tool_Schunk_SPT_Holder.STL" />
-      </geometry>
-      <material name="grey">
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/SPT_Toolholder/Tool_Schunk_SPT_Holder.STL" />
-      </geometry>
-    </collision>
-  </link>
   
-  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP_Tip_R_A1000_I500" />
-    <child link="Tool_Schunk_SPT_Holder" />
-    <axis xyz="0 0 0" />
-  </joint>
-  <link name="Tool_Tip_R_A1000_I500">
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0.00881061215391388" />
-      <mass value="0.00106303297474693" />
-      <inertia ixx="0.0734343917353869" ixy="-5.65230035141878e-06" ixz="-0.000161953758832679" iyy="0.0377139193260435" iyz="0.00720112978111611" izz="0.0598441739891415" />
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/SPT_Toolholder/Tips/Tool_Tip_R_A1000_I500.STL" />
-      </geometry>
-      <material name="white">
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/SPT_Toolholder/Tips/Tool_Tip_R_A1000_I500.STL" />
-      </geometry>
-    </collision>
-  </link>
-  
-  <joint name="PM_Robot_Vacuum_Tool_Tip_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP_Tip_R_A1000_I500" />
-    <child link="Tool_Tip_R_A1000_I500" />
-    <axis xyz="0 0 0" />
-  </joint>
-  
-  
-  
-  <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
-    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.08141999999999999" />
-    <parent link="Gripper_Rot_Plate" />
-    <child link="PM_Robot_Tool_TCP_Tip_R_A1000_I500" />
-    <axis xyz="0 0 0" />
-  </joint>
-
   
   
   <link name="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array">
   </link>
   <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
-    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.07042000000000001" />
+    <origin rpy="       0.0        0.0        0.0" xyz="       -0.007        -0.005        -0.09142" />
     <parent link="Gripper_Rot_Plate" />
     <child link="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array" />
     <axis xyz="0 0 0" />
   </joint>
-  <link name="Tool_Holder_Siemens_Vacuum_Array">
-    <inertial>
-      <origin rpy="0 0 0" xyz="0.0001252666624285 -8.73670257350925E-05 0.0143350430460158" />
-      <mass value="0.0221301374746933" />
-      <inertia ixx="3.46416743890629e-05" ixy="-5.11326964427359e-05" ixz="-3.3181423255289e-05" iyy="2.42108157991381e-05" iyz="-5.95705687984465e-05" izz="5.35218008422331e-05" />
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Holder_Siemens_Vacuum_Array.STL" />
-      </geometry>
-      <material name="grey">
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Holder_Siemens_Vacuum_Array.STL" />
-      </geometry>
-    </collision>
-  </link>
-  
-  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array" />
-    <child link="Tool_Holder_Siemens_Vacuum_Array" />
-    <axis xyz="0 0 0" />
-  </joint>
-  <joint name="PM_Robot_Vacuum_Tool_Tip_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array" />
-    <child link="Tool_Tip_Vacuum_Array" />
-    <axis xyz="0 0 0" />
-  </joint>
   
   
   
-  <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
-    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.06342" />
-    <parent link="Gripper_Rot_Plate" />
-    <child link="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array" />
-    <axis xyz="0 0 0" />
-  </joint>
-  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array" />
-    <child link="Tool_Holder_Siemens_Vacuum_Array_short" />
-    <axis xyz="0 0 0" />
-  </joint>
-  <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
-    <origin rpy="       0.0        -0.017453292519944444        0.0" xyz="       0.0        0.0        -0.06342" />
-    <parent link="Gripper_Rot_Plate" />
-    <child link="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array" />
-    <axis xyz="0 0 0" />
-  </joint>
-  <link name="Tool_Holder_Siemens_Vacuum_Array_angled">
-    <inertial>
-      <origin rpy="0 0 0" xyz="0.0001252666624285 -8.73670257350925E-05 0.0143350430460158" />
-      <mass value="0.0221301374746933" />
-      <inertia ixx="3.46416743890629e-05" ixy="-5.11326964427359e-05" ixz="-3.3181423255289e-05" iyy="2.42108157991381e-05" iyz="-5.95705687984465e-05" izz="5.35218008422331e-05" />
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Holder_Siemens_Vacuum_Array_angled.STL" />
-      </geometry>
-      <material name="grey">
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Siemens_Vacuum_Array/Tool_Holder_Siemens_Vacuum_Array_angled.STL" />
-      </geometry>
-    </collision>
-  </link>
-  
-  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array" />
-    <child link="Tool_Holder_Siemens_Vacuum_Array_angled" />
-    <axis xyz="0 0 0" />
-  </joint>
   <link name="PM_Robot_Tool_TCP_Tip_Lens_12_7">
   </link>
   <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
-    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.07342" />
+    <origin rpy="       0.0        0.0        0.0" xyz="       -0.007        -0.005        -0.09142" />
     <parent link="Gripper_Rot_Plate" />
     <child link="PM_Robot_Tool_TCP_Tip_Lens_12_7" />
-    <axis xyz="0 0 0" />
-  </joint>
-  <link name="Tool_Schunk_Lens_Holder">
-    <inertial>
-      <origin rpy="0 0 0" xyz="1.94962067323612E-5 8.67361737988404E-5 0.00857148720935565" />
-      <mass value="0.000252215142180128" />
-      <inertia ixx="2.97527922886531e-05" ixy="-5.55102525874779e-05" ixz="1.68231331951212e-05" iyy="2.04734495928482e-05" iyz="-2.30568654913543e-05" izz="4.73717402562279e-05" />
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper/Tool_Schunk_Lens_Holder.STL" />
-      </geometry>
-      <material name="grey">
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper/Tool_Schunk_Lens_Holder.STL" />
-      </geometry>
-    </collision>
-  </link>
-  
-  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP_Tip_Lens_12_7" />
-    <child link="Tool_Schunk_Lens_Holder" />
-    <axis xyz="0 0 0" />
-  </joint>
-  <link name="Tip_Lens_12_7">
-    <inertial>
-      <origin rpy="0 0 0" xyz="-1.29186788957441E-21 7.60244056032738E-5 0.00881061215391388" />
-      <mass value="0.00384481220269709" />
-      <inertia ixx="1.36440715877095e-05" ixy="-3.53519310023124e-05" ixz="7.47710101979354e-05" iyy="3.91548342058176e-05" iyz="2.42885894721925e-05" izz="3.29488653146782e-05" />
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper/Tips/Tip_Lens_12_7.STL" />
-      </geometry>
-      <material name="white">
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper/Tips/Tip_Lens_12_7.STL" />
-      </geometry>
-    </collision>
-  </link>
-  
-  <joint name="PM_Robot_Vacuum_Tool_Tip_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP_Tip_Lens_12_7" />
-    <child link="Tip_Lens_12_7" />
     <axis xyz="0 0 0" />
   </joint>
   
@@ -2218,65 +2098,9 @@
   <link name="PM_Robot_Tool_TCP_Tip_Lens_12_7_long">
   </link>
   <joint name="PM_Robot_Tool_TCP_Joint" type="fixed">
-    <origin rpy="       0.0        0.0        0.0" xyz="       0.0        0.0        -0.08942" />
+    <origin rpy="       0.0        0.0        0.0" xyz="       -0.007        -0.005        -0.09142" />
     <parent link="Gripper_Rot_Plate" />
     <child link="PM_Robot_Tool_TCP_Tip_Lens_12_7_long" />
-    <axis xyz="0 0 0" />
-  </joint>
-  <link name="Tool_Schunk_Lens_Holder_long">
-    <inertial>
-      <origin rpy="0 0 0" xyz="-7.27367336112415E-05 7.45086790461934E-05 0.0362589765461052" />
-      <mass value="0.0201926555806949" />
-      <inertia ixx="2.9853615697905e-06" ixy="-5.05919548415697e-08" ixz="1.73675287109836e-09" iyy="2.04022017020586e-06" iyz="2.16027321887872e-09" izz="4.74384919822489e-06" />
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper_long/Tool_Schunk_Lens_Holder_long.STL" />
-      </geometry>
-      <material name="grey">
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper_long/Tool_Schunk_Lens_Holder_long.STL" />
-      </geometry>
-    </collision>
-  </link>
-  
-  <joint name="PM_Robot_Vacuum_Tool_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP_Tip_Lens_12_7_long" />
-    <child link="Tool_Schunk_Lens_Holder_long" />
-    <axis xyz="0 0 0" />
-  </joint>
-  <link name="Tip_Lens_12_7_long">
-    <inertial>
-      <origin rpy="0 0 0" xyz="5.51768492007554E-11 0 0.0160617769778818" />
-      <mass value="0.00230092030303971" />
-      <inertia ixx="1.36440715877095e-05" ixy="-3.53519310023124e-05" ixz="7.47710101979354e-05" iyy="3.91548342058176e-05" iyz="2.42885894721925e-05" izz="3.29488653146782e-05" />
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper_long/Tips/Tip_Lens_12_7_long.STL" />
-      </geometry>
-      <material name="white">
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/Tools/Schunk_Vacuum_Tools/Lens_Gripper_long/Tips/Tip_Lens_12_7_long.STL" />
-      </geometry>
-    </collision>
-  </link>
-  
-  <joint name="PM_Robot_Vacuum_Tool_Tip_Joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
-    <parent link="PM_Robot_Tool_TCP_Tip_Lens_12_7_long" />
-    <child link="Tip_Lens_12_7_long" />
     <axis xyz="0 0 0" />
   </joint>
   
