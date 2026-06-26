@@ -65,6 +65,9 @@ public class configureRobot : MonoBehaviour
     [Tooltip("YAML: availabe_chucks — Chuck_Carrier_Demo")]
     public GameObject gonioLeft_Chuck_Carrier_Demo;
 
+    [Tooltip("YAML: availabe_chucks — Chuck_ASG_Dummy")]
+    public GameObject gonioLeft_Chuck_ASG_Dummy; 
+
     // -------------------------------------------------------------------------
     // Gonio Right
     // -------------------------------------------------------------------------
@@ -121,13 +124,20 @@ public class configureRobot : MonoBehaviour
     // -------------------------------------------------------------------------
     // Parallel Gripper 2 Jaws — PG2
     // -------------------------------------------------------------------------
-    [Header("PG2 Tool Body  (pm_robot_tool_parallel_gripper_2_jaws)")]
+    [Header("PG2 Tool Bodies  (pm_robot_tool_parallel_gripper_2_jaws)")]
     [Tooltip("YAML: available_tools[0].tool_name — Schunk_MPG_10_plus")]
     public GameObject pg2_Tool_Schunk_MPG_10_plus;
 
+    [Tooltip("YAML: available_tools[1].tool_name — Schunk_MPG_20_plus")]
+    public GameObject pg2_Tool_Schunk_MPG_20_plus;
+
     [Header("PG2 Jaws — Schunk_MPG_10_plus")]
-    [Tooltip("YAML: available_tools[0].availabe_jaws[0] — Jaw_3mm_Lens")]
+    [Tooltip("YAML: available_tools[0].available_jaws[0] — Jaw_3mm_Lens")]
     public GameObject pg2_Jaw_SchunkMPG_Jaw3mmLens;
+
+    [Header("PG2 Jaws — Schunk_MPG_20_plus")]
+    [Tooltip("YAML: available_tools[1].available_jaws[0] — Jaw_ASG_Gripper")]
+    public GameObject pg2_Jaw_SchunkMPG20_JawASG;
 
     // -------------------------------------------------------------------------
     // Vacuum Tools
@@ -166,7 +176,7 @@ public class configureRobot : MonoBehaviour
     private Dictionary<string, GameObject> _pg1Tools;
     private Dictionary<string, Dictionary<string, GameObject>> _pg1JawsPerTool;
     private Dictionary<string, GameObject> _pg2Tools;
-    private Dictionary<string, GameObject> _pg2Jaws;
+    private Dictionary<string, Dictionary<string, GameObject>> _pg2JawsPerTool;
     private Dictionary<string, GameObject> _vacTools;
     private Dictionary<string, GameObject> _smarpodChucks;
 
@@ -263,6 +273,7 @@ public class configureRobot : MonoBehaviour
             { "chuck_gonio_left_IPEG_Demonstrator",   gonioLeft_Chuck_IPEG_Demonstrator },
             { "Chuck_Siemens_Carrier_P39_V2",         gonioLeft_Chuck_Siemens_Carrier_P39_V2 },
             { "Chuck_Carrier_Demo",                   gonioLeft_Chuck_Carrier_Demo },
+            { "Chuck_ASG_Dummy",                      gonioLeft_Chuck_ASG_Dummy },
         };
 
         _gonioRightChucks = new Dictionary<string, GameObject>
@@ -300,11 +311,23 @@ public class configureRobot : MonoBehaviour
         _pg2Tools = new Dictionary<string, GameObject>
         {
             { "Schunk_MPG_10_plus", pg2_Tool_Schunk_MPG_10_plus },
+            { "Schunk_MPG_20_plus", pg2_Tool_Schunk_MPG_20_plus },
         };
 
-        _pg2Jaws = new Dictionary<string, GameObject>
+        _pg2JawsPerTool = new Dictionary<string, Dictionary<string, GameObject>>
         {
-            { "Jaw_3mm_Lens", pg2_Jaw_SchunkMPG_Jaw3mmLens },
+            {
+                "Schunk_MPG_10_plus", new Dictionary<string, GameObject>
+                {
+                    { "Jaw_3mm_Lens", pg2_Jaw_SchunkMPG_Jaw3mmLens },
+                }
+            },
+            {
+                "Schunk_MPG_20_plus", new Dictionary<string, GameObject>
+                {
+                    { "Jaw_ASG_Gripper", pg2_Jaw_SchunkMPG20_JawASG },
+                }
+            },
         };
 
         _vacTools = new Dictionary<string, GameObject>
@@ -437,12 +460,21 @@ public class configureRobot : MonoBehaviour
         if (!active)
         {
             DeactivateAll(_pg2Tools);
-            DeactivateAll(_pg2Jaws);
+            foreach (var jawMap in _pg2JawsPerTool.Values) DeactivateAll(jawMap);
             return;
         }
 
-        ActivateSelected(_pg2Tools, GetString(d, "use_tool"));
-        ActivateSelected(_pg2Jaws, GetString(d, "use_jaw_type"));
+        string useTool = GetString(d, "use_tool");
+        ActivateSelected(_pg2Tools, useTool);
+
+        string useJaw = GetString(d, "use_jaw_type");
+        foreach (var kv in _pg2JawsPerTool)
+        {
+            if (kv.Key == useTool)
+                ActivateSelected(kv.Value, useJaw);
+            else
+                DeactivateAll(kv.Value);
+        }
     }
 
     private void ConfigureVacuumTools(Dictionary<string, object> toolsDict)
