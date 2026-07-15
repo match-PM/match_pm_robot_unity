@@ -79844,6 +79844,7 @@ GameObject:
   - component: {fileID: 1558672280}
   - component: {fileID: 1558672279}
   - component: {fileID: 1558672278}
+  - component: {fileID: 1558672282}
   m_Layer: 0
   m_Name: Tip_Siemens_Sensor_Bottom
   m_TagString: Untagged
@@ -79981,6 +79982,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &1558672282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1558672276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07e9415a2ffa6004b922b749f090f055, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1559048280
 GameObject:
   m_ObjectHideFlags: 8
