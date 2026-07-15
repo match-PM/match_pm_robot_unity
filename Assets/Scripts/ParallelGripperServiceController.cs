@@ -24,7 +24,9 @@ public class ParallelGripperServiceController : MonoBehaviour
     public ROS2UnityComponent ros2Unity;
     public bool searchParentsForRos2Unity = true;
     public ArticulationBody movingJaw;
-    public string movingJawObjectName = "SmarAct_Gripper_Jaw_flat";
+    // Canonical link name from the generated URDF/manifest:
+    // Tool_Parallel_Gripper_Jaw_{tool}_{jaw} (see pm_robot_unity_manifest.json)
+    public string movingJawObjectName = "Tool_Parallel_Gripper_Jaw_SmarAct_Piezo_Gripper_flat_Sensing_Jaw";
     public bool autoResolveMovingJaw = true;
 
     [Header("Force Feedback")]

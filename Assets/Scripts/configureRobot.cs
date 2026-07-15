@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using ROS2;
 using UtilityFunctions; // GetConfigFilePath, GenericFunctions.YamlLoader
@@ -9,8 +10,27 @@ using UtilityFunctions; // GetConfigFilePath, GenericFunctions.YamlLoader
 using ConfigureRobotReq = pm_msgs.srv.EmptyWithSuccess_Request;
 using ConfigureRobotResp = pm_msgs.srv.EmptyWithSuccess_Response;
 
+// =============================================================================
+// Applies the pm_robot_bringup_config.yaml configuration to the Unity robot:
+// activates the selected tools/tips/chucks and deactivates the alternatives.
+//
+// The mapping from YAML selections to GameObjects is NOT hardcoded here; it is
+// read from pm_robot_unity_manifest.json, which generate_unity_urdf.py emits
+// next to the combined URDF in the pm_robot_description install. GameObjects
+// are resolved by name (Unity object name == URDF link name), so a new tool
+// only needs a ROS-side entry, regeneration, and a run of the
+// "Config Tools/Delta Import Robot Parts" editor tool - no code changes.
+//
+// Only hardware that is outside the URDF generation (measuring systems, the
+// gonio/smarpod assemblies, smarpod chucks) is still wired in the Inspector.
+// =============================================================================
+
 public class configureRobot : MonoBehaviour
 {
+    [Header("Robot")]
+    [Tooltip("Root of the robot hierarchy; all manifest links are resolved by name below this object. Defaults to the GameObject named 'pm_robot'.")]
+    public GameObject robotRoot;
+
     // -------------------------------------------------------------------------
     // Measuring Systems
     // -------------------------------------------------------------------------
@@ -25,191 +45,30 @@ public class configureRobot : MonoBehaviour
     public GameObject measuringSystem_KeyenceBottom;
 
     // -------------------------------------------------------------------------
-    // 1K Dispenser Tips
+    // Assemblies (enable flags; their chucks/tools come from the manifest)
     // -------------------------------------------------------------------------
-    [Header("1K Dispenser Tips  (pm_robot_1K_dispenser_tip)")]
-    [Tooltip("YAML: availabe_dispenser_tips — Dis_Tip_Yellow_I_100_A240_L12700")]
-    public GameObject dispenser_Tip_Yellow_I_100_A240_L12700;
-
-    [Tooltip("YAML: availabe_dispenser_tips — Dis_Tip_Lavender_I_150_A310_L12700")]
-    public GameObject dispenser_Tip_Lavender_I_150_A310_L12700;
-
-    [Tooltip("YAML: availabe_dispenser_tips — Dis_Tip_Red_I_250_A520_L12700")]
-    public GameObject dispenser_Tip_Red_I_250_A520_L12700;
-
-    // -------------------------------------------------------------------------
-    // Gonio Left
-    // -------------------------------------------------------------------------
-    [Header("Gonio Left  (pm_robot_gonio_left)")]
-    [Tooltip("YAML: with_Gonio_Left — entire Gonio Left assembly")]
+    [Header("Assemblies")]
+    [Tooltip("YAML: pm_robot_gonio_left.with_Gonio_Left — entire Gonio Left assembly")]
     public GameObject assembly_GonioLeft;
 
-    [Tooltip("YAML: availabe_chucks — chuck_gonio_left_Siemens_Carrier")]
-    public GameObject gonioLeft_Chuck_Siemens_Carrier;
-
-    [Tooltip("YAML: availabe_chucks — chuck_gonio_left_Siemens_Carrier_SIN")]
-    public GameObject gonioLeft_Chuck_Siemens_Carrier_SIN;
-
-    [Tooltip("YAML: availabe_chucks — chuck_gonio_left_Siemens_Sensor")]
-    public GameObject gonioLeft_Chuck_Siemens_Sensor;
-
-    [Tooltip("YAML: availabe_chucks — Chuck_Siemens_Carrier_P39")]
-    public GameObject gonioLeft_Chuck_Siemens_Carrier_P39;
-
-    [Tooltip("YAML: availabe_chucks — chuck_gonio_left_IPEG_Demonstrator")]
-    public GameObject gonioLeft_Chuck_IPEG_Demonstrator;
-
-    [Tooltip("YAML: availabe_chucks — Chuck_Siemens_Carrier_P39_V2")]
-    public GameObject gonioLeft_Chuck_Siemens_Carrier_P39_V2;
-
-    [Tooltip("YAML: availabe_chucks — Chuck_Carrier_Demo")]
-    public GameObject gonioLeft_Chuck_Carrier_Demo;
-
-    [Tooltip("YAML: availabe_chucks — Chuck_ASG_Dummy")]
-    public GameObject gonioLeft_Chuck_ASG_Dummy; 
-
-    // -------------------------------------------------------------------------
-    // Gonio Right
-    // -------------------------------------------------------------------------
-    [Header("Gonio Right  (pm_robot_gonio_right)")]
-    [Tooltip("YAML: with_Gonio_Right — entire Gonio Right assembly")]
+    [Tooltip("YAML: pm_robot_gonio_right.with_Gonio_Right — entire Gonio Right assembly")]
     public GameObject assembly_GonioRight;
 
-    [Tooltip("YAML: availabe_chucks — chuck_gonio_right_Siemens_UFC")]
-    public GameObject gonioRight_Chuck_Siemens_UFC;
-
-    [Tooltip("YAML: availabe_chucks — chuck_gonio_right_double_lens_holder_12_7")]
-    public GameObject gonioRight_Chuck_DoubleLensHolder_12_7;
-
-    [Tooltip("YAML: availabe_chucks — chuck_gonio_right_ipeg_active_alignment_station")]
-    public GameObject gonioRight_Chuck_IPEG_ActiveAlignment;
-
-    [Tooltip("YAML: availabe_chucks — chuck_gonio_right_siemens_SIN")]
-    public GameObject gonioRight_Chuck_Siemens_SIN;
-
-    // -------------------------------------------------------------------------
-    // Smarpod Station
-    // -------------------------------------------------------------------------
-    [Header("Smarpod Station  (pm_smparpod_station)")]
-    [Tooltip("YAML: with_smarpod_station — entire Smarpod Station assembly")]
+    [Tooltip("YAML: pm_smparpod_station.with_smarpod_station — entire Smarpod Station assembly")]
     public GameObject assembly_SmarpodStation;
 
+    // -------------------------------------------------------------------------
+    // Smarpod Station chucks (not part of the URDF generation -> still wired here)
+    // -------------------------------------------------------------------------
+    [Header("Smarpod Station  (pm_smparpod_station)")]
     [Tooltip("YAML: availabe_chucks — chuck_diodenplacement  (use_chuck: 'empty' deactivates all chucks)")]
     public GameObject smarpod_Chuck_DiodePlacement;
-
-    // -------------------------------------------------------------------------
-    // Parallel Gripper 1 Jaw — PG1
-    // -------------------------------------------------------------------------
-    [Header("PG1 Tool Bodies  (pm_robot_tool_parallel_gripper_1_jaw)")]
-    [Tooltip("YAML: available_tools[0].tool_name — SmarAct_Piezo_Gripper")]
-    public GameObject pg1_Tool_SmarAct_Piezo_Gripper;
-
-    [Tooltip("YAML: available_tools[1].tool_name — SmarAct_Piezo_Gripper_flat")]
-    public GameObject pg1_Tool_SmarAct_Piezo_Gripper_flat;
-
-    [Header("PG1 Jaws — SmarAct_Piezo_Gripper")]
-    [Tooltip("YAML: available_tools[0].availabe_jaws[0] — Default_Jaw")]
-    public GameObject pg1_Jaw_SmarActGripper_Default;
-
-    [Header("PG1 Jaws — SmarAct_Piezo_Gripper_flat")]
-    [Tooltip("YAML: available_tools[1].availabe_jaws[0] — Default_Jaw")]
-    public GameObject pg1_Jaw_SmarActGripperFlat_Default;
-
-    [Tooltip("YAML: available_tools[1].availabe_jaws[1] — Flat_Jaw")]
-    public GameObject pg1_Jaw_SmarActGripperFlat_Flat;
-
-    [Tooltip("YAML: available_tools[1].availabe_jaws[1] — Sensing_Jaw")]
-    public GameObject pg1_Jaw_SmarActGripperFlat_Sensing;
-
-    // -------------------------------------------------------------------------
-    // Parallel Gripper 2 Jaws — PG2
-    // -------------------------------------------------------------------------
-    [Header("PG2 Tool Bodies  (pm_robot_tool_parallel_gripper_2_jaws)")]
-    [Tooltip("YAML: available_tools[0].tool_name — Schunk_MPG_10_plus")]
-    public GameObject pg2_Tool_Schunk_MPG_10_plus;
-
-    [Tooltip("YAML: available_tools[1].tool_name — Schunk_MPG_20_plus")]
-    public GameObject pg2_Tool_Schunk_MPG_20_plus;
-
-    [Header("PG2 Jaws — Schunk_MPG_10_plus")]
-    [Tooltip("YAML: available_tools[0].available_jaws[0] — Jaw_3mm_Lens")]
-    public GameObject pg2_Jaw_SchunkMPG_Jaw3mmLens;
-
-    [Header("PG2 Jaws — Schunk_MPG_20_plus")]
-    [Tooltip("YAML: available_tools[1].available_jaws[0] — Jaw_ASG_Gripper")]
-    public GameObject pg2_Jaw_SchunkMPG20_JawASG;
-
-    // -------------------------------------------------------------------------
-    // Vacuum Tools
-    // -------------------------------------------------------------------------
-    [Header("Vacuum Tool Bodies  (pm_robot_vacuum_tools)")]
-    [Tooltip("YAML: availabe_tools[0].tool_name — Tool_SPT_Toolholder")]
-    public GameObject vac_Tool_SPT_Toolholder;
-
-    [Tooltip("YAML: availabe_tools[1].tool_name — Tool_Schunk_SPT_Tool_old")]
-    public GameObject vac_Tool_Schunk_SPT_Tool_old;
-
-    [Tooltip("YAML: availabe_tools[2].tool_name — Siemens_Vacuum_Array")]
-    public GameObject vac_Tool_Siemens_Vacuum_Array;
-
-    [Tooltip("YAML: availabe_tools[3].tool_name — Siemens_Vacuum_Array_short")]
-    public GameObject vac_Tool_Siemens_Vacuum_Array_short;
-
-    [Tooltip("YAML: availabe_tools[4].tool_name — Siemens_Vacuum_Array_angled")]
-    public GameObject vac_Tool_Siemens_Vacuum_Array_angled;
-
-    [Tooltip("YAML: availabe_tools[5].tool_name — Schunk_Lens_Gripper")]
-    public GameObject vac_Tool_Schunk_Lens_Gripper;
-
-    [Tooltip("YAML: availabe_tools[6].tool_name — Schunk_Lens_Gripper_long")]
-    public GameObject vac_Tool_Schunk_Lens_Gripper_long;
-
-    [Header("Vacuum Tips — Tool_SPT_Toolholder")]
-    [Tooltip("YAML: availabe_tools[0].availabe_tips[0] — Tip_R_A1000_I500")]
-    public GameObject vac_Tip_SPT_Toolholder_R_A1000_I500;
-
-    [Header("Vacuum Tips — Tool_Schunk_SPT_Tool_old")]
-    [Tooltip("YAML: availabe_tools[1].availabe_tips[0] — Tip_R_A1000_I500")]
-    public GameObject vac_Tip_SchunkSPTToolOld_R_A1000_I500;
-
-    [Header("Vacuum Tips — Siemens_Vacuum_Array")]
-    [Tooltip("YAML: availabe_tools[2].availabe_tips[0] — Tip_Siemens_Vacuum_Array")]
-    public GameObject vac_Tip_SiemensVacuumArray_SiemensVacuumArray;
-
-    [Header("Vacuum Tips — Siemens_Vacuum_Array_short")]
-    [Tooltip("YAML: availabe_tools[3].availabe_tips[0] — Tip_Siemens_Vacuum_Array")]
-    public GameObject vac_Tip_SiemensVacuumArrayShort_SiemensVacuumArray;
-
-    [Tooltip("YAML: availabe_tools[3].availabe_tips[1] — Tip_Siemens_Sensor_Bottom")]
-    public GameObject vac_Tip_SiemensVacuumArrayShort_SiemensSensorBottom;
-
-    [Header("Vacuum Tips — Siemens_Vacuum_Array_angled")]
-    [Tooltip("YAML: availabe_tools[4].availabe_tips[0] — Tip_Siemens_Vacuum_Array")]
-    public GameObject vac_Tip_SiemensVacuumArrayAngled_SiemensVacuumArray;
-
-    [Header("Vacuum Tips — Schunk_Lens_Gripper")]
-    [Tooltip("YAML: availabe_tools[5].availabe_tips[0] — Tip_Lens_12_7")]
-    public GameObject vac_Tip_SchunkLensGripper_Lens_12_7;
-
-    [Header("Vacuum Tips — Schunk_Lens_Gripper_long")]
-    [Tooltip("YAML: availabe_tools[6].availabe_tips[0] — Tip_Lens_12_7_long")]
-    public GameObject vac_Tip_SchunkLensGripperLong_Lens_12_7_long;
 
     // -------------------------------------------------------------------------
     // Private state
     // -------------------------------------------------------------------------
     private Dictionary<string, object> _yamlRoot;
-
-    // Per-section selection maps (YAML name → pre-wired GO)
-    private Dictionary<string, GameObject> _dispenserTips;
-    private Dictionary<string, GameObject> _gonioLeftChucks;
-    private Dictionary<string, GameObject> _gonioRightChucks;
-    private Dictionary<string, GameObject> _pg1Tools;
-    private Dictionary<string, Dictionary<string, GameObject>> _pg1JawsPerTool;
-    private Dictionary<string, GameObject> _pg2Tools;
-    private Dictionary<string, Dictionary<string, GameObject>> _pg2JawsPerTool;
-    private Dictionary<string, GameObject> _vacTools;
-    private Dictionary<string, Dictionary<string, GameObject>> _vacTipsPerTool;
+    private RobotUnityManifest _manifest;
     private Dictionary<string, GameObject> _smarpodChucks;
 
     // ROS2
@@ -228,15 +87,37 @@ public class configureRobot : MonoBehaviour
     {
         ros2Unity = GetComponent<ROS2UnityComponent>();
 
-        BuildMaps();
+        if (robotRoot == null)
+        {
+            // A scene can contain more than one robot (e.g. a leftover
+            // 'pm_robot (1)' from an earlier full import). Picking one at
+            // random would configure the wrong robot, so say so out loud.
+            var roots = UnityEngine.SceneManagement.SceneManager.GetActiveScene()
+                .GetRootGameObjects();
+            var candidates = new List<GameObject>();
+            foreach (var go in roots)
+                if (go.name == "pm_robot" || go.name.StartsWith("pm_robot ("))
+                    candidates.Add(go);
 
-        string filepath = GetConfigFilePath("pm_robot_bringup", "pm_robot_bringup_config.yaml");
-        _yamlRoot = GenericFunctions.YamlLoader.LoadYaml(filepath);
+            if (candidates.Count > 1)
+                Debug.LogWarning("configureRobot: the scene contains several robot roots (" +
+                                 string.Join(", ", candidates.ConvertAll(g => g.name)) +
+                                 "). Assign the intended one to 'Robot Root' in the Inspector; " +
+                                 "falling back to the one named 'pm_robot'.");
 
-        if (_yamlRoot != null)
-            ApplyConfiguration(_yamlRoot);
-        else
-            Debug.LogError("configureRobot: Error loading yaml file: " + filepath);
+            robotRoot = candidates.Find(g => g.name == "pm_robot")
+                        ?? (candidates.Count > 0 ? candidates[0] : null);
+        }
+        if (robotRoot == null)
+            Debug.LogError("configureRobot: robot root not set and no GameObject named 'pm_robot' found.");
+
+        // "empty" is intentionally absent — it is handled as a sentinel in ConfigureSmarpodStation
+        _smarpodChucks = new Dictionary<string, GameObject>
+        {
+            { "chuck_diodenplacement", smarpod_Chuck_DiodePlacement },
+        };
+
+        LoadAndApplyConfiguration();
     }
 
     void Update()
@@ -266,17 +147,8 @@ public class configureRobot : MonoBehaviour
 
         mainThreadActions.Enqueue(() =>
         {
-            string filepath = GetConfigFilePath("pm_robot_bringup", "pm_robot_bringup_config.yaml");
-            _yamlRoot = GenericFunctions.YamlLoader.LoadYaml(filepath);
-            if (_yamlRoot != null)
-            {
-                ApplyConfiguration(_yamlRoot);
-                Debug.Log("configureRobot: Reconfigured via ROS2 service.");
-            }
-            else
-            {
-                Debug.LogError("configureRobot service: Error loading yaml file: " + filepath);
-            }
+            LoadAndApplyConfiguration();
+            Debug.Log("configureRobot: Reconfigured via ROS2 service.");
         });
 
         response.Success = true;
@@ -284,147 +156,33 @@ public class configureRobot : MonoBehaviour
     }
 
     // =========================================================================
-    // Map builder — wires public fields into internal dictionaries
+    // Configuration loading
     // =========================================================================
 
-    private void BuildMaps()
+    private void LoadAndApplyConfiguration()
     {
-        _dispenserTips = new Dictionary<string, GameObject>
+        string filepath = GetConfigFilePath("pm_robot_bringup", "pm_robot_bringup_config.yaml");
+        _yamlRoot = GenericFunctions.YamlLoader.LoadYaml(filepath);
+        if (_yamlRoot == null)
         {
-            { "Dis_Tip_Yellow_I_100_A240_L12700",   dispenser_Tip_Yellow_I_100_A240_L12700 },
-            { "Dis_Tip_Lavender_I_150_A310_L12700", dispenser_Tip_Lavender_I_150_A310_L12700 },
-            { "Dis_Tip_Red_I_250_A520_L12700",      dispenser_Tip_Red_I_250_A520_L12700 },
-        };
+            Debug.LogError("configureRobot: Error loading yaml file: " + filepath);
+            return;
+        }
 
-        _gonioLeftChucks = new Dictionary<string, GameObject>
-        {
-            { "chuck_gonio_left_Siemens_Carrier",     gonioLeft_Chuck_Siemens_Carrier },
-            { "chuck_gonio_left_Siemens_Carrier_SIN", gonioLeft_Chuck_Siemens_Carrier_SIN },
-            { "chuck_gonio_left_Siemens_Sensor",      gonioLeft_Chuck_Siemens_Sensor },
-            { "Chuck_Siemens_Carrier_P39",            gonioLeft_Chuck_Siemens_Carrier_P39 },
-            { "chuck_gonio_left_IPEG_Demonstrator",   gonioLeft_Chuck_IPEG_Demonstrator },
-            { "Chuck_Siemens_Carrier_P39_V2",         gonioLeft_Chuck_Siemens_Carrier_P39_V2 },
-            { "Chuck_Carrier_Demo",                   gonioLeft_Chuck_Carrier_Demo },
-            { "Chuck_ASG_Dummy",                      gonioLeft_Chuck_ASG_Dummy },
-        };
+        // Reload the manifest on every apply so a regeneration in ROS is
+        // picked up by the next reconfigure service call.
+        _manifest = RobotUnityManifest.Load(GetManifestPath());
 
-        _gonioRightChucks = new Dictionary<string, GameObject>
-        {
-            { "chuck_gonio_right_Siemens_UFC",                  gonioRight_Chuck_Siemens_UFC },
-            { "chuck_gonio_right_double_lens_holder_12_7",      gonioRight_Chuck_DoubleLensHolder_12_7 },
-            { "chuck_gonio_right_ipeg_active_alignment_station", gonioRight_Chuck_IPEG_ActiveAlignment },
-            { "chuck_gonio_right_siemens_SIN",                  gonioRight_Chuck_Siemens_SIN },
-        };
+        ApplyConfiguration(_yamlRoot);
+    }
 
-        _pg1Tools = new Dictionary<string, GameObject>
-        {
-            { "SmarAct_Piezo_Gripper",      pg1_Tool_SmarAct_Piezo_Gripper },
-            { "SmarAct_Piezo_Gripper_flat", pg1_Tool_SmarAct_Piezo_Gripper_flat },
-        };
-
-        _pg1JawsPerTool = new Dictionary<string, Dictionary<string, GameObject>>
-        {
-            {
-                "SmarAct_Piezo_Gripper", new Dictionary<string, GameObject>
-                {
-                    { "Default_Jaw", pg1_Jaw_SmarActGripper_Default },
-                }
-            },
-            {
-                "SmarAct_Piezo_Gripper_flat", new Dictionary<string, GameObject>
-                {
-                    { "Default_Jaw", pg1_Jaw_SmarActGripperFlat_Default },
-                    { "Flat_Jaw",    pg1_Jaw_SmarActGripperFlat_Flat },
-                    { "Sensing_Jaw", pg1_Jaw_SmarActGripperFlat_Sensing}, 
-                }
-            },
-        };
-
-        _pg2Tools = new Dictionary<string, GameObject>
-        {
-            { "Schunk_MPG_10_plus", pg2_Tool_Schunk_MPG_10_plus },
-            { "Schunk_MPG_20_plus", pg2_Tool_Schunk_MPG_20_plus },
-        };
-
-        _pg2JawsPerTool = new Dictionary<string, Dictionary<string, GameObject>>
-        {
-            {
-                "Schunk_MPG_10_plus", new Dictionary<string, GameObject>
-                {
-                    { "Jaw_3mm_Lens", pg2_Jaw_SchunkMPG_Jaw3mmLens },
-                }
-            },
-            {
-                "Schunk_MPG_20_plus", new Dictionary<string, GameObject>
-                {
-                    { "Jaw_ASG_Gripper", pg2_Jaw_SchunkMPG20_JawASG },
-                }
-            },
-        };
-
-        _vacTools = new Dictionary<string, GameObject>
-        {
-            { "Tool_SPT_Toolholder",         vac_Tool_SPT_Toolholder },
-            { "Tool_Schunk_SPT_Tool_old",     vac_Tool_Schunk_SPT_Tool_old },
-            { "Siemens_Vacuum_Array",         vac_Tool_Siemens_Vacuum_Array },
-            { "Siemens_Vacuum_Array_short",   vac_Tool_Siemens_Vacuum_Array_short },
-            { "Siemens_Vacuum_Array_angled",  vac_Tool_Siemens_Vacuum_Array_angled },
-            { "Schunk_Lens_Gripper",          vac_Tool_Schunk_Lens_Gripper },
-            { "Schunk_Lens_Gripper_long",     vac_Tool_Schunk_Lens_Gripper_long },
-        };
-
-        _vacTipsPerTool = new Dictionary<string, Dictionary<string, GameObject>>
-        {
-            {
-                "Tool_SPT_Toolholder", new Dictionary<string, GameObject>
-                {
-                    { "Tip_R_A1000_I500", vac_Tip_SPT_Toolholder_R_A1000_I500 },
-                }
-            },
-            {
-                "Tool_Schunk_SPT_Tool_old", new Dictionary<string, GameObject>
-                {
-                    { "Tip_R_A1000_I500", vac_Tip_SchunkSPTToolOld_R_A1000_I500 },
-                }
-            },
-            {
-                "Siemens_Vacuum_Array", new Dictionary<string, GameObject>
-                {
-                    { "Tip_Siemens_Vacuum_Array", vac_Tip_SiemensVacuumArray_SiemensVacuumArray },
-                }
-            },
-            {
-                "Siemens_Vacuum_Array_short", new Dictionary<string, GameObject>
-                {
-                    { "Tip_Siemens_Vacuum_Array",   vac_Tip_SiemensVacuumArrayShort_SiemensVacuumArray },
-                    { "Tip_Siemens_Sensor_Bottom",  vac_Tip_SiemensVacuumArrayShort_SiemensSensorBottom },
-                }
-            },
-            {
-                "Siemens_Vacuum_Array_angled", new Dictionary<string, GameObject>
-                {
-                    { "Tip_Siemens_Vacuum_Array", vac_Tip_SiemensVacuumArrayAngled_SiemensVacuumArray },
-                }
-            },
-            {
-                "Schunk_Lens_Gripper", new Dictionary<string, GameObject>
-                {
-                    { "Tip_Lens_12_7", vac_Tip_SchunkLensGripper_Lens_12_7 },
-                }
-            },
-            {
-                "Schunk_Lens_Gripper_long", new Dictionary<string, GameObject>
-                {
-                    { "Tip_Lens_12_7_long", vac_Tip_SchunkLensGripperLong_Lens_12_7_long },
-                }
-            },
-        };
-
-        // "empty" is intentionally absent — it is handled as a sentinel in ConfigureSmarpodStation
-        _smarpodChucks = new Dictionary<string, GameObject>
-        {
-            { "chuck_diodenplacement", smarpod_Chuck_DiodePlacement },
-        };
+    public static string GetManifestPath()
+    {
+        string packagePath = GetROS2PackagePath("pm_robot_description");
+        if (string.IsNullOrEmpty(packagePath))
+            return null;
+        return Path.Combine(packagePath, "share", "pm_robot_description", "urdf",
+                            "pm_robot_unity_manifest.json");
     }
 
     // =========================================================================
@@ -434,15 +192,13 @@ public class configureRobot : MonoBehaviour
     private void ApplyConfiguration(Dictionary<string, object> root)
     {
         ConfigureMeasuringSystems(root);
-        ConfigureDispenserTips(root);
-        ConfigureGonioLeft(root);
-        ConfigureGonioRight(root);
+        ConfigureAssemblies(root);
         ConfigureSmarpodStation(root);
-        ConfigureTools(root);
+        ApplyManifestSections(root);
     }
 
     // =========================================================================
-    // Section configurators
+    // Inspector-wired hardware (outside the URDF generation)
     // =========================================================================
 
     private void ConfigureMeasuringSystems(Dictionary<string, object> root)
@@ -453,32 +209,12 @@ public class configureRobot : MonoBehaviour
         measuringSystem_KeyenceBottom?.SetActive(GetBool(d, "use_keyence_bottom"));
     }
 
-    private void ConfigureDispenserTips(Dictionary<string, object> root)
+    private void ConfigureAssemblies(Dictionary<string, object> root)
     {
-        if (!TryGetSubDict(root, "pm_robot_1K_dispenser_tip", out var d)) return;
-        ActivateSelected(_dispenserTips, GetString(d, "use_dispenser_tip"));
-    }
-
-    private void ConfigureGonioLeft(Dictionary<string, object> root)
-    {
-        if (!TryGetSubDict(root, "pm_robot_gonio_left", out var d)) return;
-        bool active = GetBool(d, "with_Gonio_Left");
-        assembly_GonioLeft?.SetActive(active);
-        if (active)
-            ActivateSelected(_gonioLeftChucks, GetString(d, "use_chuck"));
-        else
-            DeactivateAll(_gonioLeftChucks);
-    }
-
-    private void ConfigureGonioRight(Dictionary<string, object> root)
-    {
-        if (!TryGetSubDict(root, "pm_robot_gonio_right", out var d)) return;
-        bool active = GetBool(d, "with_Gonio_Right");
-        assembly_GonioRight?.SetActive(active);
-        if (active)
-            ActivateSelected(_gonioRightChucks, GetString(d, "use_chuck"));
-        else
-            DeactivateAll(_gonioRightChucks);
+        if (TryGetSubDict(root, "pm_robot_gonio_left", out var left))
+            assembly_GonioLeft?.SetActive(GetBool(left, "with_Gonio_Left"));
+        if (TryGetSubDict(root, "pm_robot_gonio_right", out var right))
+            assembly_GonioRight?.SetActive(GetBool(right, "with_Gonio_Right"));
     }
 
     private void ConfigureSmarpodStation(Dictionary<string, object> root)
@@ -498,87 +234,99 @@ public class configureRobot : MonoBehaviour
             ActivateSelected(_smarpodChucks, useChuck);
     }
 
-    private void ConfigureTools(Dictionary<string, object> root)
+    // =========================================================================
+    // Manifest-driven tools / tips / chucks
+    // =========================================================================
+
+    private void ApplyManifestSections(Dictionary<string, object> yamlRoot)
     {
-        if (!TryGetSubDict(root, "pm_robot_tools", out var toolsDict)) return;
-        ConfigurePG1(toolsDict);
-        ConfigurePG2(toolsDict);
-        ConfigureVacuumTools(toolsDict);
+        if (_manifest == null || robotRoot == null)
+            return;
+
+        Dictionary<string, GameObject> linkIndex = BuildLinkIndex();
+
+        // A GameObject may be shared by several items (identical shared
+        // visual, e.g. two dispenser tips differing only in TCP offset), so
+        // desired states are OR-combined before applying.
+        var desired = new Dictionary<GameObject, bool>();
+        var missingActive = new List<string>();
+        var missingInactive = new List<string>();
+
+        foreach (var section in _manifest.sections)
+        {
+            if (!TryGetSectionDict(yamlRoot, section.yamlPath, out var d))
+                continue;
+
+            bool enabled = string.IsNullOrEmpty(section.enableKey) || GetBool(d, section.enableKey);
+            string[] selected = section.selectKeys.Select(k => GetString(d, k)).ToArray();
+
+            foreach (var item in section.items)
+            {
+                bool active = enabled && IsSelected(item.yamlNames, selected);
+                foreach (var linkName in item.rootLinks)
+                {
+                    if (linkIndex.TryGetValue(linkName, out var go))
+                    {
+                        desired.TryGetValue(go, out bool current);
+                        desired[go] = current || active;
+                    }
+                    else
+                    {
+                        (active ? missingActive : missingInactive).Add(linkName);
+                    }
+                }
+            }
+        }
+
+        foreach (var kv in desired)
+            kv.Key.SetActive(kv.Value);
+
+        if (missingActive.Count > 0)
+            Debug.LogWarning("configureRobot: the SELECTED configuration needs GameObjects that are " +
+                             "missing from the scene: " + string.Join(", ", missingActive) +
+                             ". Import them via 'Config Tools/Delta Import Robot Parts' in the Unity editor.");
+        if (missingInactive.Count > 0)
+            Debug.Log($"configureRobot: {missingInactive.Count} inactive manifest link(s) not present in " +
+                      "the scene (harmless unless they get selected): " + string.Join(", ", missingInactive));
     }
 
-    private void ConfigurePG1(Dictionary<string, object> toolsDict)
+    private static bool IsSelected(string[] yamlNames, string[] selected)
     {
-        if (!TryGetSubDict(toolsDict, "pm_robot_tool_parallel_gripper_1_jaw", out var d)) return;
-        bool active = GetBool(d, "use_paralell_gripper");
-
-        if (!active)
+        if (yamlNames.Length != selected.Length)
+            return false;
+        for (int i = 0; i < yamlNames.Length; i++)
         {
-            DeactivateAll(_pg1Tools);
-            foreach (var jawMap in _pg1JawsPerTool.Values) DeactivateAll(jawMap);
-            return;
+            if (string.IsNullOrEmpty(selected[i]) || selected[i] == "empty" || selected[i] != yamlNames[i])
+                return false;
         }
-
-        string useTool = GetString(d, "use_tool");
-        ActivateSelected(_pg1Tools, useTool);
-
-        string useJaw = GetString(d, "use_jaw_type");
-        foreach (var kv in _pg1JawsPerTool)
-        {
-            if (kv.Key == useTool)
-                ActivateSelected(kv.Value, useJaw);
-            else
-                DeactivateAll(kv.Value);
-        }
+        return true;
     }
 
-    private void ConfigurePG2(Dictionary<string, object> toolsDict)
+    private Dictionary<string, GameObject> BuildLinkIndex()
     {
-        if (!TryGetSubDict(toolsDict, "pm_robot_tool_parallel_gripper_2_jaws", out var d)) return;
-        bool active = GetBool(d, "use_paralell_gripper");
-
-        if (!active)
+        // Rebuilt on every apply: cheap, and robust against objects added by
+        // the delta importer between two reconfigure calls.
+        var index = new Dictionary<string, GameObject>();
+        foreach (var t in robotRoot.GetComponentsInChildren<Transform>(true))
         {
-            DeactivateAll(_pg2Tools);
-            foreach (var jawMap in _pg2JawsPerTool.Values) DeactivateAll(jawMap);
-            return;
+            if (!index.ContainsKey(t.name))
+                index[t.name] = t.gameObject;
+            // Duplicate names among non-manifest objects (e.g. 'Visuals') are
+            // normal; manifest link names are unique by construction.
         }
-
-        string useTool = GetString(d, "use_tool");
-        ActivateSelected(_pg2Tools, useTool);
-
-        string useJaw = GetString(d, "use_jaw_type");
-        foreach (var kv in _pg2JawsPerTool)
-        {
-            if (kv.Key == useTool)
-                ActivateSelected(kv.Value, useJaw);
-            else
-                DeactivateAll(kv.Value);
-        }
+        return index;
     }
 
-    private void ConfigureVacuumTools(Dictionary<string, object> toolsDict)
+    private bool TryGetSectionDict(Dictionary<string, object> root, string yamlPath,
+        out Dictionary<string, object> result)
     {
-        if (!TryGetSubDict(toolsDict, "pm_robot_vacuum_tools", out var d)) return;
-        bool active = GetBool(d, "use_vacuum_tool");
-
-        if (!active)
+        result = root;
+        foreach (var key in yamlPath.Split('/'))
         {
-            DeactivateAll(_vacTools);
-            foreach (var tipMap in _vacTipsPerTool.Values) DeactivateAll(tipMap);
-            return;
+            if (!TryGetSubDict(result, key, out result))
+                return false;
         }
-
-        string useTool = GetString(d, "use_tool");
-        ActivateSelected(_vacTools, useTool);
-
-        string useTip = GetString(d, "use_tip");
-        foreach (var kv in _vacTipsPerTool)
-        {
-            if (kv.Key == useTool)
-                ActivateSelected(kv.Value, useTip);
-            else
-                DeactivateAll(kv.Value);
-        }
+        return true;
     }
 
     // =========================================================================
@@ -638,7 +386,7 @@ public class configureRobot : MonoBehaviour
             {
                 kv.Value?.SetActive(false);
             }
-            
+
     }
 
     // =========================================================================
