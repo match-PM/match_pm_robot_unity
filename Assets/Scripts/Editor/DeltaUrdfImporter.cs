@@ -38,6 +38,7 @@ public class DeltaUrdfImporter : EditorWindow
         public ManifestSection section;
         public ManifestItem item;
         public List<string> missingLinks;   // topologically ordered, parents first
+        public List<ManifestSpawnPoint> missingSpawnPoints;
         public List<string> meshesToCopy;
         public string targetParentPath;     // where the item's first root link lands
         public string blockedReason;        // null when importable
@@ -87,7 +88,7 @@ public class DeltaUrdfImporter : EditorWindow
         GUILayout.Label("Delta Import Robot Parts", EditorStyles.boldLabel);
         EditorGUILayout.HelpBox(
             "Imports links that exist in the generated URDF/manifest but not in the scene robot. " +
-            "Existing objects are never modified.", MessageType.Info);
+            "Existing components and world poses are preserved.", MessageType.Info);
 
         urdfPath = EditorGUILayout.TextField("Combined URDF", urdfPath);
         manifestPath = EditorGUILayout.TextField("Manifest", manifestPath);
@@ -141,7 +142,10 @@ public class DeltaUrdfImporter : EditorWindow
             else
                 EditorGUILayout.HelpBox(
                     $"{title}\nparent: {r.targetParentPath}" +
-                    $"\nlinks: {string.Join(", ", r.missingLinks)}" +
+                    $"\nlinks: {(r.missingLinks.Count > 0 ? string.Join(", ", r.missingLinks) : "(none)")}" +
+                    (r.missingSpawnPoints.Count > 0
+                        ? $"\nspawn points: {string.Join(", ", r.missingSpawnPoints.Select(s => $"{s.name} -> {s.parentLink}"))}"
+                        : "") +
                     (r.meshesToCopy.Count > 0 ? $"\nmeshes to copy: {string.Join(", ", r.meshesToCopy)}" : ""),
                     MessageType.None);
         }
@@ -197,22 +201,68 @@ public class DeltaUrdfImporter : EditorWindow
         {
             foreach (var item in section.items)
             {
-                var missing = item.links.Where(l => !sceneIndex.ContainsKey(l)).ToList();
-                if (missing.Count == 0)
+                var missing = (item.links ?? Array.Empty<string>())
+                    .Where(l => !sceneIndex.ContainsKey(l)).ToList();
+                var missingSpawnPoints = (item.spawnPoints ?? Array.Empty<ManifestSpawnPoint>())
+                    .Where(s => !SpawnPointExists(s, sceneIndex, opcUaMap)).ToList();
+                if (missing.Count == 0 && missingSpawnPoints.Count == 0)
                     continue;
 
-                var result = new ScanResult { section = section, item = item, missingLinks = new List<string>() };
+                var result = new ScanResult
+                {
+                    section = section,
+                    item = item,
+                    missingLinks = new List<string>(),
+                    missingSpawnPoints = missingSpawnPoints,
+                };
+                var plannedSpawnSources = new HashSet<string>(
+                    missingSpawnPoints.Select(s => s.sourceLink));
+
+                // Every spawn frame is first instantiated from its unique URDF
+                // source link. Validate that source before treating it as a
+                // prospective parent for the visible links (vacuum tool links
+                // are children of their TCP in ROS).
+                foreach (var spawnPoint in missingSpawnPoints)
+                {
+                    if (ResolveSceneTransform(spawnPoint.sourceLink, sceneIndex, opcUaMap) == null)
+                    {
+                        if (!linkElements.ContainsKey(spawnPoint.sourceLink))
+                        {
+                            result.blockedReason = $"spawn-point source link '{spawnPoint.sourceLink}' not found in URDF.";
+                            break;
+                        }
+
+                        string sourceParent = ResolveParentLink(
+                            spawnPoint.sourceLink, item, jointsByChild);
+                        if (ResolveImportParent(sourceParent, item, sceneIndex, opcUaMap) == null &&
+                            !missing.Contains(sourceParent))
+                        {
+                            result.blockedReason = $"parent '{sourceParent}' of spawn-point source " +
+                                                   $"'{spawnPoint.sourceLink}' not found in scene or URDF.";
+                            break;
+                        }
+                    }
+
+                    if (ResolveImportParent(spawnPoint.parentLink, item, sceneIndex, opcUaMap) == null &&
+                        !missing.Contains(spawnPoint.parentLink))
+                    {
+                        result.blockedReason = $"target parent '{spawnPoint.parentLink}' of spawn point " +
+                                               $"'{spawnPoint.name}' not found in scene or item.";
+                        break;
+                    }
+                }
 
                 // Topological order: repeatedly place links whose parent is in
                 // the scene or already placed.
                 var remaining = new List<string>(missing);
-                while (remaining.Count > 0)
+                while (result.blockedReason == null && remaining.Count > 0)
                 {
                     string next = remaining.FirstOrDefault(l =>
                     {
                         string parent = ResolveParentLink(l, item, jointsByChild);
                         return parent != null &&
-                               (ResolveSceneTransform(parent, sceneIndex, opcUaMap) != null ||
+                               (ResolveImportParent(parent, item, sceneIndex, opcUaMap) != null ||
+                                plannedSpawnSources.Contains(parent) ||
                                 result.missingLinks.Contains(parent));
                     });
                     if (next == null)
@@ -234,8 +284,14 @@ public class DeltaUrdfImporter : EditorWindow
                 if (result.blockedReason == null && result.missingLinks.Count > 0)
                 {
                     string firstParent = ResolveParentLink(result.missingLinks[0], item, jointsByChild);
-                    Transform p = ResolveSceneTransform(firstParent, sceneIndex, opcUaMap);
+                    Transform p = ResolveImportParent(firstParent, item, sceneIndex, opcUaMap);
                     result.targetParentPath = p != null ? PathOf(p) : firstParent;
+                }
+                else if (result.blockedReason == null && result.missingSpawnPoints.Count > 0)
+                {
+                    var spawnPoint = result.missingSpawnPoints[0];
+                    Transform p = ResolveImportParent(spawnPoint.parentLink, item, sceneIndex, opcUaMap);
+                    result.targetParentPath = p != null ? PathOf(p) : spawnPoint.parentLink;
                 }
                 results.Add(result);
             }
@@ -245,7 +301,7 @@ public class DeltaUrdfImporter : EditorWindow
         int importable = results.Count(r => r.blockedReason == null);
         int blocked = results.Count - importable;
         scanSummary = results.Count == 0
-            ? "Scene is up to date: every manifest link exists."
+            ? "Scene is up to date: every manifest link and spawn point exists."
             : $"{importable} item(s) missing and importable" + (blocked > 0 ? $", {blocked} blocked." : ".");
     }
 
@@ -301,11 +357,64 @@ public class DeltaUrdfImporter : EditorWindow
         Dictionary<string, Transform> sceneIndex = BuildSceneIndex(robotRoot.transform);
         Dictionary<string, string> opcUaMap = LoadOpcUaMap();
 
-        int createdLinks = 0, importedItems = 0;
+        int createdLinks = 0, finalizedSpawnPoints = 0, importedItems = 0;
         var report = new List<string>();
         foreach (var r in scanResults.Where(r => r.blockedReason == null))
         {
             var createdThisItem = new List<GameObject>();
+
+            // Spawn sources are created first because vacuum tool geometry is
+            // parented to PM_Robot_Tool_TCP in the ROS URDF. Once all visible
+            // links exist, FinalizeSpawnPoint moves the empty TCP/part origin
+            // below the actual tool/chuck without moving anything in world
+            // space.
+            foreach (var spawnPoint in r.missingSpawnPoints)
+            {
+                Transform source = ResolveSceneTransform(
+                    spawnPoint.sourceLink, sceneIndex, opcUaMap);
+                if (source != null)
+                    continue; // migrate an earlier importer result below
+
+                // A previous import may already have renamed/reparented the
+                // source but failed while stripping its URDF components. Use
+                // that canonical object as the source so this pass repairs it
+                // instead of creating a duplicate spawn point.
+                Transform existingParent = ResolveImportParent(
+                    spawnPoint.parentLink, r.item, sceneIndex, opcUaMap);
+                source = FindDirectChild(existingParent, spawnPoint.name);
+                if (source != null)
+                {
+                    sceneIndex[spawnPoint.sourceLink] = source;
+                    continue;
+                }
+
+                if (!linkElements.TryGetValue(spawnPoint.sourceLink, out var linkEl))
+                {
+                    Debug.LogError($"DeltaUrdfImporter: spawn-point source link " +
+                                   $"'{spawnPoint.sourceLink}' not found in URDF, skipping.");
+                    continue;
+                }
+
+                string parentName = ResolveParentLink(
+                    spawnPoint.sourceLink, r.item, jointsByChild);
+                Transform parent = ResolveImportParent(
+                    parentName, r.item, sceneIndex, opcUaMap);
+                if (parent == null)
+                {
+                    Debug.LogError($"DeltaUrdfImporter: parent '{parentName}' of spawn-point " +
+                                   $"source '{spawnPoint.sourceLink}' not found, skipping.");
+                    continue;
+                }
+
+                XElement jointEl = SelectJoint(
+                    spawnPoint.sourceLink, r.item, jointsByChild);
+                GameObject go = UrdfLinkExtensions.Create(
+                    parent, new Link(linkEl), new Joint(jointEl));
+                Undo.RegisterCreatedObjectUndo(go, "Delta import spawn point");
+                sceneIndex[spawnPoint.sourceLink] = go.transform;
+                createdThisItem.Add(go);
+            }
+
             foreach (var linkName in r.missingLinks)
             {
                 if (!linkElements.TryGetValue(linkName, out var linkEl))
@@ -314,7 +423,7 @@ public class DeltaUrdfImporter : EditorWindow
                     continue;
                 }
                 string parentName = ResolveParentLink(linkName, r.item, jointsByChild);
-                Transform parent = ResolveSceneTransform(parentName, sceneIndex, opcUaMap);
+                Transform parent = ResolveImportParent(parentName, r.item, sceneIndex, opcUaMap);
                 if (parent == null)
                 {
                     Debug.LogError($"DeltaUrdfImporter: parent '{parentName}' of '{linkName}' not found, skipping.");
@@ -329,24 +438,49 @@ public class DeltaUrdfImporter : EditorWindow
                 createdLinks++;
             }
 
-            // 3. Scene conventions (mirrors ApplyGeneralSettings): colliders
-            //    off, ArticulationBodies off (only the OPC-UA axes and
-            //    controller-driven jaws are enabled, and those are existing
-            //    objects). New items start deactivated; configureRobot
-            //    activates the selected one at Play.
+            foreach (var spawnPoint in r.missingSpawnPoints)
+            {
+                Transform source = ResolveSceneTransform(
+                    spawnPoint.sourceLink, sceneIndex, opcUaMap);
+                Transform targetParent = ResolveImportParent(
+                    spawnPoint.parentLink, r.item, sceneIndex, opcUaMap);
+                if (source == null || targetParent == null)
+                {
+                    Debug.LogError($"DeltaUrdfImporter: could not finalize spawn point " +
+                                   $"'{spawnPoint.name}' (source='{spawnPoint.sourceLink}', " +
+                                   $"parent='{spawnPoint.parentLink}').");
+                    continue;
+                }
+
+                int createdSourceIndex = createdThisItem.FindIndex(
+                    go => go != null && go.transform == source);
+                Transform finalized = FinalizeSpawnPoint(
+                    source, targetParent, spawnPoint.name);
+                if (createdSourceIndex >= 0)
+                    createdThisItem[createdSourceIndex] = finalized.gameObject;
+                finalizedSpawnPoints++;
+                sceneIndex.Remove(spawnPoint.sourceLink);
+                sceneIndex[spawnPoint.name] = finalized;
+            }
+
+            // 3. Imported robot parts participate in physics immediately when
+            //    their configuration is active: collision MeshColliders and
+            //    ArticulationBodies stay enabled. The item root itself starts
+            //    deactivated; configureRobot activates the selected item at
+            //    Play, which activates these enabled components with it.
             foreach (var go in createdThisItem)
             {
                 foreach (var col in go.GetComponentsInChildren<MeshCollider>(true))
-                    col.enabled = false;
+                    col.enabled = true;
                 foreach (var ab in go.GetComponentsInChildren<ArticulationBody>(true))
-                    ab.enabled = false;
+                    ab.enabled = true;
             }
             foreach (var rootLink in r.item.rootLinks)
             {
                 var go = createdThisItem.FirstOrDefault(g => g.name == rootLink);
                 go?.SetActive(false);
             }
-            if (createdThisItem.Count > 0)
+            if (createdThisItem.Count > 0 || r.missingSpawnPoints.Count > 0)
             {
                 importedItems++;
                 report.Add($"  {r.section.yamlPath} [{string.Join(" / ", r.item.yamlNames)}]: " +
@@ -356,7 +490,8 @@ public class DeltaUrdfImporter : EditorWindow
 
         EditorSceneManager.MarkSceneDirty(robotRoot.scene);
         Debug.Log($"DeltaUrdfImporter: imported {importedItems} item(s), {createdLinks} link(s), " +
-                  $"copied {copied} mesh(es) into '{PathOf(robotRoot.transform)}'. New parts start " +
+                  $"created/repaired {finalizedSpawnPoints} spawn point(s), copied {copied} mesh(es) " +
+                  $"into '{PathOf(robotRoot.transform)}'. New parts start " +
                   "deactivated; press Play or call the configure_robot service to activate the " +
                   "selected configuration.\n" + string.Join("\n", report));
 
@@ -422,6 +557,93 @@ public class DeltaUrdfImporter : EditorWindow
         return null;
     }
 
+    private static Transform ResolveImportParent(string linkName, ManifestItem item,
+        Dictionary<string, Transform> sceneIndex, Dictionary<string, string> opcUaMap)
+    {
+        Transform direct = ResolveSceneTransform(linkName, sceneIndex, opcUaMap);
+        if (direct != null)
+            return direct;
+
+        // Once a source link has been finalized it carries its canonical name
+        // below parentLink. Resolve that alias for repair/partial-import cases.
+        foreach (var spawnPoint in item.spawnPoints ?? Array.Empty<ManifestSpawnPoint>())
+        {
+            if (spawnPoint.sourceLink != linkName)
+                continue;
+            Transform parent = ResolveSceneTransform(spawnPoint.parentLink, sceneIndex, opcUaMap);
+            return FindDirectChild(parent, spawnPoint.name);
+        }
+        return null;
+    }
+
+    private static bool SpawnPointExists(ManifestSpawnPoint spawnPoint,
+        Dictionary<string, Transform> sceneIndex, Dictionary<string, string> opcUaMap)
+    {
+        Transform parent = ResolveSceneTransform(spawnPoint.parentLink, sceneIndex, opcUaMap);
+        Transform candidate = FindDirectChild(parent, spawnPoint.name);
+        return candidate != null && candidate.GetComponents<Component>()
+            .All(component => component is Transform);
+    }
+
+    private static Transform FindDirectChild(Transform parent, string name)
+    {
+        if (parent == null)
+            return null;
+        foreach (Transform child in parent)
+            if (child.name == name)
+                return child;
+        return null;
+    }
+
+    /// <summary>Turn a scenario-unique empty URDF source link into the
+    /// canonical empty Unity spawn point below its visible chuck/tool. Vacuum
+    /// tools initially sit below the TCP, so that small hierarchy is inverted
+    /// while every transform keeps its world pose.</summary>
+    private static Transform FinalizeSpawnPoint(Transform source, Transform targetParent,
+        string finalName)
+    {
+        const string undoName = "Place robot spawn point";
+
+        if (targetParent.IsChildOf(source))
+        {
+            // Vacuum holder and tip are siblings below the ROS TCP. Make the
+            // holder the visible root, move its siblings below it, then place
+            // the empty TCP below the holder too. The old TCP was also the
+            // activation root, so transfer its activeSelf state to the holder
+            // when repairing a scene imported with the previous manifest.
+            bool itemActive = source.gameObject.activeSelf;
+            Transform outerParent = source.parent;
+            var siblings = source.Cast<Transform>()
+                .Where(child => child != targetParent).ToList();
+            Undo.SetTransformParent(targetParent, outerParent, undoName);
+            Undo.RecordObject(targetParent.gameObject, undoName);
+            targetParent.gameObject.SetActive(itemActive);
+            foreach (var sibling in siblings)
+                Undo.SetTransformParent(sibling, targetParent, undoName);
+        }
+
+        Undo.SetTransformParent(source, targetParent, undoName);
+
+        // Replacing the temporary URDF link as one GameObject avoids Unity's
+        // RequireComponent removal ordering (UrdfJointFixed/UrdfInertial both
+        // require ArticulationBody). Copying its local transform retains the
+        // exact pose converted by the URDF importer.
+        var emptyObject = new GameObject(finalName);
+        emptyObject.transform.SetParent(targetParent, false);
+        emptyObject.transform.localPosition = source.localPosition;
+        emptyObject.transform.localRotation = source.localRotation;
+        emptyObject.transform.localScale = source.localScale;
+        Undo.RegisterCreatedObjectUndo(emptyObject, undoName);
+
+        // Preserve anything the user may already have spawned below a marker
+        // left behind by the failed cleanup attempt.
+        foreach (var child in source.Cast<Transform>().ToList())
+            Undo.SetTransformParent(child, emptyObject.transform, undoName);
+
+        Undo.DestroyObjectImmediate(source.gameObject);
+        return emptyObject.transform;
+    }
+
     private static string ResolveParentLink(string linkName, ManifestItem item,
         Dictionary<string, List<XElement>> jointsByChild)
     {
@@ -440,7 +662,7 @@ public class DeltaUrdfImporter : EditorWindow
             return null;
         if (joints.Count == 1)
             return joints[0];
-        var ownLinks = new HashSet<string>(item.links);
+        var ownLinks = new HashSet<string>(item.links ?? Array.Empty<string>());
         return joints.FirstOrDefault(j => ownLinks.Contains((string)j.Element("parent")?.Attribute("link")))
                ?? joints[0];
     }
