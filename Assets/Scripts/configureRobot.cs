@@ -164,6 +164,37 @@ public class configureRobot : MonoBehaviour
     [Tooltip("YAML: availabe_tools[6].tool_name — Schunk_Lens_Gripper_long")]
     public GameObject vac_Tool_Schunk_Lens_Gripper_long;
 
+    [Header("Vacuum Tips — Tool_SPT_Toolholder")]
+    [Tooltip("YAML: availabe_tools[0].availabe_tips[0] — Tip_R_A1000_I500")]
+    public GameObject vac_Tip_SPT_Toolholder_R_A1000_I500;
+
+    [Header("Vacuum Tips — Tool_Schunk_SPT_Tool_old")]
+    [Tooltip("YAML: availabe_tools[1].availabe_tips[0] — Tip_R_A1000_I500")]
+    public GameObject vac_Tip_SchunkSPTToolOld_R_A1000_I500;
+
+    [Header("Vacuum Tips — Siemens_Vacuum_Array")]
+    [Tooltip("YAML: availabe_tools[2].availabe_tips[0] — Tip_Siemens_Vacuum_Array")]
+    public GameObject vac_Tip_SiemensVacuumArray_SiemensVacuumArray;
+
+    [Header("Vacuum Tips — Siemens_Vacuum_Array_short")]
+    [Tooltip("YAML: availabe_tools[3].availabe_tips[0] — Tip_Siemens_Vacuum_Array")]
+    public GameObject vac_Tip_SiemensVacuumArrayShort_SiemensVacuumArray;
+
+    [Tooltip("YAML: availabe_tools[3].availabe_tips[1] — Tip_Siemens_Sensor_Bottom")]
+    public GameObject vac_Tip_SiemensVacuumArrayShort_SiemensSensorBottom;
+
+    [Header("Vacuum Tips — Siemens_Vacuum_Array_angled")]
+    [Tooltip("YAML: availabe_tools[4].availabe_tips[0] — Tip_Siemens_Vacuum_Array")]
+    public GameObject vac_Tip_SiemensVacuumArrayAngled_SiemensVacuumArray;
+
+    [Header("Vacuum Tips — Schunk_Lens_Gripper")]
+    [Tooltip("YAML: availabe_tools[5].availabe_tips[0] — Tip_Lens_12_7")]
+    public GameObject vac_Tip_SchunkLensGripper_Lens_12_7;
+
+    [Header("Vacuum Tips — Schunk_Lens_Gripper_long")]
+    [Tooltip("YAML: availabe_tools[6].availabe_tips[0] — Tip_Lens_12_7_long")]
+    public GameObject vac_Tip_SchunkLensGripperLong_Lens_12_7_long;
+
     // -------------------------------------------------------------------------
     // Private state
     // -------------------------------------------------------------------------
@@ -178,6 +209,7 @@ public class configureRobot : MonoBehaviour
     private Dictionary<string, GameObject> _pg2Tools;
     private Dictionary<string, Dictionary<string, GameObject>> _pg2JawsPerTool;
     private Dictionary<string, GameObject> _vacTools;
+    private Dictionary<string, Dictionary<string, GameObject>> _vacTipsPerTool;
     private Dictionary<string, GameObject> _smarpodChucks;
 
     // ROS2
@@ -341,6 +373,53 @@ public class configureRobot : MonoBehaviour
             { "Schunk_Lens_Gripper_long",     vac_Tool_Schunk_Lens_Gripper_long },
         };
 
+        _vacTipsPerTool = new Dictionary<string, Dictionary<string, GameObject>>
+        {
+            {
+                "Tool_SPT_Toolholder", new Dictionary<string, GameObject>
+                {
+                    { "Tip_R_A1000_I500", vac_Tip_SPT_Toolholder_R_A1000_I500 },
+                }
+            },
+            {
+                "Tool_Schunk_SPT_Tool_old", new Dictionary<string, GameObject>
+                {
+                    { "Tip_R_A1000_I500", vac_Tip_SchunkSPTToolOld_R_A1000_I500 },
+                }
+            },
+            {
+                "Siemens_Vacuum_Array", new Dictionary<string, GameObject>
+                {
+                    { "Tip_Siemens_Vacuum_Array", vac_Tip_SiemensVacuumArray_SiemensVacuumArray },
+                }
+            },
+            {
+                "Siemens_Vacuum_Array_short", new Dictionary<string, GameObject>
+                {
+                    { "Tip_Siemens_Vacuum_Array",   vac_Tip_SiemensVacuumArrayShort_SiemensVacuumArray },
+                    { "Tip_Siemens_Sensor_Bottom",  vac_Tip_SiemensVacuumArrayShort_SiemensSensorBottom },
+                }
+            },
+            {
+                "Siemens_Vacuum_Array_angled", new Dictionary<string, GameObject>
+                {
+                    { "Tip_Siemens_Vacuum_Array", vac_Tip_SiemensVacuumArrayAngled_SiemensVacuumArray },
+                }
+            },
+            {
+                "Schunk_Lens_Gripper", new Dictionary<string, GameObject>
+                {
+                    { "Tip_Lens_12_7", vac_Tip_SchunkLensGripper_Lens_12_7 },
+                }
+            },
+            {
+                "Schunk_Lens_Gripper_long", new Dictionary<string, GameObject>
+                {
+                    { "Tip_Lens_12_7_long", vac_Tip_SchunkLensGripperLong_Lens_12_7_long },
+                }
+            },
+        };
+
         // "empty" is intentionally absent — it is handled as a sentinel in ConfigureSmarpodStation
         _smarpodChucks = new Dictionary<string, GameObject>
         {
@@ -485,11 +564,21 @@ public class configureRobot : MonoBehaviour
         if (!active)
         {
             DeactivateAll(_vacTools);
+            foreach (var tipMap in _vacTipsPerTool.Values) DeactivateAll(tipMap);
             return;
         }
 
         string useTool = GetString(d, "use_tool");
         ActivateSelected(_vacTools, useTool);
+
+        string useTip = GetString(d, "use_tip");
+        foreach (var kv in _vacTipsPerTool)
+        {
+            if (kv.Key == useTool)
+                ActivateSelected(kv.Value, useTip);
+            else
+                DeactivateAll(kv.Value);
+        }
     }
 
     // =========================================================================
