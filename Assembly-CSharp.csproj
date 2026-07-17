@@ -102,6 +102,7 @@
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2TalkerExample.cs" />
     <Compile Include="Assets/Scripts/RefFrames/setName.cs" />
     <Compile Include="Assets/Scripts/configureRobot.cs" />
+    <Compile Include="Assets/Scripts/Gripper2JawsController.cs" />
     <Compile Include="Assets/Scripts/Sensors/Camera2LightControl.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/tf_Ref/DrawCoordinates.cs" />
     <Compile Include="Assets/Scripts/ShowArticulationNames.cs" />
