@@ -18,7 +18,7 @@ using GripperGetForcesResp = pm_msgs.srv.GripperGetForces_Response;
 using GripperForceMoveReq = pm_msgs.srv.GripperForceMove_Request;
 using GripperForceMoveResp = pm_msgs.srv.GripperForceMove_Response;
 
-public class ParallelGripperServiceController : MonoBehaviour
+public class SmarActGripperServiceController : MonoBehaviour
 {
     [Header("Scene References")]
     public ROS2UnityComponent ros2Unity;
@@ -120,7 +120,7 @@ public class ParallelGripperServiceController : MonoBehaviour
             /// // Add more services here as needed, following the same pattern.
             /// Debug logs
             Debug.Log(
-                $"ParallelGripperServiceController: Registered services under '{NormalizeServiceNamespace()}' " +
+                $"SmarActGripperServiceController: Registered services under '{NormalizeServiceNamespace()}' " +
                 $"on fixed gripper object '{gameObject.name}', driving '{(movingJaw != null ? movingJaw.name : "unresolved")}'.");
         }
     }
@@ -141,7 +141,7 @@ public class ParallelGripperServiceController : MonoBehaviour
         if (ros2Unity == null && !loggedMissingRos2Unity)
         {
             Debug.LogWarning(
-                "ParallelGripperServiceController: No ROS2UnityComponent found. " +
+                "SmarActGripperServiceController: No ROS2UnityComponent found. " +
                 "Assign one in the Inspector or keep a ROS2UnityComponent on a parent/root object.");
             loggedMissingRos2Unity = true;
             return;
@@ -178,7 +178,7 @@ public class ParallelGripperServiceController : MonoBehaviour
         if (!loggedMissingJaw)
         {
             Debug.LogWarning(
-                $"ParallelGripperServiceController: Could not resolve moving jaw '{movingJawObjectName}' under '{gameObject.name}'.");
+                $"SmarActGripperServiceController: Could not resolve moving jaw '{movingJawObjectName}' under '{gameObject.name}'.");
             loggedMissingJaw = true;
         }
     }
@@ -205,7 +205,7 @@ public class ParallelGripperServiceController : MonoBehaviour
         if (forceSensor == null && !loggedMissingForceSensor)
         {
             Debug.LogWarning(
-                "ParallelGripperServiceController: No ForceSensorPiezoGripper found. " +
+                "SmarActGripperServiceController: No ForceSensorPiezoGripper found. " +
                 "Assign one in the Inspector or keep the gripper force sensor in this hierarchy.");
             loggedMissingForceSensor = true;
             return;

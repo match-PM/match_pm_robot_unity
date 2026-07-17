@@ -511,10 +511,20 @@ public class DeltaUrdfImporter : EditorWindow
         return string.Join("/", parts);
     }
 
+    /// <summary>Name -> scene object for link lookups. Link objects are
+    /// indexed first so they win over same-named mesh children: the tool
+    /// changer is the link 't_axis_toolchanger' carrying a mesh child named
+    /// 't_axis_tool', which is also a URDF link name, and a mesh must never
+    /// become an import parent. Everything else is still indexed afterwards as
+    /// a fallback (spawn points and hand-made objects carry no UrdfLink).</summary>
     private static Dictionary<string, Transform> BuildSceneIndex(Transform robotRoot)
     {
         var index = new Dictionary<string, Transform>();
-        foreach (var t in robotRoot.GetComponentsInChildren<Transform>(true))
+        var all = robotRoot.GetComponentsInChildren<Transform>(true);
+        foreach (var t in all)
+            if (t.GetComponent<UrdfLink>() != null && !index.ContainsKey(t.name))
+                index[t.name] = t;
+        foreach (var t in all)
             if (!index.ContainsKey(t.name))
                 index[t.name] = t;
         return index;

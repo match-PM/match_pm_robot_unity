@@ -65,7 +65,7 @@ public class ForceSensorPiezoGripper : MonoBehaviour
 
         ignoredHierarchyResolved = true;
 
-        ParallelGripperServiceController gripperController = GetComponentInParent<ParallelGripperServiceController>();
+        SmarActGripperServiceController gripperController = GetComponentInParent<SmarActGripperServiceController>();
         if (gripperController != null)
         {
             ignoredHierarchyRoot = gripperController.transform;

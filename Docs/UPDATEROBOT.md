@@ -61,7 +61,7 @@ link names it owns (Unity GameObject name == URDF link name).
    ```
 
 If a driven part was added (e.g. a new gripper), attach its controller script
-(e.g. `ParallelGripperServiceController`) to the imported tool body, set
+(e.g. `SmarActGripperServiceController`) to the imported tool body, set
 `movingJawObjectName` to the canonical jaw link
 (`Tool_Parallel_Gripper_Jaw_{tool}_{jaw}`, see the manifest), and enable that
 jaw's ArticulationBody.
