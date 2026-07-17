@@ -3,8 +3,8 @@
 When new tools, chucks, tips or jaws are added to the robot in ROS, the Unity
 simulation is updated with a **delta import** — the existing scene robot (with
 all its tuned ArticulationBodies, attached scripts and sensors) is never
-deleted or re-imported. There are also **no Unity code changes**: the runtime
-configuration (`configureRobot.cs`) reads which GameObjects belong to which
+deleted or re-imported. 
+The runtime configuration (`configureRobot.cs`) reads which GameObjects belong to which
 YAML selection from a generated manifest.
 
 ## How it works
@@ -51,7 +51,9 @@ link names it owns (Unity GameObject name == URDF link name).
    **Scan (dry run)** → review the listed items, each showing the scene path
    its parts will be attached to → **Import missing parts**. The console then
    reports the full path of every created object.
-4. **Run**: select the part in `pm_robot_bringup_config.yaml`, then press Play
+4. **Add scripts** If the added components should have scipts, the must be attached manually.
+   For example, every tip of the gripper has to have a force_sensor script attached so the force sensor can be used.
+5. **Run**: select the part in `pm_robot_bringup_config.yaml`, then press Play
    or call the reconfigure service while playing:
 
    ```bash
@@ -73,45 +75,5 @@ them and the other silently keeps the old state. The importer warns and makes
 you assign the root explicitly; `configureRobot` warns at Play. **Delete the
 leftover robot** (or assign the intended root in both places) — do not keep two.
 
-A quick way to tell them apart: the current URDF names the tool changer
-`t_axis_tool`. A robot containing `t_axis_toolchanger` instead was imported
-from an older/intermediate URDF generation.
 
-## One-time migration of an existing scene (pre-manifest)
 
-Older scenes contain legacy names for the vacuum tools and the SmarAct (PG1)
-gripper (e.g. `PM_Robot_Tool_TCP_Tip_Siemens_Vacuum_Array_short`,
-`SmarAct_Gripper_Jaw_flat`, `Default_Jaw_1/2`, `Jaw_Flat_Config_*`,
-`Tool_Parallel_Gripper_Base_flat*`). Migrate once:
-
-1. Commit / back up `Assets/main_scene.unity`.
-2. Rebuild the ROS workspace and run `generate_unity_urdf.py`.
-3. Note which scripts/children are hand-attached to the legacy vacuum & PG1
-   subtrees (`ParallelGripperServiceController`, `ForceSensorPiezoGripper`,
-   TCP markers, ...), then **delete those legacy subtrees** from the scene.
-   Do NOT delete the PG2 (`..._Schunk_MPG_20_plus_Jaw_ASG_Gripper`) subtree,
-   chucks or dispenser tips — their names already match.
-4. If a dispenser tip object named `1K_Dispenser_Tip` exists, rename it to
-   `Dis_Tip_Yellow_I_100_A240_L060` (the generator now names STL-less links
-   after their YAML selection).
-5. `Config Tools → Delta Import Robot Parts` → Scan → Import. This recreates
-   the deleted parts (plus anything that never existed, e.g.
-   `Schunk_MPG_10_plus`) under their canonical names.
-6. Re-attach the noted scripts to the new subtrees and update their
-   name fields (e.g. `movingJawObjectName =
-   Tool_Parallel_Gripper_Jaw_SmarAct_Piezo_Gripper_flat_Sensing_Jaw`); enable
-   the driven jaw ArticulationBodies.
-7. In the `configureRobot` Inspector only these remain: robot root, the 3
-   measuring systems, the gonio/smarpod assembly objects and the smarpod
-   chuck. All other old fields are gone — the manifest replaces them.
-8. Scan again: it must report "Scene is up to date". Press Play and check the
-   selected configuration appears. Commit.
-
-## Full re-import (rarely needed)
-
-The old full workflow (Save Configuration → delete robot → import URDF →
-Rename Links → Apply General Settings → Apply config → re-add sensors) still
-exists under `Config Tools → Save and Apply Configuration`, but should only be
-needed if the base robot itself changes structurally. Sensors (cameras,
-lasers, ...) are prefabs under `Assets/Resources/Prefabs` and are added
-manually.
