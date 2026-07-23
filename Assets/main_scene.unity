@@ -25622,7 +25622,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1599390901}
+    m_TransformParent: {fileID: 1861071545}
     m_Modifications:
     - target: {fileID: -5835062871269225819, guid: f47828fc71ef01bfd8d439d9497a63df, type: 3}
       propertyPath: NodeName
@@ -25678,7 +25678,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7495592489943765269, guid: f47828fc71ef01bfd8d439d9497a63df, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.0013001263
       objectReference: {fileID: 0}
     - target: {fileID: 7495592489943765269, guid: f47828fc71ef01bfd8d439d9497a63df, type: 3}
       propertyPath: m_LocalPosition.z
@@ -25690,15 +25690,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7495592489943765269, guid: f47828fc71ef01bfd8d439d9497a63df, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7495592489943765269, guid: f47828fc71ef01bfd8d439d9497a63df, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7495592489943765269, guid: f47828fc71ef01bfd8d439d9497a63df, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7495592489943765269, guid: f47828fc71ef01bfd8d439d9497a63df, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -63512,7 +63512,7 @@ MonoBehaviour:
     target: {fileID: 1172001302}
     addToCurrentPose: 1
   - yamlJointName: Confocal_Sensor_Top_TCP_Joint
-    target: {fileID: 1599390901}
+    target: {fileID: 1861071545}
     addToCurrentPose: 1
   - yamlJointName: Confocal_Sensor_Bottom_TCP_Joint
     target: {fileID: 806031843}
@@ -63561,11 +63561,11 @@ MonoBehaviour:
   AxisX: {fileID: 1249734995}
   AxisY: {fileID: 1092978866}
   AxisZ: {fileID: 1588346923}
-  Dispenser: {fileID: 598417689}
+  Dispenser: {fileID: 1985366212}
   mmToUnity: 0.001
   speed: 0.01
   positionTolerance: 0.0005
-  DispenserTip: {fileID: 2068867706}
+  DispenserTip: {fileID: 1019295358}
   adhesiveMaterial: {fileID: 0}
   beadRadius: 0.001
   beadSampleDistance: 0.001
@@ -76987,7 +76987,6 @@ Transform:
   - {fileID: 1985366208}
   - {fileID: 1393349403}
   - {fileID: 1325324031}
-  - {fileID: 1599390901}
   m_Father: {fileID: 1092978862}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1588346920
@@ -78242,7 +78241,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1599390901
 Transform:
   m_ObjectHideFlags: 0
@@ -78252,14 +78251,13 @@ Transform:
   m_GameObject: {fileID: 1599390900}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.058, y: -0.5005, z: 0.17699999}
+  m_LocalPosition: {x: 0, y: -0.0013001263, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1876372185}
   - {fileID: 110074622}
-  - {fileID: 372300708}
-  m_Father: {fileID: 1588346919}
+  m_Father: {fileID: 1861071545}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1599390902
 MonoBehaviour:
@@ -78287,7 +78285,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 5
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0.058000028, y: -0.5005001, z: 0.17699999}
+  m_ParentAnchorPosition: {x: 0, y: -0.0013001263, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
@@ -91318,6 +91316,8 @@ Transform:
   m_Children:
   - {fileID: 943948929}
   - {fileID: 53827696}
+  - {fileID: 372300708}
+  - {fileID: 1599390901}
   m_Father: {fileID: 1588346919}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1861071546

@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
+using System.Threading;
 using UnityEngine;
 using ROS2;
 
@@ -34,6 +35,13 @@ public class Dispense2K : MonoBehaviour
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
     private IService<Dispense2KReq, Dispense2KResp> srvDispense2K;
+    private IPublisher<std_msgs.msg.Bool> donePublisher;
+
+    // Set to 1 while a G-code run is in progress. Used to reject overlapping
+    // requests and to gate the completion signal. Accessed from both the ROS2
+    // executor thread (service callback) and the Unity main thread (coroutine),
+    // so it is guarded with Interlocked.
+    private int gCodeRunning = 0;
 
     private readonly ConcurrentQueue<Action> mainThreadActions = new ConcurrentQueue<Action>();
 
@@ -156,17 +164,31 @@ public class Dispense2K : MonoBehaviour
                 ros2Node = ros2Unity.CreateNode("unity_skills");
                 srvDispense2K = ros2Node.CreateService<Dispense2KReq, Dispense2KResp>(
                     "~/dispense_2k_unity", Dispense2KServiceCallback);
-                Debug.Log("Dispense2K: ROS2 service '~/dispense_2k_unity' registered.");
+                donePublisher = ros2Node.CreatePublisher<std_msgs.msg.Bool>("~/dispense_2k_done");
+                Debug.Log("Dispense2K: ROS2 service '~/dispense_2k_unity' and topic '~/dispense_2k_done' registered.");
             }
         }
     }
 
+    // Runs on the ROS2 executor thread. It must return quickly — blocking here
+    // stalls the whole executor (it holds the spin mutex) and deadlocks Unity.
+    // So this only validates and kicks off the coroutine, then returns an
+    // "accepted" ack immediately. Actual completion is signalled asynchronously
+    // by publishing 'true' on '~/dispense_2k_done' when the motion finishes.
     private Dispense2KResp Dispense2KServiceCallback(Dispense2KReq _)
     {
+        // Reject if a run is already in progress (atomic 0 -> 1 transition).
+        if (Interlocked.CompareExchange(ref gCodeRunning, 1, 0) != 0)
+        {
+            Debug.LogWarning("Dispense2K: dispense already in progress — request rejected.");
+            return new Dispense2KResp { Success = false };
+        }
+
         string packagePath = configureRobot.GetROS2PackagePath("pm_skills");
         if (string.IsNullOrEmpty(packagePath))
         {
             Debug.LogError("Dispense2K: Could not resolve package path for 'pm_skills'.");
+            Interlocked.Exchange(ref gCodeRunning, 0);
             return new Dispense2KResp { Success = false };
         }
 
@@ -174,6 +196,7 @@ public class Dispense2K : MonoBehaviour
         if (!File.Exists(filePath))
         {
             Debug.LogError($"Dispense2K: G-code file not found at '{filePath}'.");
+            Interlocked.Exchange(ref gCodeRunning, 0);
             return new Dispense2KResp { Success = false };
         }
 
@@ -269,6 +292,8 @@ public class Dispense2K : MonoBehaviour
         beadPoints.Clear();
         if (beadMesh != null) beadMesh.Clear();
 
+        try
+        {
         foreach (var cmd in commands)
         {
             switch (cmd.type)
@@ -302,6 +327,16 @@ public class Dispense2K : MonoBehaviour
 
         isDispensing = false;
         Debug.Log("Dispense2K: G-code execution complete.");
+        }
+        finally
+        {
+            // Runs on the Unity main thread when the coroutine ends (normally,
+            // via exception, or if stopped). Signal completion to the caller and
+            // clear the running flag so the next request is accepted.
+            isDispensing = false;
+            Interlocked.Exchange(ref gCodeRunning, 0);
+            donePublisher?.Publish(new std_msgs.msg.Bool { Data = true });
+        }
     }
 
     // G10 - Move to target, no dispensing.
@@ -315,7 +350,7 @@ public class Dispense2K : MonoBehaviour
     private IEnumerator DoDispenseMove(GCodeCommand cmd)
     {
         isDispensing = true;
-        BeginMove(cmd.x, cmd.y, cmd.z, cmd.fx, cmd.fy, cmd.fz);
+        BeginMove(cmd.x, cmd.y, cmd.z, cmd.fx, cmd.fy, cmd.fz, cmd.moveTime);
 
         // Turn off dispenser early if timing parameters are provided
         if (cmd.moveTime > 0f)
@@ -346,27 +381,62 @@ public class Dispense2K : MonoBehaviour
         if (cmd.t > 0f)
             yield return new WaitForSeconds(cmd.t / 1000f);
 
-        // Move back up with up speeds (in Unity units — already converted)
-        goalTargetX = startX;
-        goalTargetY = startY;
-        goalTargetZ = startZ;
-        speedX = cmd.fxu > 0f ? cmd.fxu * mmToUnity : speed;
-        speedY = cmd.fyu > 0f ? cmd.fyu * mmToUnity : speed;
-        speedZ = cmd.fzu > 0f ? cmd.fzu * mmToUnity : speed;
-        isInterpolating = true;
+        // Move back up with up speeds. startX/Y/Z are already in Unity units.
+        float reqXu = cmd.fxu != 0f ? Mathf.Abs(cmd.fxu) * mmToUnity : speed;
+        float reqYu = cmd.fyu != 0f ? Mathf.Abs(cmd.fyu) * mmToUnity : speed;
+        float reqZu = cmd.fzu != 0f ? Mathf.Abs(cmd.fzu) * mmToUnity : speed;
+        StartSyncMove(startX, startY, startZ, reqXu, reqYu, reqZu, 0f);
 
         yield return new WaitUntil(() => !isInterpolating && AxesAtTarget(startX, startY, startZ));
     }
 
-    // Set goal and per-axis speeds, start interpolation. Speeds in mm/s (0 = use default).
-    private void BeginMove(float x, float y, float z, float fx, float fy, float fz)
+    // Set goal (mm) and per-axis feed rates (mm/s, signed — only magnitude matters;
+    // 0 = use default), then start a synchronized move. If moveTimeMs > 0 it forces
+    // the total move duration (e.g. G20 MT), otherwise the slowest axis sets the pace.
+    private void BeginMove(float x, float y, float z, float fx, float fy, float fz, float moveTimeMs = 0f)
     {
-        goalTargetX = x * mmToUnity;
-        goalTargetY = y * mmToUnity;
-        goalTargetZ = z * mmToUnity;
-        speedX = fx > 0f ? fx * mmToUnity : speed;
-        speedY = fy > 0f ? fy * mmToUnity : speed;
-        speedZ = fz > 0f ? fz * mmToUnity : speed;
+        float reqX = fx != 0f ? Mathf.Abs(fx) * mmToUnity : speed;
+        float reqY = fy != 0f ? Mathf.Abs(fy) * mmToUnity : speed;
+        float reqZ = fz != 0f ? Mathf.Abs(fz) * mmToUnity : speed;
+        StartSyncMove(x * mmToUnity, y * mmToUnity, z * mmToUnity, reqX, reqY, reqZ, moveTimeMs / 1000f);
+    }
+
+    // Set goal (Unity units) and per-axis requested speeds (Unity units/s), then rescale
+    // every axis so they all reach their goal at the same instant — this keeps the axes
+    // synchronized. If durationSec > 0 it forces the total move time; otherwise the axis
+    // that would take longest at its requested speed dictates the shared duration and the
+    // others are slowed to match (no axis ever exceeds its requested speed).
+    private void StartSyncMove(float goalX, float goalY, float goalZ,
+                               float reqX, float reqY, float reqZ, float durationSec)
+    {
+        goalTargetX = goalX;
+        goalTargetY = goalY;
+        goalTargetZ = goalZ;
+
+        float distX = Mathf.Abs(goalTargetX - currentTargetX);
+        float distY = Mathf.Abs(goalTargetY - currentTargetY);
+        float distZ = Mathf.Abs(goalTargetZ - currentTargetZ);
+
+        float duration = durationSec;
+        if (duration <= 0f)
+        {
+            float tX = reqX > 0f ? distX / reqX : 0f;
+            float tY = reqY > 0f ? distY / reqY : 0f;
+            float tZ = reqZ > 0f ? distZ / reqZ : 0f;
+            duration = Mathf.Max(tX, Mathf.Max(tY, tZ));
+        }
+
+        if (duration > 1e-6f)
+        {
+            speedX = distX / duration;
+            speedY = distY / duration;
+            speedZ = distZ / duration;
+        }
+        else
+        {
+            speedX = speedY = speedZ = 0f;
+        }
+
         isInterpolating = true;
     }
 

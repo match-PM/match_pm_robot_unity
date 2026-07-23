@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ROS2;
+using Unity.Robotics.UrdfImporter;
 using assembly_manager_interfaces.msg;
 
 public class UnityComponentSpawner : MonoBehaviour
@@ -74,6 +75,12 @@ public class UnityComponentSpawner : MonoBehaviour
     {
         // Keep track of all spawned objects by name for easy parenting
         Dictionary<string, GameObject> spawnedDict = new Dictionary<string, GameObject>();
+        // Keep track of all reference frames created in THIS rebuild by their (fully
+        // qualified) frame name. Parent resolution below must use these frames, never a
+        // global GameObject.Find: during a rebuild the previous (being-destroyed) objects
+        // and their identically-named frames are still alive, and Find could bind a new
+        // object to a dying frame, causing it to be destroyed together with the old parent.
+        Dictionary<string, GameObject> frameDict = new Dictionary<string, GameObject>();
 
         // First pass: create all GameObjects
         foreach (var obj in object_list)
@@ -100,30 +107,47 @@ public class UnityComponentSpawner : MonoBehaviour
             sgo.tag = "spawned";
             sgo.uuid = obj.Uuid;
 
+            // Create a child GameObject for EVERY reference frame of this object.
+            // Frame names are fully qualified (e.g. "<Obj>_Vision_Hole_Left"), so this
+            // lets objects whose Parent_frame is another object's frame find their parent
+            // in the hierarchy during the second pass below.
             var refFrames = obj.Ref_frames;
             foreach (var rf in refFrames)
             {
-                if (rf.Properties.Glue_pt_frame_properties.Is_glue_point)
+                // Skip if a frame with this name already exists under the object
+                if (spawnedGameObject.transform.Find(rf.Frame_name) != null)
                 {
-                    // Check if glue point already exists
-                    if (spawnedGameObject.transform.Find(rf.Frame_name) != null)
-                    {
-                        Debug.Log($"[UnityComponentSpawner] Glue point {rf.Frame_name} already exists, skipping creation.");
-                        continue;
-                    }
-                    
-                    // Create glue point GameObject
-                    GameObject gluePoint = new GameObject(rf.Frame_name);
-                    gluePoint.tag = "spawned";
-                    gluePoint.transform.SetParent(spawnedGameObject.transform, false);
-                    gluePoint.transform.localPosition = new Vector3(
-                        (float)(rf.Pose.Position.Y * -1), // ROS Y -> Unity X
-                        (float)rf.Pose.Position.Z,         // ROS Z -> Unity Y
-                        (float)rf.Pose.Position.X          // ROS X -> Unity Z
-                    );
-                    
-                    Debug.Log($"[UnityComponentSpawner] Created glue point: {rf.Frame_name} under {obj.Obj_name}");
+                    Debug.Log($"[UnityComponentSpawner] Frame {rf.Frame_name} already exists, skipping creation.");
+                    continue;
                 }
+
+                // Create the frame GameObject as a child of the object.
+                // The frame pose is expressed relative to the object origin.
+                GameObject frameObject = new GameObject(rf.Frame_name);
+                frameObject.tag = "spawned";
+                frameObject.transform.SetParent(spawnedGameObject.transform, false);
+
+                // Apply the frame's local pose using the same ROS->Unity convention
+                // as SpawnGameObject, so objects parented to this frame line up correctly.
+                Vector3 framePos = new Vector3(
+                    (float)rf.Pose.Position.X,
+                    (float)rf.Pose.Position.Y,
+                    (float)rf.Pose.Position.Z
+                );
+                frameObject.transform.localPosition = framePos.Ros2Unity();
+
+                Quaternion frameRot = new Quaternion(
+                    (float)rf.Pose.Orientation.X,
+                    (float)rf.Pose.Orientation.Y,
+                    (float)rf.Pose.Orientation.Z,
+                    (float)rf.Pose.Orientation.W
+                );
+                frameObject.transform.localRotation = frameRot.Ros2Unity();
+
+                // Register so objects parented to this frame resolve to THIS rebuild's frame.
+                frameDict[rf.Frame_name] = frameObject;
+
+                Debug.Log($"[UnityComponentSpawner] Created frame: {rf.Frame_name} under {obj.Obj_name}");
             }
 
             if (withRefFrame)
@@ -142,10 +166,14 @@ public class UnityComponentSpawner : MonoBehaviour
             {
                 GameObject parentObj = null;
 
-                // First try the newly spawned objects
-                if (!spawnedDict.TryGetValue(obj.Parent_frame, out parentObj))
+                // Resolve the parent frame against objects/frames created in THIS rebuild
+                // first, so we never bind to a leftover object from the previous scene that
+                // is about to be destroyed. Only fall back to a global scene search for
+                // static frames (e.g. Gonio_*) that are not spawned by this component.
+                if (!spawnedDict.TryGetValue(obj.Parent_frame, out parentObj) &&
+                    !frameDict.TryGetValue(obj.Parent_frame, out parentObj))
                 {
-                    // Fallback: try to find it in the scene
+                    // Fallback: a static (non-spawned) frame already present in the scene
                     parentObj = GameObject.Find(obj.Parent_frame);
                 }
 
