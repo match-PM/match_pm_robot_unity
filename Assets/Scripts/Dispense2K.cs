@@ -8,8 +8,8 @@ using System.Threading;
 using UnityEngine;
 using ROS2;
 
-using Dispense2KReq = pm_msgs.srv.EmptyWithSuccess_Request;
-using Dispense2KResp = pm_msgs.srv.EmptyWithSuccess_Response;
+using Dispense2KReq = pm_skills_interfaces.srv.DispensePathUnity_Request;
+using Dispense2KResp = pm_skills_interfaces.srv.DispensePathUnity_Response;
 
 public class Dispense2K : MonoBehaviour
 {
@@ -37,6 +37,13 @@ public class Dispense2K : MonoBehaviour
     private IService<Dispense2KReq, Dispense2KResp> srvDispense2K;
     private IPublisher<std_msgs.msg.Bool> donePublisher;
 
+    // Name of the frame the dispense path starts at, taken from the service request.
+    // When the run finishes, the adhesive bead is re-parented to this frame's parent
+    // (the component) so it travels with it. Written from the ROS2 executor thread
+    // (service callback), read on the Unity main thread; a plain reference assignment
+    // is atomic and we only need the latest value.
+    private volatile string attachFrameName;
+
     // Set to 1 while a G-code run is in progress. Used to reject overlapping
     // requests and to gate the completion signal. Accessed from both the ROS2
     // executor thread (service callback) and the Unity main thread (coroutine),
@@ -51,11 +58,20 @@ public class Dispense2K : MonoBehaviour
     private float speedX, speedY, speedZ; // m/s per axis
     private bool isInterpolating = false;
 
-    // Bead visualization state
+    // Bead visualization state. Each dispense run builds its OWN bead GameObject +
+    // mesh (created in StartNewBead) so previously dispensed beads are left in the
+    // scene attached to their objects instead of being overwritten. These fields only
+    // ever refer to the bead of the run currently in progress.
     private readonly List<Vector3> beadPoints = new List<Vector3>();
     private Mesh beadMesh;
     private MeshFilter beadMeshFilter;
+    private GameObject beadObj;
     private bool isDispensing = false;
+
+    // Shared material instance for all beads, resolved once in Start().
+    private Material beadMaterialInstance;
+    // Incrementing counter to give each bead a unique, identifiable name.
+    private int beadRunCounter = 0;
 
     private struct GCodeCommand
     {
@@ -82,27 +98,40 @@ public class Dispense2K : MonoBehaviour
         if (DispenserTip == null)
             Debug.LogError("Dispense2K: No DispenserTip and no Dispenser assigned. Adhesive bead will not work.");
 
-        var beadObj = new GameObject("AdhesiveBead");
-        beadObj.transform.position = Vector3.zero;
-        beadObj.transform.rotation = Quaternion.identity;
-
-        beadMeshFilter = beadObj.AddComponent<MeshFilter>();
-        var meshRenderer = beadObj.AddComponent<MeshRenderer>();
-
+        // Resolve the bead material once. Each run's bead GameObject shares this
+        // instance; the actual GameObjects are created per-run in StartNewBead().
         if (adhesiveMaterial != null)
         {
-            meshRenderer.material = adhesiveMaterial;
+            beadMaterialInstance = adhesiveMaterial;
         }
         else
         {
             Shader shader = Shader.Find("Universal Render Pipeline/Lit")
                          ?? Shader.Find("Standard")
                          ?? Shader.Find("Sprites/Default");
-            meshRenderer.material = new Material(shader) { color = new Color(0.9f, 0.6f, 0.1f, 1f) };
+            beadMaterialInstance = new Material(shader) { color = new Color(0.9f, 0.6f, 0.1f, 1f) };
         }
+    }
 
-        beadMesh = new Mesh { name = "AdhesiveBeadMesh" };
+    // Create a brand-new bead GameObject + mesh for the run about to start. The
+    // previous run's bead (if any) is left untouched in the scene, attached to its
+    // object, so multiple adhesive beads accumulate instead of overwriting each other.
+    private void StartNewBead()
+    {
+        beadRunCounter++;
+        beadObj = new GameObject($"AdhesiveBead_{beadRunCounter}");
+        beadObj.transform.position = Vector3.zero;
+        beadObj.transform.rotation = Quaternion.identity;
+        beadObj.transform.localScale = Vector3.one;
+
+        beadMeshFilter = beadObj.AddComponent<MeshFilter>();
+        var meshRenderer = beadObj.AddComponent<MeshRenderer>();
+        meshRenderer.material = beadMaterialInstance;
+
+        beadMesh = new Mesh { name = $"AdhesiveBeadMesh_{beadRunCounter}" };
         beadMeshFilter.mesh = beadMesh;
+
+        beadPoints.Clear();
     }
 
     void FixedUpdate()
@@ -175,7 +204,7 @@ public class Dispense2K : MonoBehaviour
     // So this only validates and kicks off the coroutine, then returns an
     // "accepted" ack immediately. Actual completion is signalled asynchronously
     // by publishing 'true' on '~/dispense_2k_done' when the motion finishes.
-    private Dispense2KResp Dispense2KServiceCallback(Dispense2KReq _)
+    private Dispense2KResp Dispense2KServiceCallback(Dispense2KReq req)
     {
         // Reject if a run is already in progress (atomic 0 -> 1 transition).
         if (Interlocked.CompareExchange(ref gCodeRunning, 1, 0) != 0)
@@ -183,6 +212,10 @@ public class Dispense2K : MonoBehaviour
             Debug.LogWarning("Dispense2K: dispense already in progress — request rejected.");
             return new Dispense2KResp { Success = false };
         }
+
+        // Frame the dispense path starts at. The bead is attached to this frame's
+        // parent component when the run finishes (see AttachBeadToFrameParent).
+        attachFrameName = req.Start_frame;
 
         string packagePath = configureRobot.GetROS2PackagePath("pm_skills");
         if (string.IsNullOrEmpty(packagePath))
@@ -289,8 +322,10 @@ public class Dispense2K : MonoBehaviour
         if (AxisY != null) currentTargetY = AxisY.jointPosition[0];
         if (AxisZ != null) currentTargetZ = AxisZ.jointPosition[0];
 
-        beadPoints.Clear();
-        if (beadMesh != null) beadMesh.Clear();
+        // Create a fresh bead GameObject + mesh for this run. The previous run's bead
+        // stays in the scene attached to its object. The new bead sits at world
+        // origin/identity while it is drawn, because its mesh is built in world coords.
+        StartNewBead();
 
         try
         {
@@ -327,6 +362,13 @@ public class Dispense2K : MonoBehaviour
 
         isDispensing = false;
         Debug.Log("Dispense2K: G-code execution complete.");
+
+        // Attach the finished bead to the component that owns the start frame, so it
+        // moves with the component from here on. pm_skills sends the start frame name;
+        // in Unity that frame is a child GameObject of its component, so we parent the
+        // bead to the frame's parent. worldPositionStays=true keeps the world-space
+        // mesh in place while binding it to the component's transform.
+        AttachBeadToFrameParent();
         }
         finally
         {
@@ -448,6 +490,42 @@ public class Dispense2K : MonoBehaviour
         return xOk && yOk && zOk;
     }
 
+    // Parent the adhesive bead to the component that owns the start frame. Runs on the
+    // Unity main thread (from the coroutine) so GameObject.Find is safe.
+    private void AttachBeadToFrameParent()
+    {
+        if (beadObj == null) return;
+
+        string frameName = attachFrameName;
+        if (string.IsNullOrEmpty(frameName))
+        {
+            Debug.LogWarning("Dispense2K: no start frame received — adhesive bead left in world space.");
+            return;
+        }
+
+        GameObject frameObj = GameObject.Find(frameName);
+        if (frameObj == null)
+        {
+            Debug.LogWarning($"Dispense2K: start frame '{frameName}' not found in scene — adhesive bead left in world space.");
+            return;
+        }
+
+        // The frame is a child of its component; follow that component. Fall back to
+        // the frame itself if it has no parent.
+        Transform target = frameObj.transform.parent != null ? frameObj.transform.parent : frameObj.transform;
+
+        // Do NOT parent the bead into the spawned-object hierarchy. UnityComponentSpawner
+        // destroys and recreates every "spawned" object whenever the assembly scene
+        // changes (e.g. when the component is gripped and re-parented), which would
+        // destroy a child bead along with it. Instead the bead stays at the scene root
+        // and follows the target by name, re-binding after each rebuild. See BeadFollower.
+        var follower = beadObj.GetComponent<BeadFollower>() ?? beadObj.AddComponent<BeadFollower>();
+        follower.targetName = target.name;
+        follower.localPosition = target.InverseTransformPoint(beadObj.transform.position);
+        follower.localRotation = Quaternion.Inverse(target.rotation) * beadObj.transform.rotation;
+        Debug.Log($"Dispense2K: adhesive bead now following '{target.name}' (parent of frame '{frameName}').");
+    }
+
     private void RebuildBeadMesh()
     {
         if (beadMesh == null || beadPoints.Count < 2) return;
@@ -503,5 +581,8 @@ public class Dispense2K : MonoBehaviour
         beadMesh.vertices = vertices;
         beadMesh.triangles = triangles;
         beadMesh.RecalculateNormals();
+        // Explicitly refresh bounds so the renderer is not frustum-culled and stays
+        // visible after the bead is re-parented to a moving object.
+        beadMesh.RecalculateBounds();
     }
 }

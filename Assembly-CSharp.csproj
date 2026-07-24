@@ -113,6 +113,7 @@
     <Compile Include="Assets/Scripts/OpcUaControl/OPCUA_Client.cs" />
     <Compile Include="Assets/Scripts/Sensors/ForceSensor.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/UvCartController.cs" />
+    <Compile Include="Assets/Scripts/BeadFollower.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ServiceExample.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2Node.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/Time/ROS2Clock.cs" />
@@ -137,8 +138,10 @@
     <None Include="Assets/Ros2ForUnity/Plugins/ros2cs_common.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/rcl_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/visualization_msgs_assembly.dll" />
+    <None Include="Assets/Ros2ForUnity/Plugins/pm_vision_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/metadata_ros2cs.xml" />
     <None Include="Assets/Ros2ForUnity/Plugins/std_srvs_assembly.dll" />
+    <None Include="Assets/Ros2ForUnity/Plugins/pm_skills_interfaces_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/shape_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/diagnostic_msgs_assembly.dll" />
     <None Include="Assets/Ros2ForUnity/Plugins/geometry_msgs_assembly.dll" />
@@ -529,8 +532,16 @@
       <HintPath>Assets/Ros2ForUnity/Plugins/visualization_msgs_assembly.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="pm_vision_interfaces_assembly">
+      <HintPath>Assets/Ros2ForUnity/Plugins/pm_vision_interfaces_assembly.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="std_srvs_assembly">
       <HintPath>Assets/Ros2ForUnity/Plugins/std_srvs_assembly.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="pm_skills_interfaces_assembly">
+      <HintPath>Assets/Ros2ForUnity/Plugins/pm_skills_interfaces_assembly.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="shape_msgs_assembly">

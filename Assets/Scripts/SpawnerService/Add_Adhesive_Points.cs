@@ -25,12 +25,19 @@ public class Add_Adhesive_Points : MonoBehaviour
         public Vector3 localPosition;
     }
 
-    // Already created points
-    private HashSet<string> createdPoints = new HashSet<string>();
-
-    // Still waiting for parent
-    private Dictionary<string, AddAdhesivePoint> pendingPoints
+    // Every point we've been told to display, keyed by name. This is the source of
+    // truth: as long as a point is in here we (re)create it whenever it isn't currently
+    // alive in the scene.
+    private Dictionary<string, AddAdhesivePoint> desiredPoints
         = new Dictionary<string, AddAdhesivePoint>();
+
+    // The live GameObject for each point currently instantiated in the scene, keyed by
+    // name. UnityComponentSpawner destroys and rebuilds the spawned hierarchy (e.g. when
+    // a component is gripped), which also destroys any adhesive point parented under it.
+    // Unity reports a destroyed object as == null, so we detect that below and respawn
+    // the point instead of losing it for the rest of the session.
+    private Dictionary<string, GameObject> spawnedPoints
+        = new Dictionary<string, GameObject>();
 
     // A lock to synchronize access from the subscription callback
     private readonly object framesLock = new object();
@@ -68,39 +75,40 @@ public class Add_Adhesive_Points : MonoBehaviour
 
         lock (framesLock)
         {
-            List<string> toRemove = new List<string>();
-
-            foreach (var kvp in pendingPoints)
+            foreach (var kvp in desiredPoints)
             {
                 string pointName = kvp.Key;
                 var ap = kvp.Value;
 
-                GameObject parentObj = GameObject.Find(ap.parentFrame);
-                if (parentObj == null)
+                // Already alive in the scene? (Unity's overloaded == null reports a
+                // destroyed object as null, so a rebuild falls through to respawn here.)
+                if (spawnedPoints.TryGetValue(pointName, out GameObject existing) && existing != null)
                 {
-                    // Parent not found yet; try again next frame
                     continue;
                 }
 
-                // Create the prefab
-                GameObject pointObject = Instantiate(adhesivePointPrefab, parentObj.transform);
+                GameObject parentObj = GameObject.Find(ap.parentFrame);
+                if (parentObj == null)
+                {
+                    // Parent not in the scene yet (or mid-rebuild); try again next frame.
+                    continue;
+                }
+
+                // Create the prefab. Use worldPositionStays: false so the prefab keeps its
+                // own local rotation/scale instead of Unity back-computing them from the
+                // parent frame's world transform. TF frames can carry rotated / non-uniform
+                // scales, and the default (worldPositionStays: true) can shear or collapse the
+                // point's scale to near-zero, making it invisible until a scene reload.
+                GameObject pointObject = Instantiate(adhesivePointPrefab, parentObj.transform, false);
                 pointObject.tag = "AdhesivePoint";
                 pointObject.name = ap.pointName;
                 pointObject.transform.localPosition = ap.localPosition;
 
-                // Mark as created so we never re‐add it
-                createdPoints.Add(pointName);
-
-                // We can now remove it from pending
-                toRemove.Add(pointName);
+                // Remember the live instance so we don't recreate it every frame, and so we
+                // can tell when it has been destroyed by a hierarchy rebuild.
+                spawnedPoints[pointName] = pointObject;
 
                 Debug.Log($"Created adhesive point '{ap.pointName}' under '{ap.parentFrame}'.");
-            }
-
-            // Clean up
-            foreach (string rm in toRemove)
-            {
-                pendingPoints.Remove(rm);
             }
         }
     }
@@ -111,7 +119,7 @@ public class Add_Adhesive_Points : MonoBehaviour
         lock (framesLock)
         {
             // 1) If the incoming message has no points: remove all existing adhesive points
-            if (msg.Points.Length == 0 && pendingPoints.Count != 0)
+            if (msg.Points.Length == 0 && desiredPoints.Count != 0)
             {
                 Debug.Log("Received empty points array. Removing all adhesive points in the scene...");
 
@@ -122,21 +130,15 @@ public class Add_Adhesive_Points : MonoBehaviour
             foreach (var p in msg.Points)
             {
                 string trimmedName = p.Name.Trim();
-                if (createdPoints.Contains(trimmedName))
-                {   
-                    // We already created it
-                    // Debug.Log($"Point '{trimmedName}' already exists. Skipping.");
-                    continue;
-                }
-                if (pendingPoints.ContainsKey(trimmedName))
+                if (desiredPoints.ContainsKey(trimmedName))
                 {
-                    // It's still waiting for its parent from a previous message
-                    // Debug.Log($"Point '{trimmedName}' is already pending. Skipping.");
+                    // Already requested; Update() keeps it alive (and respawns it after a
+                    // hierarchy rebuild), so there is nothing to do here.
                     continue;
                 }
 
-                // Otherwise add to pending
-                pendingPoints[trimmedName] = new AddAdhesivePoint {
+                // Record it as desired; Update() will (re)create it whenever it isn't alive.
+                desiredPoints[trimmedName] = new AddAdhesivePoint {
                     pointName   = trimmedName,
                     parentFrame = p.Parent_frame.Trim(),
                     localPosition = new Vector3(
@@ -164,8 +166,8 @@ public class Add_Adhesive_Points : MonoBehaviour
         // 2) Clear data structures
         lock (framesLock)
         {
-            pendingPoints.Clear();
-            createdPoints.Clear();
+            desiredPoints.Clear();
+            spawnedPoints.Clear();
         }
 
         // 3) Reset the flag

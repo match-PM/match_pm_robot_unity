@@ -91,9 +91,12 @@ namespace ROS2
                 }
             }
 
-            // Only launch a new capture when the previous one finished and enough time has passed
+            // Only launch a new capture when the previous one finished and enough time has passed.
+            // Also require the publisher and camera textures to be ready, otherwise a capture would
+            // throw a NullReferenceException and leave isCapturing stuck at true (publisher goes silent).
             timeSinceLastCapture += Time.deltaTime;
-            if (!isCapturing && timeSinceLastCapture >= publishInterval)
+            bool ready = cam_pub != null && mainCameraTexture != null && renderTexture != null;
+            if (ready && !isCapturing && timeSinceLastCapture >= publishInterval)
             {
                 timeSinceLastCapture = 0f;
                 StartCoroutine(CaptureAndPublish());
@@ -106,30 +109,36 @@ namespace ROS2
             // Wait for end of frame to capture
             yield return new WaitForEndOfFrame();
 
-            cam_1.targetTexture = renderTexture;
-            lastTexture = RenderTexture.active;
+            // Ensure isCapturing is always reset, even if the capture/publish throws.
+            try
+            {
+                cam_1.targetTexture = renderTexture;
+                lastTexture = RenderTexture.active;
 
-            RenderTexture.active = renderTexture;
-            cam_1.Render();
+                RenderTexture.active = renderTexture;
+                cam_1.Render();
 
-            mainCameraTexture.ReadPixels(frame, 0, 0);
-            mainCameraTexture.Apply();
+                mainCameraTexture.ReadPixels(frame, 0, 0);
+                mainCameraTexture.Apply();
 
-            cam_1.targetTexture = lastTexture;
+                cam_1.targetTexture = lastTexture;
 
-            cam_1.targetTexture = null;
+                cam_1.targetTexture = null;
 
 
-            // string path = Path.Combine("/home/match-pm/Desktop", "published_image.png");
-            // File.WriteAllBytes(path, mainCameraTexture.EncodeToPNG());
+                // string path = Path.Combine("/home/match-pm/Desktop", "published_image.png");
+                // File.WriteAllBytes(path, mainCameraTexture.EncodeToPNG());
 
-            // string rawPath = Path.Combine("/home/match-pm/Desktop", "published_image_raw.bytes");
-            // File.WriteAllBytes(rawPath, mainCameraTexture.GetRawTextureData());
+                // string rawPath = Path.Combine("/home/match-pm/Desktop", "published_image_raw.bytes");
+                // File.WriteAllBytes(rawPath, mainCameraTexture.GetRawTextureData());
 
-            msg.Data = mainCameraTexture.GetRawTextureData();
-            cam_pub.Publish(msg);
-
-            isCapturing = false;
+                msg.Data = mainCameraTexture.GetRawTextureData();
+                cam_pub.Publish(msg);
+            }
+            finally
+            {
+                isCapturing = false;
+            }
         }
 
         void OnDestroy()

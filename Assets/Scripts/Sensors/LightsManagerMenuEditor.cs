@@ -54,8 +54,15 @@ public class LightsManagerMenuEditor : Editor
         GUIContent lightOffsetLabel = new GUIContent("Offset from focus point", "Offset of the light in negative direction of optical axis of camera.");
         lightsManagerMenu.distanceFromFocusPoint = EditorGUILayout.FloatField(lightOffsetLabel, lightsManagerMenu.distanceFromFocusPoint);
 
-        // Ring light additional settings
+        // Intensity scale for the OPC UA driven ring light
         if (lightsManagerMenu.selectedLightType == LightsManagerMenu.LightSelection.Ring_Light)
+        {
+            GUIContent intensityScaleLabel = new GUIContent("Intensity scale", "Factor applied to the intensity value read from OPC UA to scale it into Unity's light intensity range.");
+            lightsManagerMenu.intensityScale = EditorGUILayout.FloatField(intensityScaleLabel, lightsManagerMenu.intensityScale);
+        }
+
+        // Ring light additional settings
+        if (lightsManagerMenu.selectedLightType != LightsManagerMenu.LightSelection.Coaxial_Light)
         {
 
             // Number of lights for ring light

@@ -29,10 +29,16 @@ public class LightsManagerMenu : MonoBehaviour
     public enum LightSelection
     {
         Coaxial_Light,
+        Ring_Light_RGB,
         Ring_Light
     }
 
     public float lightIntensity = 1f;
+
+    // Scale factor applied to the intensity value read from OPC UA (Ring_Light).
+    // The server value is on a much larger scale (e.g. 0-100) than Unity's light
+    // intensity, so it needs to be scaled down.
+    public float intensityScale = 0.01f;
 
     public int numberOfLights = 4;
     public float distanceFromFocusPoint = 0.1f;
@@ -103,11 +109,20 @@ public class LightsManagerMenu : MonoBehaviour
 
     void updateLights()
     {
+        if (selectedLightType == LightSelection.Ring_Light)
+        {
+            // This ring light is driven purely by an intensity value (no on/off state, no RGB).
+            var intensityReading = OPCUA_Client.allNodes[OPCUANodeName_Parent + "/" + OPCUANodeName_Child].dataValue.Value;
+            double currentIntensity = Convert.ToDouble(intensityReading is Array arr ? arr.GetValue(0) : intensityReading) * intensityScale;
+            lightComponent.UpdateIntensity(currentIntensity);
+            return;
+        }
+
         List<bool> currentState = new List<bool>();
         float[] currentColor = null;
 
 
-        if (selectedLightType != LightSelection.Coaxial_Light)
+        if (selectedLightType == LightSelection.Ring_Light_RGB)
         {
             // Read state and color values from the OPC UA server for this lightComponent.
             var stateReading = (bool[])OPCUA_Client.allNodes[OPCUANodeName_Parent + "/" + OPCUANodeName_Child].dataValue.Value;
@@ -138,8 +153,9 @@ public class LightsManagerMenu : MonoBehaviour
         {
             createCoaxialLight();
         }
-        else if (selectedLightType == LightSelection.Ring_Light)
+        else
         {
+            // Both Ring_Light_RGB and Ring_Light use the same ring geometry.
             CreateRingLights();
         }
     }

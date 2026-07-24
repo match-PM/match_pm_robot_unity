@@ -92,6 +92,21 @@ namespace UtilityFunctions
                 ;
             }
 
+            // Method to update the intensity of the light component. Used by lights that are
+            // driven purely by an intensity value (no on/off state, no color).
+            public void UpdateIntensity(double currentIntensity)
+            {
+                if (intensity != currentIntensity)
+                {
+                    foreach (Light light in lights)
+                    {
+                        light.intensity = (float)currentIntensity;
+                        light.enabled = currentIntensity > 0.0;
+                    }
+                    intensity = currentIntensity;
+                }
+            }
+
             // Method to turn lights on or off based on the current activity.
             void turnLightsOnOff(bool currentActivity)
             {

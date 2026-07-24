@@ -61,7 +61,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlurAmount: 1
+    - _BlurAmount: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -69,8 +69,8 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _MaxBlurRadius: 61.941513
-    - _MaxDepthDiff: 0.01
+    - _MaxBlurRadius: 0
+    - _MaxDepthDiff: 0.02
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
