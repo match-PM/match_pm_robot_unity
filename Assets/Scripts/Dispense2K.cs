@@ -73,6 +73,20 @@ public class Dispense2K : MonoBehaviour
     // Incrementing counter to give each bead a unique, identifiable name.
     private int beadRunCounter = 0;
 
+    // Every bead GameObject ever created this session, so they can all be destroyed
+    // when the assembly scene is cleared. Beads deliberately live at the scene root
+    // (outside the "spawned" hierarchy) so they survive gripping/re-parenting; nothing
+    // else tears them down, so we track them here and clear them on a true scene clear.
+    private static readonly List<GameObject> AllBeads = new List<GameObject>();
+
+    // Assembly scene subscription used solely to detect a scene clear. clear_scene
+    // publishes an empty objects_in_scene; gripping/re-parenting never empties it, so an
+    // empty list is a reliable "wipe everything" signal (same one UnityComponentSpawner
+    // uses). Set from the ROS2 executor thread, consumed on the Unity main thread.
+    private const string ObjectSceneTopic = "assembly_manager/scene";
+    private ISubscription<assembly_manager_interfaces.msg.ObjectScene> objectSceneSub;
+    private volatile bool clearBeadsRequested = false;
+
     private struct GCodeCommand
     {
         public int type;             // 10=Move, 20=Dispenser, 30=Dip, 40=Wait, 50=SetDispenser
@@ -131,6 +145,28 @@ public class Dispense2K : MonoBehaviour
         beadMesh = new Mesh { name = $"AdhesiveBeadMesh_{beadRunCounter}" };
         beadMeshFilter.mesh = beadMesh;
 
+        // Track the bead so ClearAllBeads() can destroy it on a scene clear.
+        AllBeads.Add(beadObj);
+
+        beadPoints.Clear();
+    }
+
+    // Destroy every bead in the scene. Called on the Unity main thread when the
+    // assembly scene is cleared, so previously dispensed beads do not linger after
+    // cleanup. Also resets the in-progress run's references (the mesh may have just
+    // been destroyed); RebuildBeadMesh guards against a null mesh.
+    private void ClearAllBeads()
+    {
+        foreach (GameObject bead in AllBeads)
+        {
+            if (bead != null)
+                Destroy(bead);
+        }
+        AllBeads.Clear();
+
+        beadObj = null;
+        beadMesh = null;
+        beadMeshFilter = null;
         beadPoints.Clear();
     }
 
@@ -186,6 +222,15 @@ public class Dispense2K : MonoBehaviour
         while (mainThreadActions.TryDequeue(out var action))
             action?.Invoke();
 
+        // Clear beads on a true scene clear (empty objects_in_scene). Done here on the
+        // main thread since the flag is set from the ROS2 executor thread.
+        if (clearBeadsRequested)
+        {
+            clearBeadsRequested = false;
+            ClearAllBeads();
+            Debug.Log("Dispense2K: assembly scene cleared — removed all adhesive beads.");
+        }
+
         if (ros2Unity != null && ros2Unity.Ok())
         {
             if (ros2Node == null)
@@ -194,9 +239,21 @@ public class Dispense2K : MonoBehaviour
                 srvDispense2K = ros2Node.CreateService<Dispense2KReq, Dispense2KResp>(
                     "~/dispense_2k_unity", Dispense2KServiceCallback);
                 donePublisher = ros2Node.CreatePublisher<std_msgs.msg.Bool>("~/dispense_2k_done");
+                // Watch the assembly scene so beads are torn down when it is cleared.
+                objectSceneSub = ros2Node.CreateSubscription<assembly_manager_interfaces.msg.ObjectScene>(
+                    ObjectSceneTopic, ObjectSceneCallback);
                 Debug.Log("Dispense2K: ROS2 service '~/dispense_2k_unity' and topic '~/dispense_2k_done' registered.");
             }
         }
+    }
+
+    // Runs on the ROS2 executor thread. An empty objects_in_scene means the scene was
+    // cleared (gripping/re-parenting keeps the objects, only clear_scene empties the
+    // list), so flag the beads for removal on the next main-thread Update().
+    private void ObjectSceneCallback(assembly_manager_interfaces.msg.ObjectScene msg)
+    {
+        if (msg.Objects_in_scene.Length == 0)
+            clearBeadsRequested = true;
     }
 
     // Runs on the ROS2 executor thread. It must return quickly — blocking here

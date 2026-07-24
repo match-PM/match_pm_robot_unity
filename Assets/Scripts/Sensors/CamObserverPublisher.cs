@@ -80,7 +80,10 @@ namespace ROS2
                 if (ros2Node == null)
                 {
                     ros2Node = ros2Unity.CreateNode(nodeName);
-                    cam_pub = ros2Node.CreatePublisher<sensor_msgs.msg.Image>(topicName);
+                    // Use sensor-data QoS (BEST_EFFORT) to match the vision node's
+                    // subscription (qos_profile_sensor_data) and avoid the reliable
+                    // writer/reader matching handshake.
+                    cam_pub = ros2Node.CreateSensorPublisher<sensor_msgs.msg.Image>(topicName);
                 }
             }
 
