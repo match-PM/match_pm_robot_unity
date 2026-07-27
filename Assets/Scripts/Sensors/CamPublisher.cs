@@ -23,7 +23,6 @@ namespace ROS2
         public string topicName = "Image_Cam1_raw";
 
         private RenderTexture renderTexture;
-        private RenderTexture lastTexture;
 
         private Texture2D mainCameraTexture;
         private Rect frame;
@@ -35,8 +34,7 @@ namespace ROS2
 
         private sensor_msgs.msg.Image msg = new sensor_msgs.msg.Image();
 
-        // Throttle / guard fields
-        private bool isCapturing = false;
+        // Throttle
         [Tooltip("Seconds between published frames (default 0.1 = 10 fps)")]
         public float publishInterval = 0.1f;
         private float timeSinceLastCapture = 0f;
@@ -94,53 +92,62 @@ namespace ROS2
                 }
             }
 
-            // Only launch a new capture when the previous one finished and enough time has passed.
-            // Also require the publisher and camera textures to be ready, otherwise a capture would
-            // throw a NullReferenceException and leave isCapturing stuck at true (publisher goes silent).
-            timeSinceLastCapture += Time.deltaTime;
-            bool ready = cam_pub != null && mainCameraTexture != null && renderTexture != null;
-            if (ready && !isCapturing && timeSinceLastCapture >= publishInterval)
-            {
-                timeSinceLastCapture = 0f;
-                StartCoroutine(CaptureAndPublish());
-            }
         }
-        IEnumerator CaptureAndPublish()
+
+        // The capture renders the camera explicitly, so it does not need to wait for the
+        // engine's own render pass. It used to yield on WaitForEndOfFrame, which in the Editor
+        // only resumes while the Game view tab is actually being repainted: with the tab hidden
+        // the coroutine never resumed, the in-flight guard stayed latched and the publisher went
+        // silent for the rest of the session without logging anything. Doing the work directly in
+        // LateUpdate (after all transforms are final) removes that dependency entirely, and with
+        // no coroutine there is no guard left to get stuck.
+        void LateUpdate()
         {
-            isCapturing = true;
+            timeSinceLastCapture += Time.deltaTime;
+            if (timeSinceLastCapture < publishInterval)
+            {
+                return;
+            }
 
-            // Wait for end of frame to capture
-            yield return new WaitForEndOfFrame();
+            // The textures only exist once ConfigureCamera has finished initialising the camera.
+            if (cam_pub == null || cam_1 == null || mainCameraTexture == null || renderTexture == null)
+            {
+                return;
+            }
 
-            // Ensure isCapturing is always reset, even if the capture/publish throws.
+            // Skip publishing once the ROS context is gone (e.g. while leaving Play mode),
+            // otherwise ros2cs logs "Cannot publish as the class is already disposed".
+            if (!ros2Unity.Ok())
+            {
+                return;
+            }
+
+            timeSinceLastCapture = 0f;
+            CaptureAndPublish();
+        }
+
+        void CaptureAndPublish()
+        {
+            RenderTexture previousActive = RenderTexture.active;
+            RenderTexture previousTarget = cam_1.targetTexture;
+
             try
             {
                 cam_1.targetTexture = renderTexture;
-                lastTexture = RenderTexture.active;
-
                 RenderTexture.active = renderTexture;
                 cam_1.Render();
 
+                // ReadPixels reads from RenderTexture.active.
                 mainCameraTexture.ReadPixels(frame, 0, 0);
                 mainCameraTexture.Apply();
-
-                cam_1.targetTexture = lastTexture;
-
-                cam_1.targetTexture = null;
-
-
-                // string path = Path.Combine("/home/match-pm/Desktop", "published_image.png");
-                // File.WriteAllBytes(path, mainCameraTexture.EncodeToPNG());
-
-                // string rawPath = Path.Combine("/home/match-pm/Desktop", "published_image_raw.bytes");
-                // File.WriteAllBytes(rawPath, mainCameraTexture.GetRawTextureData());
 
                 msg.Data = mainCameraTexture.GetRawTextureData();
                 cam_pub.Publish(msg);
             }
             finally
             {
-                isCapturing = false;
+                RenderTexture.active = previousActive;
+                cam_1.targetTexture = previousTarget;
             }
         }
 

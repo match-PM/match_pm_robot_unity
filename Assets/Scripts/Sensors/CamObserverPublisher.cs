@@ -27,7 +27,6 @@ namespace ROS2
         public int sensorHeight = 720;
 
         private RenderTexture renderTexture;
-        private RenderTexture lastTexture;
 
         private Texture2D mainCameraTexture;
         private Rect frame;
@@ -39,8 +38,7 @@ namespace ROS2
 
         private sensor_msgs.msg.Image msg = new sensor_msgs.msg.Image();
 
-        // Throttle / guard fields
-        private bool isCapturing = false;
+        // Throttle
         [Tooltip("Seconds between published frames (default 0.1 = 10 fps)")]
         public float publishInterval = 0.1f;
         private float timeSinceLastCapture = 0f;
@@ -87,47 +85,65 @@ namespace ROS2
                 }
             }
 
-            // Only launch a new capture when the previous one finished and enough time has passed
-            timeSinceLastCapture += Time.deltaTime;
-            if (!isCapturing && timeSinceLastCapture >= publishInterval)
-            {
-                timeSinceLastCapture = 0f;
-                StartCoroutine(CaptureAndPublish());
-            }
         }
-        IEnumerator CaptureAndPublish()
+
+        // The capture renders the camera explicitly, so it does not need to wait for the
+        // engine's own render pass. It used to yield on WaitForEndOfFrame, which in the Editor
+        // only resumes while the Game view tab is actually being repainted: with the tab hidden
+        // the coroutine never resumed, the in-flight guard stayed latched and the publisher went
+        // silent for the rest of the session without logging anything. Doing the work directly in
+        // LateUpdate (after all transforms are final) removes that dependency entirely, and with
+        // no coroutine there is no guard left to get stuck.
+        void LateUpdate()
         {
-            isCapturing = true;
+            timeSinceLastCapture += Time.deltaTime;
+            if (timeSinceLastCapture < publishInterval)
+            {
+                return;
+            }
 
-            // Wait for end of frame to capture
-            yield return new WaitForEndOfFrame();
+            if (cam_pub == null || cam_1 == null || mainCameraTexture == null || renderTexture == null)
+            {
+                return;
+            }
 
-            cam_1.targetTexture = renderTexture;
-            lastTexture = RenderTexture.active;
+            // Skip publishing once the ROS context is gone (e.g. while leaving Play mode),
+            // otherwise ros2cs logs "Cannot publish as the class is already disposed".
+            if (!ros2Unity.Ok())
+            {
+                return;
+            }
 
-            RenderTexture.active = renderTexture;
-            cam_1.Render();
+            timeSinceLastCapture = 0f;
+            CaptureAndPublish();
+        }
 
-            mainCameraTexture.ReadPixels(frame, 0, 0);
-            mainCameraTexture.Apply();
+        void CaptureAndPublish()
+        {
+            RenderTexture previousActive = RenderTexture.active;
+            RenderTexture previousTarget = cam_1.targetTexture;
 
-            cam_1.targetTexture = lastTexture;
+            try
+            {
+                cam_1.targetTexture = renderTexture;
+                RenderTexture.active = renderTexture;
+                cam_1.Render();
 
-            cam_1.targetTexture = null;
+                // ReadPixels reads from RenderTexture.active.
+                mainCameraTexture.ReadPixels(frame, 0, 0);
+                mainCameraTexture.Apply();
 
-            // Flip the image vertically to correct orientation
-            FlipTextureVertically(mainCameraTexture);
+                // Flip the image vertically to correct orientation
+                FlipTextureVertically(mainCameraTexture);
 
-            // string path = Path.Combine("/home/match-pm/Desktop", "published_image.png");
-            // File.WriteAllBytes(path, mainCameraTexture.EncodeToPNG());
-
-            // string rawPath = Path.Combine("/home/match-pm/Desktop", "published_image_raw.bytes");
-            // File.WriteAllBytes(rawPath, mainCameraTexture.GetRawTextureData());
-
-            msg.Data = mainCameraTexture.GetRawTextureData();
-            cam_pub.Publish(msg);
-
-            isCapturing = false;
+                msg.Data = mainCameraTexture.GetRawTextureData();
+                cam_pub.Publish(msg);
+            }
+            finally
+            {
+                RenderTexture.active = previousActive;
+                cam_1.targetTexture = previousTarget;
+            }
         }
 
         void FlipTextureVertically(Texture2D texture)

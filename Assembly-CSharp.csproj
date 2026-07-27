@@ -68,6 +68,7 @@
     <Compile Include="Assets/Scripts/Sensors/Camera1LightControl.cs" />
     <Compile Include="Assets/Scripts/MainCamController.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/RobotAxisControl.cs" />
+    <Compile Include="Assets/Scripts/SpawnerService/AdhesiveDot.cs" />
     <Compile Include="Assets/Ros2ForUnity/Scripts/ROS2ListenerExample.cs" />
     <Compile Include="Assets/Scripts/Sensors/ConfigureCamera.cs" />
     <Compile Include="Assets/Scripts/Smarpod.cs" />

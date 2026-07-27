@@ -221,6 +221,46 @@ public class UnityComponentSpawner : MonoBehaviour
                 return true;
             if (a.Obj_pose.Orientation.W != b.Obj_pose.Orientation.W)
                 return true;
+
+            // The reference frames have to be compared as well. An object usually enters the
+            // scene before its frames exist (glue points are added afterwards), and the object
+            // itself does not change when that happens. Without this check the rebuild is never
+            // triggered, so the frames only ever appear after a play mode restart — and
+            // anything that hangs off them (adhesive dots) never shows up at all.
+            if (RefFramesHaveChanged(a.Ref_frames, b.Ref_frames))
+                return true;
+        }
+        return false;
+    }
+
+    // True if the two reference frame lists differ in count, name or pose.
+    private bool RefFramesHaveChanged(IList<assembly_manager_interfaces.msg.RefFrame> oldFrames,
+                                      IList<assembly_manager_interfaces.msg.RefFrame> newFrames)
+    {
+        if (oldFrames.Count != newFrames.Count)
+            return true;
+
+        for (int i = 0; i < oldFrames.Count; i++)
+        {
+            var a = oldFrames[i];
+            var b = newFrames[i];
+
+            if (a.Frame_name != b.Frame_name)
+                return true;
+            if (a.Pose.Position.X != b.Pose.Position.X)
+                return true;
+            if (a.Pose.Position.Y != b.Pose.Position.Y)
+                return true;
+            if (a.Pose.Position.Z != b.Pose.Position.Z)
+                return true;
+            if (a.Pose.Orientation.X != b.Pose.Orientation.X)
+                return true;
+            if (a.Pose.Orientation.Y != b.Pose.Orientation.Y)
+                return true;
+            if (a.Pose.Orientation.Z != b.Pose.Orientation.Z)
+                return true;
+            if (a.Pose.Orientation.W != b.Pose.Orientation.W)
+                return true;
         }
         return false;
     }
