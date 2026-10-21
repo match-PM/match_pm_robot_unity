@@ -83,7 +83,7 @@ source /opt/ros/humble/setup.bash
 ```
 
 ### 3. Get custom interfaces
-The custom interfaces you need to run the unity-simulation are defined in the repro https://github.com/match-PM/pm_ros2_unity_interface.git
+The custom interfaces are defined in their original packages in your ROS2 workspace (`~/ros2_ws/src`). ros2-for-unity builds them from the mirror repro https://github.com/match-PM/pm_ros2_unity_interface.git, which the sync tool keeps up to date (see [Add new Services](AddNewServices.md#sync-to-unity)).
 
 To clone the repro, you can defined it as a custom_messages.repro. 
 
@@ -139,11 +139,9 @@ sudo apt install dotnet-sdk-6.0
 ```
 
 #### 4. Deploy
-Afterwards everything should be located in `~/ros2-for-unity/install/asset/Ros2ForUnity`
+`Assets/Ros2ForUnity` is part of this repro, so the simulation runs without copying anything.
 
-If you have not made any changes to the custom interfaces, the match_pm_robot_unity simulation should run.
-
-If not or you made changes copy that folder (`~/ros2-for-unity/install/asset/Ros2ForUnity`) to the Unity `Assets` folder.
+Whenever interfaces in your ROS2 workspace change, Unity logs a warning on startup. Then run the Unity menu `ROS2/Sync Interfaces` (or `python3 Tools/sync_ros2_interfaces.py sync`) and restart the editor. Do not copy `install/asset/Ros2ForUnity` by hand anymore.
 
 Before you (re-)start Unity make sure, you source'd all of your terminals. This is importent, otherwise Unity and ROS2 doesn't know the right linking.
 

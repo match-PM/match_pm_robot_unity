@@ -4,38 +4,27 @@ This Tutorial discribes how to create a ros2 service and implement it into Unity
 
 We are using ros2-for-unity, so the tutorial is based on [this](https://roboticsbackend.com/ros2-create-custom-message/) tutorial.
 
-Make sure, you have ros2-for-unity [installed](Docs/INSTALLATION.md).
+Make sure, you have ros2-for-unity [installed](INSTALLATION.md).
 
-## Clone repro
-The services are defined in the repro https://github.com/match-PM/pm_ros2_unity_interface.git
+## Where the interfaces live
+The interfaces are defined in their original packages in your ROS2 workspace (`~/ros2_ws/src`), e.g. `match_pm_robot/pm_msgs` or `smarpod_model/smarpod_interfaces`.
 
-To clone the repro, you can defined it as a custom_messages.repro. 
+Unity gets them through the sync tool (`Tools/sync_ros2_interfaces.py`, Unity menu `ROS2`). It finds **every** interface package below `~/ros2_ws/src` automatically, i.e. every `package.xml` containing
 
-Go to Documents/ros2-for-unity and open `ros2_for_unity_custom_messages.repos`.
+    <member_of_group>rosidl_interface_packages</member_of_group>
 
-Type in:
+New interface packages therefore need no extra registration. To leave one out, add its name to `exclude` in `Tools/ros2_interfaces.json`. Packages inside a folder with a `COLCON_IGNORE` file are ignored, just like colcon does.
 
-    repositories:
-    src/ros2cs/custom_messages/pm_ros2_unity_interface:
-        type: git
-        url: https://github.com/match-PM/pm_ros2_unity_interface.git
-        version: main
-
-Execute
-
-    ./pull_repositories.sh
-
-Now the repro is located at Documents/ros2-for-unity/src/ros2cs/custom_messages
-
+The repro https://github.com/match-PM/pm_ros2_unity_interface.git (`~/Documents/ros2-for-unity/src/ros2cs/custom_messages/pm_ros2_unity_interface`) is only a mirror that ros2-for-unity builds from. Do **not** edit it by hand, the sync overwrites it.
 
 ## Create new package
 If you want to implement a hole new funtionality, you can create a new package.
 
 If you only want to add a new service to a package, you can directly do is (s. [add new service](#add-new-service))
 
-Go to 
+Go to the repro in your ROS2 workspace where the package belongs, e.g.
 
-    cd ros2-for-unity/src/ros2cs/custom_messages/pm_ros2_unity_interface
+    cd ~/ros2_ws/src/match_pm_robot
 
 Create a new package
 
@@ -46,17 +35,19 @@ Navigate inside the package, and:
 Remove the `include/` and `src/` folders.
 Add `srv/` folder (also `msg/` if you want to create message).
 
-    $ cd ~/ros2_ws/src/*my_fancy_interface_name*/
+    $ cd *my_fancy_interface_name*/
     $ rm -rf include/
     $ rm -rf src/
     $ mkdir srv
     $ mkdir msg
 
-Add this 3 lines to the `package.xml`-File
+Add this 3 lines to the `package.xml`-File. The last one is also what makes the sync pick the package up.
 
     <buildtool_depend>rosidl_default_generators</buildtool_depend>
     <exec_depend>rosidl_default_runtime</exec_depend>
     <member_of_group>rosidl_interface_packages</member_of_group>
+
+Dependencies of an interface package must be message packages that ros2-for-unity can build (`std_msgs`, `geometry_msgs`, `sensor_msgs`, ... or other packages from your workspace). Packages depending on e.g. `moveit_msgs` are skipped by the sync with a note.
 
 ## Add new service
 
@@ -82,28 +73,26 @@ Next, open the `CMakeLists.txt`-File and add these lines. Only one path per line
 
 This far, everything is the same for a message. You will get this on your own.
 
-## Build
+## Sync to Unity
 
-When you have added a service, navigate back to the ros2-for-unity-folder
+Unity checks the interfaces once per editor session and logs a warning in the console when an interface package was added or changed since the last sync.
 
-and call the build.sh to compile everything
+To bring them into Unity:
 
-    ./build.sh
+1. Unity menu `ROS2/Sync Interfaces` (or `ROS2/Check Interfaces` to only see what changed).
+   From a terminal the same works with
 
-The first time you might get some errors, but running `./build.sh` again should fix that.
+        python3 Tools/sync_ros2_interfaces.py check
+        python3 Tools/sync_ros2_interfaces.py sync
 
+2. The sync mirrors the packages into `pm_ros2_unity_interface`, builds ros2-for-unity (a few minutes, progress in the Unity status bar, full log in `Logs/ros2_interface_sync.log`) and replaces `Assets/Ros2ForUnity/Plugins`.
+   The build only sources `/opt/ros/<distro>`, not your workspace, so it does not matter what is sourced in the terminal.
+3. Restart the Unity editor when asked. Native plugins that are already loaded can only be replaced by a restart.
+4. Commit the changes in this project (`Assets/Ros2ForUnity`, `Tools/ros2_interfaces.lock.json`) and in `pm_ros2_unity_interface`.
 
-## Deploying
-Afterwards everything should be located in `/Documents/ros2-for-unity/ros2-for-unity/install/asset/Ros2ForUnity`
+Packages that are still in the mirror but no longer in the workspace are kept and reported as `orphaned`. `python3 Tools/sync_ros2_interfaces.py sync --prune` removes them, but refuses as long as a Unity script still uses them.
 
-Just copy that folder to the Unity `Assets` folder
-
-Before you (re-)start Unity make sure, you source'd all of your terminals. This is importent, otherwise Unity and ROS2 doesn't know the right linking.
-
-    source /Documents/ros2-for-unity/ros2-for-unity/install/setup.bash
-
-or just add that line to your `~.bashrc`-file.
-
+Paths can be changed in `Tools/ros2_interfaces.json` or with the environment variables `PM_ROS2_WS_SRC` and `PM_ROS2_FOR_UNITY`.
 
 ## Implementing
 

@@ -1,0 +1,58 @@
+{
+  "packages": {
+    "assembly_manager_interfaces": {
+      "commit": "75f6e2a",
+      "dirty": false,
+      "hash": "6ed5353bb2434bd2a2f91e6b7918fae7b7d4b4b675a9a1468cd618ea1426066a",
+      "source": "ros_assembly_manager/assembly_manager_interfaces"
+    },
+    "pm_moveit_interfaces": {
+      "commit": "cd37283",
+      "dirty": false,
+      "hash": "8085da8b93aabe23b27f5b9e90bf3eca3d7fcf48e10b720fd2eb2c2d729c6c17",
+      "source": "match_pm_robot/pm_moveit_interfaces"
+    },
+    "pm_msgs": {
+      "commit": "cd37283",
+      "dirty": false,
+      "hash": "5c5f721be6f20dc48ed087945837e47c579435f45d71b4c9d8baab3619ad4460",
+      "source": "match_pm_robot/pm_msgs"
+    },
+    "pm_opcua_skills_msgs": {
+      "commit": "cd37283",
+      "dirty": false,
+      "hash": "ef0b707590701d186930232acf40900227e4f5776875f9e542ab7aaecda2cfa5",
+      "source": "match_pm_robot/pm_opcua_skills/pm_opcua_skills_msgs"
+    },
+    "pm_robot_interfaces": {
+      "commit": "cd37283",
+      "dirty": false,
+      "hash": "bf198116040f2f11de3d7eb5cd5ee1d3230f29c712995c4fb40b9760dcc2efc8",
+      "source": "match_pm_robot/pm_robot_interfaces"
+    },
+    "pm_skills_interfaces": {
+      "commit": "5dba409",
+      "dirty": false,
+      "hash": "96e6640717a23163ecfdbcb59bf81b38517525ab3586e4f2fd35f9a55202d7f9",
+      "source": "pm_robot_skills/pm_skills_interfaces"
+    },
+    "pm_vision_interfaces": {
+      "commit": "5048042",
+      "dirty": false,
+      "hash": "a5fcd9e402940ee36eb9eca07541fb882c5030e9723334b62727119e204528d5",
+      "source": "pm_vision_manager/pm_vision_interfaces"
+    },
+    "rsap_interfaces": {
+      "commit": "b073711",
+      "dirty": false,
+      "hash": "201050f1a364c32ca2655e8009b5345b407acc74dd85e7c206531dbdc088fef3",
+      "source": "ros_sequential_action_programmer/rsap_interfaces"
+    },
+    "smarpod_interfaces": {
+      "commit": "da03f22",
+      "dirty": false,
+      "hash": "3c9a3c8c4d4e7d61eefc88b58f149178fe880b233eaed5684df684f49464acdd",
+      "source": "smarpod_model/smarpod_interfaces"
+    }
+  }
+}
