@@ -35,8 +35,8 @@ public class SpawnGameObject : MonoBehaviour
             Debug.Log($"Spawning new object with UUID: {uuid}. Applying random offset to position.");
             // spawn with a random offset (0.1-0.5mm) in x and y to reflect real-world variability in the placement of the object.
             System.Random rand = new System.Random();
-            float offsetX = (float)(rand.NextDouble() * 0.0002 + 0.0001); // 0.1mm to 0.5mm in meters
-            float offsetY = (float)(rand.NextDouble() * 0.0002 + 0.0001); // 0.1mm to 0.5mm in meters
+            float offsetX = (float)(rand.NextDouble() * 0.0001 + 0.0001); // 0.1mm to 0.5mm in meters
+            float offsetY = (float)(rand.NextDouble() * 0.0001 + 0.0001); // 0.1mm to 0.5mm in meters
             // float offsetRotZ = (float)(rand.NextDouble() * 2 - 1) * 0.01f; // Random rotation offset between -0.01 and 0.01 degrees
             unityPosition.x += offsetX;
             unityPosition.y += offsetY;
@@ -120,7 +120,7 @@ public class SpawnGameObject : MonoBehaviour
 
         Material mat = new Material(Shader.Find("Standard"));
 
-        if (partName.Contains("Modulcarrier"))
+        if (partName.Contains("Holder") || partName.Contains("Modulcarrier"))
         {
             // find the "aluminium" material in the Resources folder
             Material aluminiumMat = Resources.Load<Material>("Materials/Aluminium");

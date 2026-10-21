@@ -62,7 +62,10 @@ public class Dispense2K : MonoBehaviour
     // mesh (created in StartNewBead) so previously dispensed beads are left in the
     // scene attached to their objects instead of being overwritten. These fields only
     // ever refer to the bead of the run currently in progress.
-    private readonly List<Vector3> beadPoints = new List<Vector3>();
+    // The bead is split into strokes: a new stroke starts every time the dispenser
+    // turns on, so travel moves with the dispenser off are not bridged by the tube.
+    private readonly List<List<Vector3>> beadStrokes = new List<List<Vector3>>();
+    private bool wasDispensing = false;
     private Mesh beadMesh;
     private MeshFilter beadMeshFilter;
     private GameObject beadObj;
@@ -148,7 +151,8 @@ public class Dispense2K : MonoBehaviour
         // Track the bead so ClearAllBeads() can destroy it on a scene clear.
         AllBeads.Add(beadObj);
 
-        beadPoints.Clear();
+        beadStrokes.Clear();
+        wasDispensing = false;
     }
 
     // Destroy every bead in the scene. Called on the Unity main thread when the
@@ -167,7 +171,8 @@ public class Dispense2K : MonoBehaviour
         beadObj = null;
         beadMesh = null;
         beadMeshFilter = null;
-        beadPoints.Clear();
+        beadStrokes.Clear();
+        wasDispensing = false;
     }
 
     void FixedUpdate()
@@ -189,13 +194,20 @@ public class Dispense2K : MonoBehaviour
 
         if (isDispensing && DispenserTip != null)
         {
+            // Dispenser just turned on: begin a new stroke instead of connecting to
+            // the end of the previous one.
+            if (!wasDispensing || beadStrokes.Count == 0)
+                beadStrokes.Add(new List<Vector3>());
+
+            List<Vector3> stroke = beadStrokes[beadStrokes.Count - 1];
             Vector3 pos = DispenserTip.position;
-            if (beadPoints.Count == 0 || Vector3.Distance(pos, beadPoints[beadPoints.Count - 1]) >= beadSampleDistance)
+            if (stroke.Count == 0 || Vector3.Distance(pos, stroke[stroke.Count - 1]) >= beadSampleDistance)
             {
-                beadPoints.Add(pos);
+                stroke.Add(pos);
                 RebuildBeadMesh();
             }
         }
+        wasDispensing = isDispensing;
     }
 
     // Returns true when the axis has reached its goal.
@@ -481,9 +493,9 @@ public class Dispense2K : MonoBehaviour
             yield return new WaitForSeconds(cmd.t / 1000f);
 
         // Move back up with up speeds. startX/Y/Z are already in Unity units.
-        float reqXu = cmd.fxu != 0f ? Mathf.Abs(cmd.fxu) * mmToUnity : speed;
-        float reqYu = cmd.fyu != 0f ? Mathf.Abs(cmd.fyu) * mmToUnity : speed;
-        float reqZu = cmd.fzu != 0f ? Mathf.Abs(cmd.fzu) * mmToUnity : speed;
+        float reqXu = Mathf.Abs(cmd.fxu) > MinFeedRate ? Mathf.Abs(cmd.fxu) * mmToUnity : speed;
+        float reqYu = Mathf.Abs(cmd.fyu) > MinFeedRate ? Mathf.Abs(cmd.fyu) * mmToUnity : speed;
+        float reqZu = Mathf.Abs(cmd.fzu) > MinFeedRate ? Mathf.Abs(cmd.fzu) * mmToUnity : speed;
         StartSyncMove(startX, startY, startZ, reqXu, reqYu, reqZu, 0f);
 
         yield return new WaitUntil(() => !isInterpolating && AxesAtTarget(startX, startY, startZ));
@@ -492,11 +504,16 @@ public class Dispense2K : MonoBehaviour
     // Set goal (mm) and per-axis feed rates (mm/s, signed — only magnitude matters;
     // 0 = use default), then start a synchronized move. If moveTimeMs > 0 it forces
     // the total move duration (e.g. G20 MT), otherwise the slowest axis sets the pace.
+    // Feed rates (mm/s) below this are rounding noise from rotating the path (e.g. 1e-24)
+    // and are treated as 0. Taken literally, they stretch the synchronized move to an
+    // endless duration, so the axes never move and the done signal is never sent.
+    private const float MinFeedRate = 1e-6f;
+
     private void BeginMove(float x, float y, float z, float fx, float fy, float fz, float moveTimeMs = 0f)
     {
-        float reqX = fx != 0f ? Mathf.Abs(fx) * mmToUnity : speed;
-        float reqY = fy != 0f ? Mathf.Abs(fy) * mmToUnity : speed;
-        float reqZ = fz != 0f ? Mathf.Abs(fz) * mmToUnity : speed;
+        float reqX = Mathf.Abs(fx) > MinFeedRate ? Mathf.Abs(fx) * mmToUnity : speed;
+        float reqY = Mathf.Abs(fy) > MinFeedRate ? Mathf.Abs(fy) * mmToUnity : speed;
+        float reqZ = Mathf.Abs(fz) > MinFeedRate ? Mathf.Abs(fz) * mmToUnity : speed;
         StartSyncMove(x * mmToUnity, y * mmToUnity, z * mmToUnity, reqX, reqY, reqZ, moveTimeMs / 1000f);
     }
 
@@ -585,58 +602,68 @@ public class Dispense2K : MonoBehaviour
 
     private void RebuildBeadMesh()
     {
-        if (beadMesh == null || beadPoints.Count < 2) return;
+        if (beadMesh == null) return;
 
-        int n = beadPoints.Count;
         int seg = tubeSegments;
-        var vertices = new Vector3[n * seg];
-        var triangles = new int[(n - 1) * seg * 6];
+        var vertices = new List<Vector3>();
+        var triangles = new List<int>();
 
-        for (int i = 0; i < n; i++)
+        // Each stroke is an independent tube; strokes are never joined to each other.
+        foreach (List<Vector3> points in beadStrokes)
         {
-            Vector3 fwd;
-            if (i < n - 1)
-                fwd = (beadPoints[i + 1] - beadPoints[i]).normalized;
-            else
-                fwd = (beadPoints[i] - beadPoints[i - 1]).normalized;
+            int n = points.Count;
+            if (n < 2) continue;
+            int baseIndex = vertices.Count;
 
-            Vector3 side = Vector3.Cross(fwd, Vector3.up);
-            if (side.sqrMagnitude < 0.001f)
-                side = Vector3.Cross(fwd, Vector3.right);
-            side.Normalize();
-            Vector3 up = Vector3.Cross(side, fwd).normalized;
-
-            for (int j = 0; j < seg; j++)
+            for (int i = 0; i < n; i++)
             {
-                float angle = (float)j / seg * Mathf.PI * 2f;
-                Vector3 offset = (Mathf.Cos(angle) * side + Mathf.Sin(angle) * up) * beadRadius;
-                vertices[i * seg + j] = beadPoints[i] + offset;
+                Vector3 fwd;
+                if (i < n - 1)
+                    fwd = (points[i + 1] - points[i]).normalized;
+                else
+                    fwd = (points[i] - points[i - 1]).normalized;
+
+                Vector3 side = Vector3.Cross(fwd, Vector3.up);
+                if (side.sqrMagnitude < 0.001f)
+                    side = Vector3.Cross(fwd, Vector3.right);
+                side.Normalize();
+                Vector3 up = Vector3.Cross(side, fwd).normalized;
+
+                for (int j = 0; j < seg; j++)
+                {
+                    float angle = (float)j / seg * Mathf.PI * 2f;
+                    Vector3 offset = (Mathf.Cos(angle) * side + Mathf.Sin(angle) * up) * beadRadius;
+                    vertices.Add(points[i] + offset);
+                }
+            }
+
+            for (int i = 0; i < n - 1; i++)
+            {
+                for (int j = 0; j < seg; j++)
+                {
+                    int c0 = baseIndex + i * seg + j;
+                    int c1 = baseIndex + i * seg + (j + 1) % seg;
+                    int n0 = baseIndex + (i + 1) * seg + j;
+                    int n1 = baseIndex + (i + 1) * seg + (j + 1) % seg;
+
+                    triangles.Add(c0);
+                    triangles.Add(n0);
+                    triangles.Add(c1);
+
+                    triangles.Add(c1);
+                    triangles.Add(n0);
+                    triangles.Add(n1);
+                }
             }
         }
 
-        int ti = 0;
-        for (int i = 0; i < n - 1; i++)
-        {
-            for (int j = 0; j < seg; j++)
-            {
-                int c0 = i * seg + j;
-                int c1 = i * seg + (j + 1) % seg;
-                int n0 = (i + 1) * seg + j;
-                int n1 = (i + 1) * seg + (j + 1) % seg;
-
-                triangles[ti++] = c0;
-                triangles[ti++] = n0;
-                triangles[ti++] = c1;
-
-                triangles[ti++] = c1;
-                triangles[ti++] = n0;
-                triangles[ti++] = n1;
-            }
-        }
+        if (vertices.Count == 0) return;
 
         beadMesh.Clear();
-        beadMesh.vertices = vertices;
-        beadMesh.triangles = triangles;
+        // Several strokes can exceed the 16-bit index limit.
+        beadMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        beadMesh.SetVertices(vertices);
+        beadMesh.SetTriangles(triangles, 0);
         beadMesh.RecalculateNormals();
         // Explicitly refresh bounds so the renderer is not frustum-culled and stays
         // visible after the bead is re-parented to a moving object.
