@@ -22,7 +22,7 @@ using ConfigureRobotResp = pm_msgs.srv.EmptyWithSuccess_Response;
 // "Config Tools/Delta Import Robot Parts" editor tool - no code changes.
 //
 // Only hardware that is outside the URDF generation (measuring systems, the
-// gonio/smarpod assemblies, smarpod chucks) is still wired in the Inspector.
+// gonio/smarpod assemblies) is still wired in the Inspector.
 // =============================================================================
 
 public class configureRobot : MonoBehaviour
@@ -57,19 +57,16 @@ public class configureRobot : MonoBehaviour
     [Tooltip("YAML: pm_smparpod_station.with_smarpod_station — entire Smarpod Station assembly")]
     public GameObject assembly_SmarpodStation;
 
-    // -------------------------------------------------------------------------
-    // Smarpod Station chucks (not part of the URDF generation -> still wired here)
-    // -------------------------------------------------------------------------
-    [Header("Smarpod Station  (pm_smparpod_station)")]
-    [Tooltip("YAML: availabe_chucks — chuck_diodenplacement  (use_chuck: 'empty' deactivates all chucks)")]
-    public GameObject smarpod_Chuck_DiodePlacement;
+    [Tooltip("ROS offset (m, base_link frame) of Gonio Right while the Smarpod Station is active. " +
+             "Mirrors gonio_offset_smarpod_x/y in pm_robot_gonio_right.xacro.")]
+    public Vector3 gonioRightSmarpodOffsetRos = new Vector3(0f, 0.6f, 0f);
 
     // -------------------------------------------------------------------------
     // Private state
     // -------------------------------------------------------------------------
     private Dictionary<string, object> _yamlRoot;
     private RobotUnityManifest _manifest;
-    private Dictionary<string, GameObject> _smarpodChucks;
+    private Vector3 _gonioRightAppliedOffset; // Unity frame, currently added to Gonio Right
 
     // ROS2
     private ROS2UnityComponent ros2Unity;
@@ -110,12 +107,6 @@ public class configureRobot : MonoBehaviour
         }
         if (robotRoot == null)
             Debug.LogError("configureRobot: robot root not set and no GameObject named 'pm_robot' found.");
-
-        // "empty" is intentionally absent — it is handled as a sentinel in ConfigureSmarpodStation
-        _smarpodChucks = new Dictionary<string, GameObject>
-        {
-            { "chuck_diodenplacement", smarpod_Chuck_DiodePlacement },
-        };
 
         LoadAndApplyConfiguration();
     }
@@ -217,21 +208,44 @@ public class configureRobot : MonoBehaviour
             assembly_GonioRight?.SetActive(GetBool(right, "with_Gonio_Right"));
     }
 
+    // The station's chucks and part spawn frames come from the manifest.
     private void ConfigureSmarpodStation(Dictionary<string, object> root)
     {
         if (!TryGetSubDict(root, "pm_smparpod_station", out var d)) return;
         bool active = GetBool(d, "with_smarpod_station");
         assembly_SmarpodStation?.SetActive(active);
-        if (!active)
-        {
-            DeactivateAll(_smarpodChucks);
+        PlaceGonioRight(active);
+    }
+
+    /// <summary>The Smarpod Station takes Gonio Right's place, so ROS moves
+    /// Gonio Right aside while the station is configured. Applied as a delta
+    /// to the current pose, so calibration offsets applied by
+    /// ApplyCalibrationConfig are kept regardless of script order.</summary>
+    private void PlaceGonioRight(bool smarpodStation)
+    {
+        if (assembly_GonioRight == null)
             return;
+
+        Vector3 target = smarpodStation ? gonioRightSmarpodOffsetRos.Ros2Unity() : Vector3.zero;
+        Vector3 delta = target - _gonioRightAppliedOffset;
+        if (delta == Vector3.zero)
+            return;
+
+        // An active ArticulationBody ignores transform changes; move its
+        // parent anchor instead (same approach as ApplyCalibrationConfig).
+        var body = assembly_GonioRight.GetComponent<ArticulationBody>();
+        if (body != null && body.isActiveAndEnabled)
+        {
+            body.matchAnchors = false;
+            body.parentAnchorPosition += delta;
         }
-        string useChuck = GetString(d, "use_chuck");
-        if (string.IsNullOrEmpty(useChuck) || useChuck == "empty")
-            DeactivateAll(_smarpodChucks);
         else
-            ActivateSelected(_smarpodChucks, useChuck);
+        {
+            assembly_GonioRight.transform.localPosition += delta;
+            if (body != null && !body.matchAnchors)
+                body.parentAnchorPosition += delta;
+        }
+        _gonioRightAppliedOffset = target;
     }
 
     // =========================================================================
@@ -275,6 +289,29 @@ public class configureRobot : MonoBehaviour
                         (active ? missingActive : missingInactive).Add(linkName);
                     }
                 }
+
+                // An item without a visible part (smarpod 'empty' chuck) owns
+                // only a spawn frame on a base robot link. Toggling it like a
+                // chuck keeps exactly one active frame of that name, which
+                // name-based lookups (GameObject.Find) rely on.
+                if (item.rootLinks.Length > 0)
+                    continue;
+                foreach (var spawnPoint in item.spawnPoints ?? Array.Empty<ManifestSpawnPoint>())
+                {
+                    GameObject go = null;
+                    if (linkIndex.TryGetValue(spawnPoint.parentLink, out var parent))
+                        go = parent.transform.Cast<Transform>()
+                            .FirstOrDefault(c => c.name == spawnPoint.name)?.gameObject;
+                    if (go != null)
+                    {
+                        desired.TryGetValue(go, out bool current);
+                        desired[go] = current || active;
+                    }
+                    else
+                    {
+                        (active ? missingActive : missingInactive).Add($"{spawnPoint.parentLink}/{spawnPoint.name}");
+                    }
+                }
             }
         }
 
@@ -290,13 +327,15 @@ public class configureRobot : MonoBehaviour
                       "the scene (harmless unless they get selected): " + string.Join(", ", missingInactive));
     }
 
+    // 'empty' needs no special case: the generator only emits an 'empty' item
+    // when that selection owns something (the smarpod 'empty' spawn frame).
     private static bool IsSelected(string[] yamlNames, string[] selected)
     {
         if (yamlNames.Length != selected.Length)
             return false;
         for (int i = 0; i < yamlNames.Length; i++)
         {
-            if (string.IsNullOrEmpty(selected[i]) || selected[i] == "empty" || selected[i] != yamlNames[i])
+            if (string.IsNullOrEmpty(selected[i]) || selected[i] != yamlNames[i])
                 return false;
         }
         return true;
@@ -368,25 +407,6 @@ public class configureRobot : MonoBehaviour
             return val.ToString();
         Debug.LogWarning($"configureRobot: String key '{key}' not found or null; defaulting to '{defaultValue}'.");
         return defaultValue;
-    }
-
-    private void ActivateSelected(Dictionary<string, GameObject> group, string selectedKey)
-    {
-        foreach (var kv in group)
-        {
-            if (kv.Value == null) continue;
-            kv.Value.SetActive(kv.Key == selectedKey);
-        }
-    }
-
-    private void DeactivateAll(Dictionary<string, GameObject> group)
-    {
-        foreach (var kv in group)
-            if (kv.Value != null)
-            {
-                kv.Value?.SetActive(false);
-            }
-
     }
 
     // =========================================================================

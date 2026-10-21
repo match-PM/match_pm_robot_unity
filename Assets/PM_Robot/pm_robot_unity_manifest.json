@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T14:17:43.159512+00:00",
+  "generatedAt": "2026-10-21T12:05:13.282606+00:00",
   "sourceConfig": "pm_robot_bringup_config.yaml",
   "urdf": "pm_robot_unity.urdf",
   "sections": [
@@ -437,6 +437,161 @@
               "name": "Gonio_Right_Part_1_Origin",
               "sourceLink": "Gonio_Right_Part_1_Origin__unity_source__chuck_gonio_right_ASG_bridge",
               "parentLink": "Gonio_Right_Chuck_ASG_Bruecke"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "yamlPath": "pm_smparpod_station",
+      "enableKey": "with_smarpod_station",
+      "selectKeys": [
+        "use_chuck"
+      ],
+      "unityParent": "Smarpod_Top_Plate",
+      "items": [
+        {
+          "yamlNames": [
+            "empty"
+          ],
+          "links": [],
+          "rootLinks": [],
+          "meshes": [],
+          "spawnPoints": [
+            {
+              "name": "Smarpod_Part_Spawn",
+              "sourceLink": "Smarpod_Part_Spawn__unity_source__empty",
+              "parentLink": "Smarpod_Top_Plate"
+            }
+          ]
+        },
+        {
+          "yamlNames": [
+            "chuck_diodenplacement"
+          ],
+          "links": [
+            "Chuck_Diodenplacement"
+          ],
+          "rootLinks": [
+            "Chuck_Diodenplacement"
+          ],
+          "meshes": [
+            "meshes/chucks/Chuck_Diodenplacement.STL"
+          ],
+          "spawnPoints": [
+            {
+              "name": "Smarpod_Part_Spawn",
+              "sourceLink": "Smarpod_Part_Spawn__unity_source__chuck_diodenplacement",
+              "parentLink": "Chuck_Diodenplacement"
+            }
+          ]
+        },
+        {
+          "yamlNames": [
+            "chuck_fiber"
+          ],
+          "links": [
+            "Baugruppe_Smarpod_Chucks_Fiber"
+          ],
+          "rootLinks": [
+            "Baugruppe_Smarpod_Chucks_Fiber"
+          ],
+          "meshes": [
+            "meshes/chucks/Baugruppe_Smarpod_Chucks_Fiber.STL"
+          ],
+          "spawnPoints": [
+            {
+              "name": "Smarpod_Part_Spawn",
+              "sourceLink": "Smarpod_Part_Spawn__unity_source__chuck_fiber",
+              "parentLink": "Baugruppe_Smarpod_Chucks_Fiber"
+            }
+          ]
+        },
+        {
+          "yamlNames": [
+            "chuck_smarpod_calibration"
+          ],
+          "links": [
+            "calibration_target_holder"
+          ],
+          "rootLinks": [
+            "calibration_target_holder"
+          ],
+          "meshes": [
+            "meshes/chucks/calibration_target_holder.STL"
+          ],
+          "spawnPoints": [
+            {
+              "name": "Smarpod_Part_Spawn",
+              "sourceLink": "Smarpod_Part_Spawn__unity_source__chuck_smarpod_calibration",
+              "parentLink": "calibration_target_holder"
+            }
+          ]
+        },
+        {
+          "yamlNames": [
+            "chuck_smarpod_ball_calibration"
+          ],
+          "links": [
+            "Chuck_Smarpod_Calibration_Ball"
+          ],
+          "rootLinks": [
+            "Chuck_Smarpod_Calibration_Ball"
+          ],
+          "meshes": [
+            "meshes/chucks/Chuck_Smarpod_Calibration_Ball.STL"
+          ],
+          "spawnPoints": [
+            {
+              "name": "Smarpod_Part_Spawn",
+              "sourceLink": "Smarpod_Part_Spawn__unity_source__chuck_smarpod_ball_calibration",
+              "parentLink": "Chuck_Smarpod_Calibration_Ball"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "yamlPath": "pm_smparpod_station",
+      "enableKey": "with_smarpod_station",
+      "selectKeys": [
+        "use_chuck_center"
+      ],
+      "unityParent": "SmarPod_Origin",
+      "items": [
+        {
+          "yamlNames": [
+            "empty"
+          ],
+          "links": [],
+          "rootLinks": [],
+          "meshes": [],
+          "spawnPoints": [
+            {
+              "name": "Smarpod_Part_Spawn_Center",
+              "sourceLink": "Smarpod_Part_Spawn_Center__unity_source__empty",
+              "parentLink": "Smarpod_Top_Plate"
+            }
+          ]
+        },
+        {
+          "yamlNames": [
+            "chuck_fiber_chip_alignment"
+          ],
+          "links": [
+            "Chuck_center_fiber_chip_alignment"
+          ],
+          "rootLinks": [
+            "Chuck_center_fiber_chip_alignment"
+          ],
+          "meshes": [
+            "meshes/chucks_center/Chuck_center_fiber_chip_alignment.STL"
+          ],
+          "spawnPoints": [
+            {
+              "name": "Smarpod_Part_Spawn_Center",
+              "sourceLink": "Smarpod_Part_Spawn_Center__unity_source__chuck_fiber_chip_alignment",
+              "parentLink": "Chuck_center_fiber_chip_alignment"
             }
           ]
         }

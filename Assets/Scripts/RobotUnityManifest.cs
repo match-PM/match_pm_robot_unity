@@ -8,8 +8,9 @@ using UnityEngine;
 // Unity URDF by generate_unity_urdf.py (pm_robot_description package).
 //
 // The manifest maps every selectable YAML configuration item (dispenser tip,
-// chuck, vacuum tool+tip, gripper tool+jaw) to the URDF link names it owns and
-// to its empty spawn frames (gonio part origins and tool TCPs).
+// gonio/smarpod chuck, vacuum tool+tip, gripper tool+jaw) to the URDF link
+// names it owns and to its empty spawn frames (gonio part origins, smarpod
+// part spawns and tool TCPs).
 // configureRobot uses it at runtime to toggle the matching GameObjects, and
 // the DeltaUrdfImporter editor tool uses it to import missing links, so a new
 // tool added in ROS requires no Unity code changes.
@@ -70,9 +71,12 @@ public class RobotUnityManifest
             }
             foreach (var item in section.items)
             {
-                if (item.rootLinks == null || item.rootLinks.Length == 0)
+                // Spawn-frame-only items (smarpod 'empty' chuck) legitimately
+                // have no rootLinks.
+                if ((item.rootLinks == null || item.rootLinks.Length == 0) &&
+                    (item.spawnPoints == null || item.spawnPoints.Length == 0))
                     Debug.LogWarning($"RobotUnityManifest: item '{string.Join("/", item.yamlNames)}' " +
-                                     $"in '{section.yamlPath}' has no rootLinks ({path}).");
+                                     $"in '{section.yamlPath}' has neither rootLinks nor spawnPoints ({path}).");
                 foreach (var link in item.links ?? Array.Empty<string>())
                 {
                     if (owner.TryGetValue(link, out var other) && other != section)
@@ -153,6 +157,7 @@ public class ManifestSpawnPoint
     public string sourceLink;
 
     /// <summary>Manifest-owned chuck/tool link that becomes the empty
-    /// GameObject's parent in the Unity scene.</summary>
+    /// GameObject's parent in the Unity scene; a base robot link for items
+    /// without a visible part (smarpod 'empty' chuck).</summary>
     public string parentLink;
 }

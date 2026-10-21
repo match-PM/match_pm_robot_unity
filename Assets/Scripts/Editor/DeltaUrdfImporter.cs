@@ -13,7 +13,8 @@ using Joint = Unity.Robotics.UrdfImporter.Joint;
 /// <summary>
 /// Editor window ("Config Tools/Delta Import Robot Parts") that imports only
 /// the robot parts that exist in the generated combined URDF + manifest but
-/// are missing from the scene robot. Existing objects are never touched, so
+/// are missing from the scene robot (tools, tips, gonio and smarpod chucks
+/// and their spawn frames). Existing objects are never touched, so
 /// all manual modifications (ArticulationBody tuning, attached scripts,
 /// sensors) survive. Typical workflow after adding a tool/chuck/tip in ROS:
 ///   1. colcon build, run generate_unity_urdf.py (pm_robot_description)
@@ -25,6 +26,7 @@ public class DeltaUrdfImporter : EditorWindow
     private string urdfPath = "";
     private string manifestPath = "";
     private string meshSourceDir = "";
+    private string smarpodMeshSourceDir = ""; // smarpod chucks live in smaract_hexapod_description
     private string robotRootName = "pm_robot";
     private GameObject robotRoot;
 
@@ -64,6 +66,9 @@ public class DeltaUrdfImporter : EditorWindow
                 manifestPath = Path.Combine(urdfDir, "pm_robot_unity_manifest.json");
                 meshSourceDir = Path.Combine(pkg, "share", "pm_robot_description");
             }
+            string smarpodPkg = configureRobot.GetROS2PackagePath("smaract_hexapod_description");
+            if (!string.IsNullOrEmpty(smarpodPkg))
+                smarpodMeshSourceDir = Path.Combine(smarpodPkg, "share", "smaract_hexapod_description");
         }
         RefreshRootCandidates();
     }
@@ -93,6 +98,7 @@ public class DeltaUrdfImporter : EditorWindow
         urdfPath = EditorGUILayout.TextField("Combined URDF", urdfPath);
         manifestPath = EditorGUILayout.TextField("Manifest", manifestPath);
         meshSourceDir = EditorGUILayout.TextField("ROS mesh source dir", meshSourceDir);
+        smarpodMeshSourceDir = EditorGUILayout.TextField("Smarpod mesh source dir", smarpodMeshSourceDir);
 
         EditorGUILayout.Space();
         using (new EditorGUILayout.HorizontalScope())
@@ -179,19 +185,7 @@ public class DeltaUrdfImporter : EditorWindow
             return;
         }
 
-        XDocument urdf = XDocument.Load(urdfPath);
-        Dictionary<string, XElement> linkElements = urdf.Root.Elements("link")
-            .GroupBy(e => (string)e.Attribute("name"))
-            .ToDictionary(g => g.Key, g => g.First());
-        var jointsByChild = new Dictionary<string, List<XElement>>();
-        foreach (var j in urdf.Root.Elements("joint"))
-        {
-            string child = (string)j.Element("child")?.Attribute("link");
-            if (child == null) continue;
-            if (!jointsByChild.TryGetValue(child, out var list))
-                jointsByChild[child] = list = new List<XElement>();
-            list.Add(j);
-        }
+        LoadUrdf(urdfPath, out var linkElements, out var jointsByChild);
 
         Dictionary<string, Transform> sceneIndex = BuildSceneIndex(robotRoot.transform);
         Dictionary<string, string> opcUaMap = LoadOpcUaMap();
@@ -320,11 +314,17 @@ public class DeltaUrdfImporter : EditorWindow
         int copied = 0;
         foreach (var mesh in scanResults.Where(r => r.blockedReason == null).SelectMany(r => r.meshesToCopy).Distinct())
         {
-            string src = Path.Combine(meshSourceDir, mesh);
+            // Mesh paths are relative to the providing package's share dir;
+            // the manifest does not say which package that is.
+            string src = new[] { meshSourceDir, smarpodMeshSourceDir }
+                .Where(dir => !string.IsNullOrEmpty(dir))
+                .Select(dir => Path.Combine(dir, mesh))
+                .FirstOrDefault(File.Exists);
             string dst = Path.Combine(Application.dataPath, "PM_Robot", mesh);
-            if (!File.Exists(src))
+            if (src == null)
             {
-                Debug.LogError($"DeltaUrdfImporter: mesh not found in ROS package: {src}");
+                Debug.LogError($"DeltaUrdfImporter: mesh '{mesh}' not found in '{meshSourceDir}' " +
+                               $"or '{smarpodMeshSourceDir}'.");
                 continue;
             }
             Directory.CreateDirectory(Path.GetDirectoryName(dst));
@@ -335,24 +335,8 @@ public class DeltaUrdfImporter : EditorWindow
             AssetDatabase.Refresh();
 
         // 2. Recreate the context a whole-robot import would have.
-        var settings = ImportSettings.DefaultSettings();
-        settings.convexMethod = ImportSettings.convexDecomposer.unity; // colliders get disabled anyway
-        UrdfRobotExtensions.importsettings = settings;
-        UrdfAssetPathHandler.SetPackageRoot("Assets/PM_Robot");
-
-        XDocument urdf = XDocument.Load(urdfPath);
-        Dictionary<string, XElement> linkElements = urdf.Root.Elements("link")
-            .GroupBy(e => (string)e.Attribute("name"))
-            .ToDictionary(g => g.Key, g => g.First());
-        var jointsByChild = new Dictionary<string, List<XElement>>();
-        foreach (var j in urdf.Root.Elements("joint"))
-        {
-            string child = (string)j.Element("child")?.Attribute("link");
-            if (child == null) continue;
-            if (!jointsByChild.TryGetValue(child, out var list))
-                jointsByChild[child] = list = new List<XElement>();
-            list.Add(j);
-        }
+        PrepareUrdfImport();
+        LoadUrdf(urdfPath, out var linkElements, out var jointsByChild);
 
         Dictionary<string, Transform> sceneIndex = BuildSceneIndex(robotRoot.transform);
         Dictionary<string, string> opcUaMap = LoadOpcUaMap();
@@ -363,17 +347,12 @@ public class DeltaUrdfImporter : EditorWindow
         {
             var createdThisItem = new List<GameObject>();
 
-            // Spawn sources are created first because vacuum tool geometry is
-            // parented to PM_Robot_Tool_TCP in the ROS URDF. Once all visible
-            // links exist, FinalizeSpawnPoint moves the empty TCP/part origin
-            // below the actual tool/chuck without moving anything in world
-            // space.
-            foreach (var spawnPoint in r.missingSpawnPoints)
+            void CreateSpawnSource(ManifestSpawnPoint spawnPoint)
             {
                 Transform source = ResolveSceneTransform(
                     spawnPoint.sourceLink, sceneIndex, opcUaMap);
                 if (source != null)
-                    continue; // migrate an earlier importer result below
+                    return; // migrate an earlier importer result below
 
                 // A previous import may already have renamed/reparented the
                 // source but failed while stripping its URDF components. Use
@@ -385,14 +364,14 @@ public class DeltaUrdfImporter : EditorWindow
                 if (source != null)
                 {
                     sceneIndex[spawnPoint.sourceLink] = source;
-                    continue;
+                    return;
                 }
 
                 if (!linkElements.TryGetValue(spawnPoint.sourceLink, out var linkEl))
                 {
                     Debug.LogError($"DeltaUrdfImporter: spawn-point source link " +
                                    $"'{spawnPoint.sourceLink}' not found in URDF, skipping.");
-                    continue;
+                    return;
                 }
 
                 string parentName = ResolveParentLink(
@@ -403,7 +382,7 @@ public class DeltaUrdfImporter : EditorWindow
                 {
                     Debug.LogError($"DeltaUrdfImporter: parent '{parentName}' of spawn-point " +
                                    $"source '{spawnPoint.sourceLink}' not found, skipping.");
-                    continue;
+                    return;
                 }
 
                 XElement jointEl = SelectJoint(
@@ -414,6 +393,19 @@ public class DeltaUrdfImporter : EditorWindow
                 sceneIndex[spawnPoint.sourceLink] = go.transform;
                 createdThisItem.Add(go);
             }
+
+            // Spawn sources are created first because vacuum tool geometry is
+            // parented to PM_Robot_Tool_TCP in the ROS URDF. Chuck part frames
+            // are the opposite case: their source hangs off the chuck, so it
+            // is created once the chuck link exists. Once all visible links
+            // exist, FinalizeSpawnPoint moves the empty TCP/part origin below
+            // the actual tool/chuck without moving anything in world space.
+            var sourcesBelowNewLinks = r.missingSpawnPoints
+                .Where(s => r.missingLinks.Contains(
+                    ResolveParentLink(s.sourceLink, r.item, jointsByChild)))
+                .ToList();
+            foreach (var spawnPoint in r.missingSpawnPoints.Except(sourcesBelowNewLinks))
+                CreateSpawnSource(spawnPoint);
 
             foreach (var linkName in r.missingLinks)
             {
@@ -437,6 +429,9 @@ public class DeltaUrdfImporter : EditorWindow
                 createdThisItem.Add(go);
                 createdLinks++;
             }
+
+            foreach (var spawnPoint in sourcesBelowNewLinks)
+                CreateSpawnSource(spawnPoint);
 
             foreach (var spawnPoint in r.missingSpawnPoints)
             {
@@ -469,12 +464,7 @@ public class DeltaUrdfImporter : EditorWindow
             //    deactivated; configureRobot activates the selected item at
             //    Play, which activates these enabled components with it.
             foreach (var go in createdThisItem)
-            {
-                foreach (var col in go.GetComponentsInChildren<MeshCollider>(true))
-                    col.enabled = true;
-                foreach (var ab in go.GetComponentsInChildren<ArticulationBody>(true))
-                    ab.enabled = true;
-            }
+                EnablePhysics(go);
             foreach (var rootLink in r.item.rootLinks)
             {
                 var go = createdThisItem.FirstOrDefault(g => g.name == rootLink);
@@ -499,10 +489,47 @@ public class DeltaUrdfImporter : EditorWindow
     }
 
     // =========================================================================
-    // Helpers
+    // Helpers (also used by SmarpodBaseReimporter)
     // =========================================================================
 
-    private static string PathOf(Transform t)
+    /// <summary>Import settings and mesh root a whole-robot import would use.</summary>
+    internal static void PrepareUrdfImport()
+    {
+        var settings = ImportSettings.DefaultSettings();
+        settings.convexMethod = ImportSettings.convexDecomposer.unity; // colliders get disabled anyway
+        UrdfRobotExtensions.importsettings = settings;
+        UrdfAssetPathHandler.SetPackageRoot("Assets/PM_Robot");
+    }
+
+    /// <summary>Link elements by name and joint elements by child link name.
+    /// A child can have several joints in the combined URDF (see SelectJoint).</summary>
+    internal static void LoadUrdf(string path, out Dictionary<string, XElement> linkElements,
+        out Dictionary<string, List<XElement>> jointsByChild)
+    {
+        XDocument urdf = XDocument.Load(path);
+        linkElements = urdf.Root.Elements("link")
+            .GroupBy(e => (string)e.Attribute("name"))
+            .ToDictionary(g => g.Key, g => g.First());
+        jointsByChild = new Dictionary<string, List<XElement>>();
+        foreach (var j in urdf.Root.Elements("joint"))
+        {
+            string child = (string)j.Element("child")?.Attribute("link");
+            if (child == null) continue;
+            if (!jointsByChild.TryGetValue(child, out var list))
+                jointsByChild[child] = list = new List<XElement>();
+            list.Add(j);
+        }
+    }
+
+    internal static void EnablePhysics(GameObject go)
+    {
+        foreach (var col in go.GetComponentsInChildren<MeshCollider>(true))
+            col.enabled = true;
+        foreach (var ab in go.GetComponentsInChildren<ArticulationBody>(true))
+            ab.enabled = true;
+    }
+
+    internal static string PathOf(Transform t)
     {
         var parts = new List<string>();
         for (var c = t; c != null; c = c.parent)
