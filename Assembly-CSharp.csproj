@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Assets/Scripts/Sensors/LaserRay.cs" />
     <Compile Include="Assets/Scripts/Sensors/Camera1LightControl.cs" />
+    <Compile Include="Assets/Scripts/Sensors/AsyncImagePublisher.cs" />
     <Compile Include="Assets/Scripts/MainCamController.cs" />
     <Compile Include="Assets/Scripts/OpcUaControl/RobotAxisControl.cs" />
     <Compile Include="Assets/Scripts/SpawnerService/AdhesiveDot.cs" />

@@ -22,26 +22,21 @@ namespace ROS2
         public string nodeName = "ROS2UnityCam1Publisher";
         public string topicName = "Image_Cam1_raw";
 
-        private RenderTexture renderTexture;
-
-        private Texture2D mainCameraTexture;
-        private Rect frame;
-
-
         private int frame_width;
         private int frame_height;
-        private uint image_step = 4;
 
-        private sensor_msgs.msg.Image msg = new sensor_msgs.msg.Image();
+        private AsyncImagePublisher capture;
 
         // Throttle
         [Tooltip("Seconds between published frames (default 0.1 = 10 fps)")]
         public float publishInterval = 0.1f;
-        private float timeSinceLastCapture = 0f;
+        private float timeSinceLastCapture;
 
         void Start()
         {
             ros2Unity = GetComponent<ROS2UnityComponent>();
+            // Spread the cameras over different frames instead of capturing all at once.
+            timeSinceLastCapture = Random.Range(0f, publishInterval);
 
             // Get reference to the ConfigureCamera script
             ConfigureCamera configureCamera = GetComponent<ConfigureCamera>();
@@ -62,20 +57,8 @@ namespace ROS2
             cam_1 = GetComponent<Camera>();
             cam_config = GetComponent<ConfigureCamera>();
 
-            renderTexture = new RenderTexture((int)cam_config.sensorWidth, (int)cam_config.sensorHeight, 24);
-            renderTexture.Create();
-
-            frame_width = renderTexture.width;
-            frame_height = renderTexture.height;
-
-            frame = new Rect(0, 0, frame_width, frame_height);
-
-            mainCameraTexture = new Texture2D(frame_width, frame_height, TextureFormat.RGBA32, false);
-
-            msg.Width = (uint)frame_width;
-            msg.Height = (uint)frame_height;
-            msg.Step = image_step * (uint)frame_width;
-            msg.Encoding = "rgba8";
+            frame_width = (int)cam_config.sensorWidth;
+            frame_height = (int)cam_config.sensorHeight;
         }
 
         void Update()
@@ -98,9 +81,9 @@ namespace ROS2
         // engine's own render pass. It used to yield on WaitForEndOfFrame, which in the Editor
         // only resumes while the Game view tab is actually being repainted: with the tab hidden
         // the coroutine never resumed, the in-flight guard stayed latched and the publisher went
-        // silent for the rest of the session without logging anything. Doing the work directly in
-        // LateUpdate (after all transforms are final) removes that dependency entirely, and with
-        // no coroutine there is no guard left to get stuck.
+        // silent for the rest of the session without logging anything. The capture is started
+        // directly in LateUpdate (after all transforms are final) instead; AsyncImagePublisher
+        // completes it off the main thread, and its in-flight guard times out rather than latching.
         void LateUpdate()
         {
             timeSinceLastCapture += Time.deltaTime;
@@ -109,8 +92,8 @@ namespace ROS2
                 return;
             }
 
-            // The textures only exist once ConfigureCamera has finished initialising the camera.
-            if (cam_pub == null || cam_1 == null || mainCameraTexture == null || renderTexture == null)
+            // The camera size is only known once ConfigureCamera has finished initialising it.
+            if (cam_pub == null || cam_1 == null)
             {
                 return;
             }
@@ -122,46 +105,16 @@ namespace ROS2
                 return;
             }
 
-            timeSinceLastCapture = 0f;
-            CaptureAndPublish();
-        }
-
-        void CaptureAndPublish()
-        {
-            RenderTexture previousActive = RenderTexture.active;
-            RenderTexture previousTarget = cam_1.targetTexture;
-
-            try
+            capture ??= new AsyncImagePublisher(cam_1, frame_width, frame_height, false, cam_pub, ros2Unity);
+            if (capture.TryCapture())
             {
-                cam_1.targetTexture = renderTexture;
-                RenderTexture.active = renderTexture;
-                cam_1.Render();
-
-                // ReadPixels reads from RenderTexture.active.
-                mainCameraTexture.ReadPixels(frame, 0, 0);
-                mainCameraTexture.Apply();
-
-                msg.Data = mainCameraTexture.GetRawTextureData();
-                cam_pub.Publish(msg);
-            }
-            finally
-            {
-                RenderTexture.active = previousActive;
-                cam_1.targetTexture = previousTarget;
+                timeSinceLastCapture = 0f;
             }
         }
 
         void OnDestroy()
         {
-            if (renderTexture != null)
-            {
-                renderTexture.Release();
-                Destroy(renderTexture);
-            }
-            if (mainCameraTexture != null)
-            {
-                Destroy(mainCameraTexture);
-            }
+            capture?.Dispose();
         }
 
     }
