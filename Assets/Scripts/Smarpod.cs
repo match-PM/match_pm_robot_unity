@@ -84,6 +84,13 @@ namespace ROS2
         [Tooltip("Initial translational speed [m/s] until the hardware interface sets one.")]
         public double speed = 0.001;
 
+        [Tooltip("Maximum travel [m] of every tower stage. Move targets that would exceed " +
+                 "it are rejected, and a move stops at the last pose within it.")]
+        public double maxTowerStroke = 0.01;
+
+        private const float StrokeWarningInterval = 2f;
+        private float nextStrokeWarning;
+
         // ROS
         private ROS2UnityComponent ros2Unity;
         private ROS2Node ros2Node;
@@ -184,16 +191,42 @@ namespace ROS2
             }
             double duration = Math.Max(Math.Sqrt(translation), rotation * PlatformRadius) / speed;
 
-            if (duration <= dt)
+            var next = new double[6];
+            for (int i = 0; i < 6; i++)
+                next[i] = duration <= dt ? target[i] : setpoint[i] + (target[i] - setpoint[i]) * dt / duration;
+
+            // Tower stages are not linear in the rotations, so a straight move
+            // between two valid poses can still leave the stroke on the way.
+            if (!WithinTowerStroke(next))
             {
-                Array.Copy(target, setpoint, 6);
-                moveStatus = StatusHolding;
-                holdUntil = double.PositiveInfinity;
+                WarnStroke("stopping the move at the stroke limit");
+                Halt(StatusStopped, 0.0);
                 return;
             }
 
-            for (int i = 0; i < 6; i++)
-                setpoint[i] += (target[i] - setpoint[i]) * dt / duration;
+            Array.Copy(next, setpoint, 6);
+            if (duration <= dt)
+            {
+                moveStatus = StatusHolding;
+                holdUntil = double.PositiveInfinity;
+            }
+        }
+
+        private bool WithinTowerStroke(double[] pose)
+        {
+            var p = new SmarpodPose(pose[0], pose[1], pose[2], pose[3], pose[4], pose[5]);
+            foreach (var tower in new[] { GetAJoints(p), GetBJoints(p), GetCJoints(p) })
+                if (Math.Abs(tower.x) > maxTowerStroke || Math.Abs(tower.y) > maxTowerStroke || Math.Abs(tower.z) > maxTowerStroke)
+                    return false;
+            return true;
+        }
+
+        private void WarnStroke(string action)
+        {
+            if (Time.time < nextStrokeWarning)
+                return;
+            nextStrokeWarning = Time.time + StrokeWarningInterval;
+            Debug.LogWarning($"Smarpod: a tower stage would exceed {maxTowerStroke * 1000.0:0.###} mm; {action}.");
         }
 
         // Smarpod_Stop / Smarpod_StopAndHold: end the move where it is.
@@ -226,6 +259,14 @@ namespace ROS2
 
             RunOnMainThread(() =>
             {
+                // Like Smarpod_Move for an unreachable pose: the command is
+                // rejected and the stage keeps its current target.
+                if (!WithinTowerStroke(pose))
+                {
+                    WarnStroke("target rejected");
+                    return;
+                }
+
                 Array.Copy(pose, target, 6);
                 bool atTarget = true;
                 for (int i = 0; i < 6; i++)
