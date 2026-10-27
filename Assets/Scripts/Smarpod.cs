@@ -1,36 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 using UnityEngine;
 
 namespace ROS2
 {
-    using SetPivot_Request = smarpod_interfaces.srv.SetPivot_Request;
-    using SetPivot_Response = smarpod_interfaces.srv.SetPivot_Response;
-
-    using GetPivot_Request = smarpod_interfaces.srv.GetPivot_Request;
-    using GetPivot_Response = smarpod_interfaces.srv.GetPivot_Response;
-
-    using GetPose_Request = smarpod_interfaces.srv.GetPose_Request;
-    using GetPose_Response = smarpod_interfaces.srv.GetPose_Response;
-
-    using Move_Request = smarpod_interfaces.srv.Move_Request;
-    using Move_Response = smarpod_interfaces.srv.Move_Response;
-
-    using Stop_Request = smarpod_interfaces.srv.Stop_Request;
-    using Stop_Response = smarpod_interfaces.srv.Stop_Response;
-
-    using StopAndHold_Request = smarpod_interfaces.srv.StopAndHold_Request;
-    using StopAndHold_Response = smarpod_interfaces.srv.StopAndHold_Response;
-
-    using GetMoveStatus_Request = smarpod_interfaces.srv.GetMoveStatus_Request;
-    using GetMoveStatus_Response = smarpod_interfaces.srv.GetMoveStatus_Response;
-
-    using SetSpeed_Request = smarpod_interfaces.srv.SetSpeed_Request;
-    using SetSpeed_Response = smarpod_interfaces.srv.SetSpeed_Response;
-
-    using GetSpeed_Request = smarpod_interfaces.srv.GetSpeed_Request;
-    using GetSpeed_Response = smarpod_interfaces.srv.GetSpeed_Response;
+    using JointState = sensor_msgs.msg.JointState;
+    using Float64 = std_msgs.msg.Float64;
+    using Empty = std_msgs.msg.Empty;
+    using PointMsg = geometry_msgs.msg.Point;
+    using SmarPodSimState = smarpod_interfaces.msg.SmarPodSimState;
 
     struct Point
     {
@@ -55,31 +33,78 @@ namespace ROS2
         }
     }
 
+    // =========================================================================
+    // Simulated SmarPod, the counterpart of the ros2_control hardware
+    // smaract_hexapod_unity_hw_interface/SmarPodUnitySystem (selected by
+    // smaract_hexapod_description/urdf/ros2_control.xacro for hardware:=unity).
+    // That plugin replaces every SmarPod SDK call by one of these topics:
+    //
+    //   <topicPrefix>/cmd/pose           JointState SP_X..SP_C [m, rad]   Smarpod_Move
+    //   <topicPrefix>/cmd/speed          Float64 [m/s]                    Smarpod_SetSpeed
+    //   <topicPrefix>/cmd/stop           Empty                            Smarpod_Stop
+    //   <topicPrefix>/cmd/stop_and_hold  Float64 hold time [ms]           Smarpod_StopAndHold
+    //   <topicPrefix>/cmd/pivot          Point [m]                        Smarpod_SetPivot
+    //   <topicPrefix>/state              SmarPodSimState (published here) Smarpod_Get*
+    //
+    // Moves run on a straight line in pose space, so all six axes arrive
+    // together. `speed` limits the translation and, through the platform
+    // radius, how fast the tower joints of a rotation move. The pivot is only
+    // stored and reported back: the platform joints form the same X/Y/Z/C/B/A
+    // chain as the URDF, so rotations look as they do in RViz.
+    //
+    // The stage is kinematic, not physically simulated: every physics step the
+    // plate and tower joints are set to the commanded pose, with drives and
+    // gravity switched off, and that exact pose is reported. Like the real
+    // stage it reaches its target precisely and holds it without drift.
+    // =========================================================================
     public class Smarpod : MonoBehaviour
     {
         private const string NodeName = "Smarpod";
 
+        // SmarPodSimState move_status values (Smarpod_GetMoveStatus).
+        private const byte StatusStopped = 0;
+        private const byte StatusHolding = 1;
+        private const byte StatusMoving = 2;
+
+        // Hold time the real system passes to Smarpod_Move; this value is
+        // SMARPOD_HOLDTIME_INFINITE, so the stage holds until the next command.
+        private const double InfiniteHoldTimeMs = 60000.0;
+
+        // Distance of the tower joints from the platform centre [m]
+        // (58.833488 mm in the tower kinematics below).
+        private const double PlatformRadius = 0.058833488;
+
+        private const double TargetTolerance = 1e-9;
+
+        [Header("ROS")]
+        [Tooltip("Must match the topic_prefix hardware parameter in smaract_hexapod_description/urdf/ros2_control.xacro.")]
+        public string topicPrefix = "/smarpod_unity";
+
+        [Header("Motion")]
+        [Tooltip("Initial translational speed [m/s] until the hardware interface sets one.")]
+        public double speed = 0.001;
+
         // ROS
         private ROS2UnityComponent ros2Unity;
         private ROS2Node ros2Node;
+        private ISubscription<JointState> poseSubscription;
+        private ISubscription<Float64> speedSubscription;
+        private ISubscription<Empty> stopSubscription;
+        private ISubscription<Float64> stopAndHoldSubscription;
+        private ISubscription<PointMsg> pivotSubscription;
+        private IPublisher<SmarPodSimState> statePublisher;
 
-        private IService<SetPivot_Request, SetPivot_Response> srvSetPivot;
-        private IService<GetPivot_Request, GetPivot_Response> srvGetPivot;
-        private IService<GetPose_Request, GetPose_Response> srvGetPose;
-        private IService<Move_Request, Move_Response> srvMove;
-        private IService<Stop_Request, Stop_Response> srvStop;
-        private IService<StopAndHold_Request, StopAndHold_Response> srvStopAndHold;
-        private IService<GetMoveStatus_Request, GetMoveStatus_Response> srvGetMoveStatus;
-        private IService<SetSpeed_Request, SetSpeed_Response> srvSetSpeed;
-        private IService<GetSpeed_Request, GetSpeed_Response> srvGetSpeed;
-
-        // Main thread action queue
+        // Subscription callbacks run on the ROS2ForUnity executor thread.
         private readonly ConcurrentQueue<Action> mainThreadActions = new ConcurrentQueue<Action>();
         private void RunOnMainThread(Action action) => mainThreadActions.Enqueue(action);
 
-        // Cached pose and speed for safe use in callbacks
-        private SmarpodPose latestPose = new SmarpodPose();
-        private double latestSpeed = 0.0;
+        // Simulated controller state, X/Y/Z [m] and A/B/C [rad].
+        private readonly double[] setpoint = new double[6];
+        private readonly double[] setpointVelocity = new double[6];
+        private readonly double[] target = new double[6];
+        private byte moveStatus = StatusStopped;
+        private double holdUntil = double.PositiveInfinity;
+        private readonly double[] pivot = new double[3];
 
         // Articulation bodies
         public ArticulationBody PlateXAxis, PlateYAxis, PlateZAxis;
@@ -88,144 +113,189 @@ namespace ROS2
         public ArticulationBody Tower2X, Tower2Y, Tower2Z;
         public ArticulationBody Tower3X, Tower3Y, Tower3Z;
 
+        private ArticulationBody[] PlateAxes => new[] { PlateXAxis, PlateYAxis, PlateZAxis, PlateAAxis, PlateBAxis, PlateCAxis };
+        private ArticulationBody[] TowerAxes => new[] { Tower1X, Tower1Y, Tower1Z, Tower2X, Tower2Y, Tower2Z, Tower3X, Tower3Y, Tower3Z };
+
         void Start()
         {
             ros2Unity = GetComponent<ROS2UnityComponent>();
+
+            foreach (var axis in PlateAxes) MakeKinematic(axis);
+            foreach (var axis in TowerAxes) MakeKinematic(axis);
+            IgnoreSelfCollisions();
+
+            var pose = GetPoseInner();
+            var initial = new[] { pose.position_x, pose.position_y, pose.position_z, pose.rotation_x, pose.rotation_y, pose.rotation_z };
+            Array.Copy(initial, setpoint, 6);
+            Array.Copy(initial, target, 6);
         }
 
         void Update()
         {
-            // Run any queued main-thread actions
+            if (ros2Node == null && ros2Unity != null && ros2Unity.Ok())
+            {
+                ros2Node = ros2Unity.CreateNode(NodeName);
+                poseSubscription = ros2Node.CreateSubscription<JointState>(topicPrefix + "/cmd/pose", OnMove);
+                speedSubscription = ros2Node.CreateSubscription<Float64>(topicPrefix + "/cmd/speed", OnSpeed);
+                stopSubscription = ros2Node.CreateSubscription<Empty>(topicPrefix + "/cmd/stop", OnStop);
+                stopAndHoldSubscription = ros2Node.CreateSubscription<Float64>(topicPrefix + "/cmd/stop_and_hold", OnStopAndHold);
+                pivotSubscription = ros2Node.CreateSubscription<PointMsg>(topicPrefix + "/cmd/pivot", OnPivot);
+                statePublisher = ros2Node.CreateSensorPublisher<SmarPodSimState>(topicPrefix + "/state");
+            }
+        }
+
+        void FixedUpdate()
+        {
             while (mainThreadActions.TryDequeue(out var action))
                 action?.Invoke();
 
-            if (ros2Unity.Ok())
+            var previous = (double[])setpoint.Clone();
+            StepMotion(Time.fixedDeltaTime);
+            for (int i = 0; i < 6; i++)
+                setpointVelocity[i] = (setpoint[i] - previous[i]) / Time.fixedDeltaTime;
+
+            foreach (var root in new[] { PlateXAxis, Tower1X, Tower2X, Tower3X })
+                DisableGravity(root);
+
+            var axes = PlateAxes;
+            for (int i = 0; i < 6; i++)
+                SetJointPosition(axes[i], setpoint[i]);
+
+            var pose = new SmarpodPose(setpoint[0], setpoint[1], setpoint[2], setpoint[3], setpoint[4], setpoint[5]);
+            UpdateTowers(pose);
+            PublishState(pose);
+        }
+
+        // --- Simulated controller ---
+
+        private void StepMotion(double dt)
+        {
+            if (moveStatus == StatusHolding && Time.timeAsDouble >= holdUntil)
+                moveStatus = StatusStopped;
+
+            if (moveStatus != StatusMoving)
+                return;
+
+            double translation = 0.0, rotation = 0.0;
+            for (int i = 0; i < 3; i++)
             {
-                if (ros2Node == null)
-                {
-                    ros2Node = ros2Unity.CreateNode(NodeName);
-                    srvSetPivot = ros2Node.CreateService<SetPivot_Request, SetPivot_Response>("~/SetPivot", SetPivot);
-                    srvGetPivot = ros2Node.CreateService<GetPivot_Request, GetPivot_Response>("~/GetPivot", GetPivot);
-                    srvGetPose = ros2Node.CreateService<GetPose_Request, GetPose_Response>("~/GetPose", GetPose);
-                    srvMove = ros2Node.CreateService<Move_Request, Move_Response>("~/Move", Move);
-                    srvStop = ros2Node.CreateService<Stop_Request, Stop_Response>("~/Stop", Stop);
-                    srvStopAndHold = ros2Node.CreateService<StopAndHold_Request, StopAndHold_Response>("~/StopAndHold", StopAndHold);
-                    srvGetMoveStatus = ros2Node.CreateService<GetMoveStatus_Request, GetMoveStatus_Response>("~/GetMoveStatus", GetMoveStatus);
-                    srvSetSpeed = ros2Node.CreateService<SetSpeed_Request, SetSpeed_Response>("~/SetSpeed", SetSpeed);
-                    srvGetSpeed = ros2Node.CreateService<GetSpeed_Request, GetSpeed_Response>("~/GetSpeed", GetSpeed);
-                }
+                translation += (target[i] - setpoint[i]) * (target[i] - setpoint[i]);
+                rotation = Math.Max(rotation, Math.Abs(target[i + 3] - setpoint[i + 3]));
+            }
+            double duration = Math.Max(Math.Sqrt(translation), rotation * PlatformRadius) / speed;
+
+            if (duration <= dt)
+            {
+                Array.Copy(target, setpoint, 6);
+                moveStatus = StatusHolding;
+                holdUntil = double.PositiveInfinity;
+                return;
             }
 
-            // Cache pose and speed every frame
-            latestPose = GetPoseInner();
-            latestSpeed = GetCurrentSpeed();
-
-            // Update towers using the pose
-            UpdateTowers(latestPose);
+            for (int i = 0; i < 6; i++)
+                setpoint[i] += (target[i] - setpoint[i]) * dt / duration;
         }
 
-        private void UpdateTowers(SmarpodPose pose)
+        // Smarpod_Stop / Smarpod_StopAndHold: end the move where it is.
+        private void Halt(byte status, double holdTimeMs)
         {
-            var t1 = GetAJoints(pose);
-            var t2 = GetBJoints(pose);
-            var t3 = GetCJoints(pose);
-
-            Tower1X.SetDriveTarget(ArticulationDriveAxis.X, (float)t1.x);
-            Tower1Y.SetDriveTarget(ArticulationDriveAxis.X, (float)t1.y);
-            Tower1Z.SetDriveTarget(ArticulationDriveAxis.X, (float)t1.z);
-            Tower2X.SetDriveTarget(ArticulationDriveAxis.X, (float)t2.x);
-            Tower2Y.SetDriveTarget(ArticulationDriveAxis.X, (float)t2.y);
-            Tower2Z.SetDriveTarget(ArticulationDriveAxis.X, (float)t2.z);
-            Tower3X.SetDriveTarget(ArticulationDriveAxis.X, (float)t3.x);
-            Tower3Y.SetDriveTarget(ArticulationDriveAxis.X, (float)t3.y);
-            Tower3Z.SetDriveTarget(ArticulationDriveAxis.X, (float)t3.z);
+            Array.Copy(setpoint, target, 6);
+            moveStatus = status;
+            holdUntil = holdTimeMs >= InfiniteHoldTimeMs
+                ? double.PositiveInfinity
+                : Time.timeAsDouble + holdTimeMs / 1000.0;
         }
 
-        // --- Service Callbacks ---
+        // --- Subscription callbacks (executor thread) ---
 
-        private SetPivot_Response SetPivot(SetPivot_Request req) { throw new NotImplementedException(); }
-        private GetPivot_Response GetPivot(GetPivot_Request req) { throw new NotImplementedException(); }
+        private static readonly string[] PoseJointNames = { "SP_X_Joint", "SP_Y_Joint", "SP_Z_Joint", "SP_A_Joint", "SP_B_Joint", "SP_C_Joint" };
 
-        private GetPose_Response GetPose(GetPose_Request req)
+        private void OnMove(JointState msg)
         {
-            // Use cached pose (safe to read from any thread)
-            var pose = latestPose;
-            var res = new GetPose_Response();
-            res.Xyz[0] = pose.position_x;
-            res.Xyz[1] = pose.position_y;
-            res.Xyz[2] = pose.position_z;
-            res.Abc[0] = pose.rotation_x;
-            res.Abc[1] = pose.rotation_y;
-            res.Abc[2] = pose.rotation_z;
-            return res;
-        }
+            var pose = new double[6];
+            for (int i = 0; i < 6; i++)
+            {
+                int index = Array.IndexOf(msg.Name, PoseJointNames[i]);
+                if (index < 0 || index >= msg.Position.Length || double.IsNaN(msg.Position[index]))
+                {
+                    Debug.LogWarning($"Smarpod: ignoring move without a position for {PoseJointNames[i]}.");
+                    return;
+                }
+                pose[i] = msg.Position[index];
+            }
 
-        private Move_Response Move(Move_Request req)
-        {
             RunOnMainThread(() =>
             {
-                PlateXAxis.SetDriveTarget(ArticulationDriveAxis.X, (float)req.X);
-                PlateYAxis.SetDriveTarget(ArticulationDriveAxis.X, (float)req.Y);
-                PlateZAxis.SetDriveTarget(ArticulationDriveAxis.X, (float)req.Z);
-                PlateAAxis.SetDriveTarget(ArticulationDriveAxis.X, (float)req.A);
-                PlateBAxis.SetDriveTarget(ArticulationDriveAxis.X, (float)req.B);
-                PlateCAxis.SetDriveTarget(ArticulationDriveAxis.X, (float)req.C);
+                Array.Copy(pose, target, 6);
+                bool atTarget = true;
+                for (int i = 0; i < 6; i++)
+                    atTarget &= Math.Abs(target[i] - setpoint[i]) <= TargetTolerance;
+                if (!atTarget)
+                    moveStatus = StatusMoving;
+                else if (moveStatus != StatusMoving)
+                    Halt(StatusHolding, InfiniteHoldTimeMs);
             });
-            return new Move_Response() { Success = true };
         }
 
-        private Stop_Response Stop(Stop_Request req)
+        private void OnSpeed(Float64 msg)
         {
+            double value = msg.Data;
+            if (!(value > 0.0))
+            {
+                Debug.LogWarning($"Smarpod: ignoring invalid speed {value} m/s.");
+                return;
+            }
+            RunOnMainThread(() => speed = value);
+        }
+
+        private void OnStop(Empty msg)
+        {
+            RunOnMainThread(() => Halt(StatusStopped, 0.0));
+        }
+
+        private void OnStopAndHold(Float64 msg)
+        {
+            double holdTimeMs = msg.Data;
+            RunOnMainThread(() => Halt(StatusHolding, holdTimeMs));
+        }
+
+        private void OnPivot(PointMsg msg)
+        {
+            double x = msg.X, y = msg.Y, z = msg.Z;
             RunOnMainThread(() =>
             {
-                List<float> XTarget = new(), YTarget = new(), ZTarget = new();
-                List<float> ATarget = new(), BTarget = new(), CTarget = new();
-                PlateXAxis.GetDriveTargets(XTarget);
-                PlateYAxis.GetDriveTargets(YTarget);
-                PlateZAxis.GetDriveTargets(ZTarget);
-                PlateAAxis.GetDriveTargets(ATarget);
-                PlateBAxis.GetDriveTargets(BTarget);
-                PlateCAxis.GetDriveTargets(CTarget);
-
-                PlateXAxis.SetDriveTarget(ArticulationDriveAxis.X, XTarget[0]);
-                PlateYAxis.SetDriveTarget(ArticulationDriveAxis.X, YTarget[0]);
-                PlateZAxis.SetDriveTarget(ArticulationDriveAxis.X, ZTarget[0]);
-                PlateAAxis.SetDriveTarget(ArticulationDriveAxis.X, ATarget[0]);
-                PlateBAxis.SetDriveTarget(ArticulationDriveAxis.X, BTarget[0]);
-                PlateCAxis.SetDriveTarget(ArticulationDriveAxis.X, CTarget[0]);
+                pivot[0] = x;
+                pivot[1] = y;
+                pivot[2] = z;
             });
-            return new Stop_Response() { Success = true };
         }
 
-        private StopAndHold_Response StopAndHold(StopAndHold_Request req)
+        // --- State ---
+
+        private void PublishState(SmarpodPose pose)
         {
-            Stop(new Stop_Request());
-            return new StopAndHold_Response() { Success = true };
+            // ROS shuts down before the last FixedUpdate when play mode ends.
+            if (statePublisher == null || !ros2Unity.Ok())
+                return;
+
+            var state = new SmarPodSimState();
+            ros2Node.clock.UpdateROSClockTime(state.Stamp);
+            state.Pose[0] = pose.position_x;
+            state.Pose[1] = pose.position_y;
+            state.Pose[2] = pose.position_z;
+            state.Pose[3] = pose.rotation_x;
+            state.Pose[4] = pose.rotation_y;
+            state.Pose[5] = pose.rotation_z;
+            for (int i = 0; i < 6; i++)
+                state.Velocity[i] = setpointVelocity[i];
+            state.Pivot.X = pivot[0];
+            state.Pivot.Y = pivot[1];
+            state.Pivot.Z = pivot[2];
+            state.Move_status = moveStatus;
+            state.Speed = speed;
+            state.Is_referenced = true;
+            statePublisher.Publish(state);
         }
-
-        private GetMoveStatus_Response GetMoveStatus(GetMoveStatus_Request req) { throw new NotImplementedException(); }
-
-        private SetSpeed_Response SetSpeed(SetSpeed_Request req)
-        {
-            RunOnMainThread(() =>
-            {
-                PlateXAxis.SetDriveTargetVelocity(ArticulationDriveAxis.X, (float)req.Speed);
-                PlateYAxis.SetDriveTargetVelocity(ArticulationDriveAxis.X, (float)req.Speed);
-                PlateZAxis.SetDriveTargetVelocity(ArticulationDriveAxis.X, (float)req.Speed);
-                PlateAAxis.SetDriveTargetVelocity(ArticulationDriveAxis.X, (float)req.Speed);
-                PlateBAxis.SetDriveTargetVelocity(ArticulationDriveAxis.X, (float)req.Speed);
-                PlateCAxis.SetDriveTargetVelocity(ArticulationDriveAxis.X, (float)req.Speed);
-            });
-            return new SetSpeed_Response() { Success = true };
-        }
-
-        private GetSpeed_Response GetSpeed(GetSpeed_Request req)
-        {
-            // Use cached speed
-            return new GetSpeed_Response() { Speed = latestSpeed };
-        }
-
-        // --- Pose and Speed Caching ---
 
         private SmarpodPose GetPoseInner()
         {
@@ -239,11 +309,86 @@ namespace ROS2
             );
         }
 
-        private double GetCurrentSpeed()
+        // --- Kinematic joints ---
+
+        /// <summary>Switches the drive off (xDrive returns a copy, so it is read,
+        /// modified and written back); the joint position is set every step.</summary>
+        private static void MakeKinematic(ArticulationBody body)
         {
-            List<float> XVelocity = new();
-            PlateXAxis.GetDriveTargetVelocities(XVelocity);
-            return XVelocity.Count > 0 ? (double)XVelocity[0] : 0.0;
+            if (body == null)
+                return;
+
+            var drive = body.xDrive;
+            drive.stiffness = 0f;
+            drive.damping = 0f;
+            body.xDrive = drive;
+        }
+
+        /// <summary>The tower tips meet the top plate in the CAD, so their colliders
+        /// touch. Unity only ignores contacts between directly connected links,
+        /// and depenetration would push the plate up and twist it out of its
+        /// pose every step. Contacts between the Smarpod's own links (base,
+        /// towers, plate, chucks) are ignored; contacts with everything else,
+        /// e.g. parts on the chuck, still happen.</summary>
+        private void IgnoreSelfCollisions()
+        {
+            if (PlateXAxis == null || Tower1X == null)
+                return;
+
+            // Lowest common ancestor of the plate chain and the towers (SmarPod_Origin).
+            Transform root = PlateXAxis.transform;
+            while (root != null && !Tower1X.transform.IsChildOf(root))
+                root = root.parent;
+            if (root == null)
+                return;
+
+            var colliders = root.GetComponentsInChildren<Collider>(true);
+            for (int i = 0; i < colliders.Length; i++)
+                for (int j = i + 1; j < colliders.Length; j++)
+                    Physics.IgnoreCollision(colliders[i], colliders[j]);
+            Debug.Log($"Smarpod: ignoring contacts between {colliders.Length} colliders below '{root.name}'.");
+        }
+
+        /// <summary>Gravity on any link below the plate or a tower (chucks,
+        /// attached parts) would pull the chain away from its pose during the
+        /// physics step, so it is switched off for the whole subtree. Checked
+        /// every step to cover links attached at runtime.</summary>
+        private static void DisableGravity(ArticulationBody root)
+        {
+            if (root == null)
+                return;
+
+            foreach (var body in root.GetComponentsInChildren<ArticulationBody>())
+                if (body.useGravity)
+                    body.useGravity = false;
+        }
+
+        /// <summary>Places the joint exactly at `value` (metres or radians) and
+        /// at rest, so the physics step leaves it there.</summary>
+        private static void SetJointPosition(ArticulationBody body, double value)
+        {
+            if (body == null || body.dofCount == 0)
+                return;
+
+            body.jointPosition = new ArticulationReducedSpace((float)value);
+            body.jointVelocity = new ArticulationReducedSpace(0f);
+        }
+
+        private void UpdateTowers(SmarpodPose pose)
+        {
+            var t1 = GetAJoints(pose);
+            var t2 = GetBJoints(pose);
+            var t3 = GetCJoints(pose);
+
+            SetJointPosition(Tower1X, t1.x);
+            SetJointPosition(Tower1Y, t1.y);
+            SetJointPosition(Tower1Z, t1.z);
+            SetJointPosition(Tower2X, t2.x);
+            SetJointPosition(Tower2Y, t2.y);
+            SetJointPosition(Tower2Z, t2.z);
+            SetJointPosition(Tower3X, t3.x);
+            SetJointPosition(Tower3Y, t3.y);
+            SetJointPosition(Tower3Z, t3.z);
         }
 
         // --- Kinematic Calculations (unchanged) ---
