@@ -1,6 +1,7 @@
 {
   "ros2_ws_src": "~/ros2_ws/src",
-  "ros2_for_unity": "~/Documents/ros2-for-unity",
+  "ros2_for_unity": "~/ros2-for-unity",
+  "PREV_ros2_for_unity": "~/Documents/ros2-for-unity",
   "interface_repo": "src/ros2cs/custom_messages/pm_ros2_unity_interface",
   "exclude": []
 }

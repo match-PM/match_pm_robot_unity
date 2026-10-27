@@ -69,15 +69,72 @@ def warn(text):
 
 
 def load_config():
-    config = json.loads(CONFIG_FILE.read_text())
-    ws_src = os.environ.get("PM_ROS2_WS_SRC", config["ros2_ws_src"])
-    ros2_for_unity = Path(os.path.expanduser(os.environ.get("PM_ROS2_FOR_UNITY", config["ros2_for_unity"])))
+    try:
+        config = json.loads(CONFIG_FILE.read_text())
+        ws_src = os.environ.get("PM_ROS2_WS_SRC", config["ros2_ws_src"])
+        ros2_for_unity_value = os.environ.get("PM_ROS2_FOR_UNITY", config["ros2_for_unity"])
+        interface_repo = config["interface_repo"]
+    except FileNotFoundError:
+        raise SyncError(f"configuration file not found: {CONFIG_FILE}")
+    except json.JSONDecodeError as error:
+        raise SyncError(f"invalid JSON in {CONFIG_FILE}: line {error.lineno}, column {error.colno}: {error.msg}")
+    except KeyError as error:
+        raise SyncError(f"missing required key {error} in {CONFIG_FILE}")
+
+    ros2_for_unity = Path(os.path.expanduser(ros2_for_unity_value))
     return Config(
         ws_src=Path(os.path.expanduser(ws_src)),
         ros2_for_unity=ros2_for_unity,
-        mirror=ros2_for_unity / config["interface_repo"],
+        mirror=ros2_for_unity / interface_repo,
         exclude=set(config.get("exclude", [])),
     )
+
+
+def configured_by(environment_name, json_key):
+    if environment_name in os.environ:
+        return f"environment variable {environment_name}"
+    return f"'{json_key}' in {CONFIG_FILE.relative_to(PROJECT)}"
+
+
+def validate_config(config):
+    """Fail early when a configured root or required subdirectory is wrong.
+
+    Without this guard a missing ros2-for-unity tree looks like an empty set of
+    bundled interfaces. Custom packages then appear ``skipped`` because normal
+    dependencies such as geometry_msgs seem unavailable, hiding the path error.
+    """
+    problems = []
+    if not config.ws_src.is_dir():
+        problems.append(
+            f"ROS2 workspace source directory does not exist: {config.ws_src}\n"
+            f"  configured by {configured_by('PM_ROS2_WS_SRC', 'ros2_ws_src')}")
+
+    if not config.ros2_for_unity.is_dir():
+        detail = (
+            f"ros2-for-unity directory does not exist: {config.ros2_for_unity}\n"
+            f"  configured by {configured_by('PM_ROS2_FOR_UNITY', 'ros2_for_unity')}")
+        likely = Path.home() / "ros2-for-unity"
+        if likely.is_dir() and likely.resolve() != config.ros2_for_unity.resolve():
+            detail += f"\n  possible installation found at: {likely}"
+        problems.append(detail)
+    else:
+        expected = (
+            (config.ros2_for_unity / "src" / "ros2cs" / "build.sh", True,
+             "ros2cs build script"),
+            (config.ros2_for_unity / "src" / "ros2cs" / "src", False,
+             "bundled ROS2 interface sources"),
+            (config.mirror, False, "custom interface mirror"),
+        )
+        for path, is_file, description in expected:
+            exists = path.is_file() if is_file else path.is_dir()
+            if not exists:
+                problems.append(f"{description} not found: {path}")
+
+    if problems:
+        raise SyncError(
+            "Interface sync path validation failed:\n- " + "\n- ".join(problems) +
+            "\nUpdate Tools/ros2_interfaces.json or set PM_ROS2_WS_SRC / PM_ROS2_FOR_UNITY "
+            "before starting Unity.")
 
 
 def ros_distro():
@@ -207,11 +264,6 @@ def survey(config):
 
 
 def check(config, as_json):
-    if not config.ws_src.is_dir():
-        message = f"ROS2 workspace not found at {config.ws_src}, nothing to check"
-        print(json.dumps({"available": False, "message": message, "packages": []}) if as_json else message)
-        return 0
-
     packages = survey(config)
     outdated = [p for p in packages if p.status in OUTDATED]
     if as_json:
@@ -296,12 +348,62 @@ def build(workspace, distro, say):
     # dependencies that ros2-for-unity then never deploys.
     env = {key: os.environ[key] for key in ("HOME", "USER", "LOGNAME", "LANG", "TERM") if key in os.environ}
     env["PATH"] = CLEAN_PATH
-    command = ["bash", "-c", f"source /opt/ros/{distro}/setup.bash && ./build.sh"]
+    command = ["bash", "-c", f"source /opt/ros/{distro}/setup.bash && ./src/ros2cs/build.sh"]
     for attempt in (1, 2):
-        say(f"--- build attempt {attempt}: {workspace}/build.sh (only /opt/ros/{distro} sourced)")
+        say(f"--- build attempt {attempt}: {workspace}/src/ros2cs/build.sh "
+            f"(only /opt/ros/{distro} sourced)")
         if run_streamed(command, workspace, env, say) == 0:
-            return
-    raise SyncError("ros2-for-unity build failed twice (see log); Assets/Ros2ForUnity was not touched")
+            break
+    else:
+        raise SyncError("ros2-for-unity build failed twice (see log); Assets/Ros2ForUnity was not touched")
+
+    # The upstream top-level build.sh packages a complete Ros2ForUnity asset
+    # from workspace/src/Ros2ForUnity. This project already owns that asset,
+    # and some installations deliberately omit the duplicate source tree.
+    # Stage only the freshly built plugins consumed by deploy().
+    asset = workspace / "install" / "asset" / "Ros2ForUnity"
+    plugins = asset / "Plugins"
+    say(f"--- staging Unity plugins in {plugins}")
+    dotnet_output = workspace / "install" / "lib" / "dotnet"
+    native_output = workspace / "install" / "lib"
+    missing = [path for path in (dotnet_output, native_output) if not path.is_dir()]
+    if missing:
+        raise SyncError(
+            "ros2cs build finished without the expected plugin output: " +
+            ", ".join(str(path) for path in missing) +
+            "; Assets/Ros2ForUnity was not touched")
+
+    plugins.mkdir(parents=True, exist_ok=True)
+    native_plugins = plugins / "Linux" / "x86_64"
+    native_plugins.mkdir(parents=True, exist_ok=True)
+    managed_count = 0
+    native_count = 0
+    for source in dotnet_output.iterdir():
+        if source.is_file() and source.suffix != ".pdb":
+            shutil.copy2(source, plugins / source.name)
+            managed_count += 1
+    for source in native_output.iterdir():
+        if source.is_file() and not source.name.endswith("_python.so"):
+            shutil.copy2(source, native_plugins / source.name)
+            native_count += 1
+    if not managed_count or not native_count:
+        raise SyncError(
+            f"ros2cs plugin output is incomplete ({managed_count} managed, {native_count} native files); "
+            "Assets/Ros2ForUnity was not touched")
+    say(f"--- staged {managed_count} managed and {native_count} native plugin file(s)")
+
+    # ros2cs itself has not changed during an interface sync, so retain the
+    # checked-in metadata while replacing the generated assemblies/typesupport.
+    for name in ("metadata_ros2cs.xml", "metadata_ros2_for_unity.xml"):
+        source = ASSET_DIR / name
+        if not source.is_file():
+            raise SyncError(f"Unity metadata missing: {source}")
+        shutil.copy2(source, asset / name)
+    ros2cs_metadata = ASSET_DIR / "metadata_ros2cs.xml"
+    # The editor resolves plugins from Plugins/<OS>/x86_64, while player
+    # builds consume the copy at Plugins. Keep both layouts valid.
+    shutil.copy2(ros2cs_metadata, plugins / "metadata_ros2cs.xml")
+    shutil.copy2(ros2cs_metadata, native_plugins / "metadata_ros2cs.xml")
 
 
 def deploy(workspace, log):
@@ -344,12 +446,6 @@ def csharp_users(names):
 
 def sync(config, prune):
     workspace = config.ros2_for_unity
-    if not (workspace / "build.sh").is_file():
-        raise SyncError(f"ros2-for-unity not found at {workspace} (set PM_ROS2_FOR_UNITY or Tools/ros2_interfaces.json)")
-    if not config.mirror.is_dir():
-        raise SyncError(f"interface repo {config.mirror} missing, run ./pull_repositories.sh in {workspace} first")
-    if not config.ws_src.is_dir():
-        raise SyncError(f"ROS2 workspace not found at {config.ws_src} (set PM_ROS2_WS_SRC or Tools/ros2_interfaces.json)")
 
     distro = ros_distro()
     packages = survey(config)
@@ -418,6 +514,7 @@ def main():
 
     try:
         config = load_config()
+        validate_config(config)
         if args.command == "check":
             return check(config, args.json)
         return sync(config, args.prune)

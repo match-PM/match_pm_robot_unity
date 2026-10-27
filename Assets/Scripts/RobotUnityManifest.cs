@@ -107,6 +107,12 @@ public class ManifestSection
     /// keys separated by '/', e.g. "pm_robot_tools/pm_robot_vacuum_tools".</summary>
     public string yamlPath;
 
+    /// <summary>Optional path to the dictionary containing enableKey. Empty
+    /// means enableKey is read from yamlPath. This supports selections whose
+    /// enable flag lives elsewhere, such as confocal_sensor_head being gated
+    /// by measuring_systems.use_confocal_head.</summary>
+    public string enableYamlPath;
+
     /// <summary>Bool key enabling the section ("" = always enabled). Key names
     /// mirror the YAML verbatim, including its typos (e.g. "use_paralell_gripper").</summary>
     public string enableKey;

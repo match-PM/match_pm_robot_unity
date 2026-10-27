@@ -196,7 +196,14 @@ public class configureRobot : MonoBehaviour
     {
         if (!TryGetSubDict(root, "measuring_systems", out var d)) return;
         measuringSystem_ConfocalBottom?.SetActive(GetBool(d, "use_confocal_bottom"));
-        measuringSystem_ConfocalHead?.SetActive(GetBool(d, "use_confocal_head"));
+        // New confocal-head variants are generated into the manifest and are
+        // activated below from confocal_sensor_head.use_config. Keep the old
+        // Inspector-wired single mesh disabled when that section is present;
+        // this also makes existing scenes migrate cleanly after a delta import.
+        bool manifestControlsConfocalHead = _manifest?.sections?.Any(
+            s => s.yamlPath == "confocal_sensor_head") == true;
+        measuringSystem_ConfocalHead?.SetActive(
+            !manifestControlsConfocalHead && GetBool(d, "use_confocal_head"));
         measuringSystem_KeyenceBottom?.SetActive(GetBool(d, "use_keyence_bottom"));
     }
 
@@ -271,7 +278,13 @@ public class configureRobot : MonoBehaviour
             if (!TryGetSectionDict(yamlRoot, section.yamlPath, out var d))
                 continue;
 
-            bool enabled = string.IsNullOrEmpty(section.enableKey) || GetBool(d, section.enableKey);
+            Dictionary<string, object> enableDict = d;
+            if (!string.IsNullOrEmpty(section.enableYamlPath) &&
+                !TryGetSectionDict(yamlRoot, section.enableYamlPath, out enableDict))
+                continue;
+
+            bool enabled = string.IsNullOrEmpty(section.enableKey) ||
+                           GetBool(enableDict, section.enableKey);
             string[] selected = section.selectKeys.Select(k => GetString(d, k)).ToArray();
 
             foreach (var item in section.items)

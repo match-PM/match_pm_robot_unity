@@ -1,31 +1,31 @@
 {
   "packages": {
     "assembly_manager_interfaces": {
-      "commit": "75f6e2a",
-      "dirty": false,
-      "hash": "6ed5353bb2434bd2a2f91e6b7918fae7b7d4b4b675a9a1468cd618ea1426066a",
+      "commit": "9c838bb",
+      "dirty": true,
+      "hash": "b74b33d11fe55a07babde2c83d611742c6dd2a35e3dfbd2d5c67a06e8e6bacca",
       "source": "ros_assembly_manager/assembly_manager_interfaces"
     },
     "pm_moveit_interfaces": {
-      "commit": "cd37283",
+      "commit": "6b6dafe",
       "dirty": false,
       "hash": "8085da8b93aabe23b27f5b9e90bf3eca3d7fcf48e10b720fd2eb2c2d729c6c17",
       "source": "match_pm_robot/pm_moveit_interfaces"
     },
     "pm_msgs": {
-      "commit": "cd37283",
+      "commit": "6b6dafe",
       "dirty": false,
-      "hash": "5c5f721be6f20dc48ed087945837e47c579435f45d71b4c9d8baab3619ad4460",
+      "hash": "20c8c406b6264736a01887f637b08fa2a7bceef814809b08c073ca4d54da8041",
       "source": "match_pm_robot/pm_msgs"
     },
     "pm_opcua_skills_msgs": {
-      "commit": "cd37283",
+      "commit": "6b6dafe",
       "dirty": false,
       "hash": "ef0b707590701d186930232acf40900227e4f5776875f9e542ab7aaecda2cfa5",
       "source": "match_pm_robot/pm_opcua_skills/pm_opcua_skills_msgs"
     },
     "pm_robot_interfaces": {
-      "commit": "cd37283",
+      "commit": "6b6dafe",
       "dirty": false,
       "hash": "bf198116040f2f11de3d7eb5cd5ee1d3230f29c712995c4fb40b9760dcc2efc8",
       "source": "match_pm_robot/pm_robot_interfaces"
