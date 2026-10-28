@@ -1,9 +1,9 @@
 {
   "packages": {
     "assembly_manager_interfaces": {
-      "commit": "ad196cb",
+      "commit": "826ce5b",
       "dirty": true,
-      "hash": "f39d2b03e5079aa3e613420a99339678a408a863f55d893c102af198bf5356c3",
+      "hash": "258ebf5b48c33922b59cf0335e8aa3a6c29e9687ba1dbc0dc655d7bacffd6a69",
       "source": "ros_assembly_manager/assembly_manager_interfaces"
     },
     "pm_moveit_interfaces": {
