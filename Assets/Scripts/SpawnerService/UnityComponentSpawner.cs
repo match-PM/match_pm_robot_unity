@@ -16,6 +16,23 @@ public class UnityComponentSpawner : MonoBehaviour
     private bool scene_has_changed = false;
     public bool withRefFrame = false;
 
+    [Header("Random spawn offset (placement variability)")]
+    [Tooltip("Max position error along the part's own ROS axes, in metres. Drawn uniformly from [-max, +max].")]
+    public Vector3 maxPositionOffset = new Vector3(0.0005f, 0.0005f, 0f);
+    [Tooltip("Max rotation error (roll, pitch, yaw) about the part's own ROS axes, in degrees. Drawn uniformly from [-max, +max].")]
+    public Vector3 maxRotationOffsetDeg = new Vector3(0f, 0f, 0.5f);
+
+    // UUIDs seen in the previous scene message (null until the first one arrives).
+    // Only touched on the ROS spin thread.
+    private HashSet<string> lastSeenUuids = null;
+    // UUIDs of the first scene message after play mode starts, handed to the main thread to
+    // drop poses stored on disk for parts that left the scene while Unity was stopped.
+    private HashSet<string> firstSceneUuids = null;
+    // UUIDs that left the scene, handed from the ROS spin thread to the main thread.
+    // Collected per message rather than per rebuild: a clear followed quickly by a
+    // respawn can be merged into a single rebuild, and the removal must not be missed.
+    private readonly HashSet<string> removedUuids = new HashSet<string>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +43,13 @@ public class UnityComponentSpawner : MonoBehaviour
             Debug.LogError("ROS2UnityComponent not found on this GameObject. Please add it in the Inspector.");
             return;
         }
+    }
+
+    // Parts move with their parents (gonio, gripper) without a rebuild, so the stored world
+    // pose is refreshed once more when play mode stops.
+    void OnApplicationQuit()
+    {
+        SpawnGameObject.StoreAllWorldPoses();
     }
 
     // Update is called once per frame
@@ -41,11 +65,32 @@ public class UnityComponentSpawner : MonoBehaviour
             Debug.Log($"Subscribed to {ObjectScene} and ready to receive objects.");
         }
 
-        if (scene_has_changed)
+        // Read the flag before draining the removals: the callback queues removals before it
+        // sets the flag, so every removal belonging to this rebuild is forgotten first and a
+        // respawned part cannot keep its old pose.
+        bool rebuild = scene_has_changed;
+
+        var forgottenUuids = new HashSet<string>();
+        lock (removedUuids)
+        {
+            if (firstSceneUuids != null)
+            {
+                SpawnGameObject.ForgetPosesExcept(firstSceneUuids);
+                firstSceneUuids = null;
+            }
+            foreach (string uuid in removedUuids)
+                SpawnGameObject.ForgetPose(uuid);
+            forgottenUuids.UnionWith(removedUuids);
+            removedUuids.Clear();
+        }
+
+        if (rebuild)
         {
             Debug.Log("Scene has changed, applying objects to Unity.");
+            // Parts that stay in the scene keep their world pose across the rebuild.
+            var previousWorldPoses = CaptureWorldPoses(forgottenUuids);
             ClearScene(); // Clear the scene before applying new objects
-            if (ApplyObjectsToUnity())
+            if (ApplyObjectsToUnity(previousWorldPoses))
             {
                 Debug.Log("Objects applied successfully.");
             }
@@ -59,6 +104,8 @@ public class UnityComponentSpawner : MonoBehaviour
 
     private void ObjectSceneCallback(ObjectScene msg)
     {
+        TrackRemovedUuids(msg.Objects_in_scene);
+
         if (CheckSceneHasChanged(msg.Objects_in_scene))
         {
             object_list = new List<assembly_manager_interfaces.msg.Object>(msg.Objects_in_scene);
@@ -71,7 +118,60 @@ public class UnityComponentSpawner : MonoBehaviour
         }
     }
 
-    private bool ApplyObjectsToUnity()
+    // Queues every UUID that was in the previous message but is missing from this one,
+    // so its stored pose is deleted and a respawn draws a new placement error.
+    private void TrackRemovedUuids(IList<assembly_manager_interfaces.msg.Object> msgObjectList)
+    {
+        var currentUuids = new HashSet<string>();
+        foreach (var obj in msgObjectList)
+            currentUuids.Add(obj.Uuid);
+
+        lock (removedUuids)
+        {
+            if (lastSeenUuids == null)
+            {
+                firstSceneUuids = currentUuids;
+            }
+            else
+            {
+                foreach (string uuid in lastSeenUuids)
+                {
+                    if (!currentUuids.Contains(uuid))
+                        removedUuids.Add(uuid);
+                }
+            }
+        }
+        lastSeenUuids = currentUuids;
+    }
+
+    // World pose of every spawned part by UUID, taken before the scene is torn down. Parts
+    // that were removed from the scene (and possibly respawned) are left out, so a respawn
+    // is placed with a new placement error.
+    private Dictionary<string, UnityEngine.Pose> CaptureWorldPoses(HashSet<string> forgottenUuids)
+    {
+        var worldPoses = new Dictionary<string, UnityEngine.Pose>();
+        foreach (var sgo in FindObjectsOfType<SpawnGameObject>())
+        {
+            if (string.IsNullOrEmpty(sgo.uuid) || forgottenUuids.Contains(sgo.uuid))
+                continue;
+            worldPoses[sgo.uuid] = new UnityEngine.Pose(sgo.transform.position, sgo.transform.rotation);
+        }
+        return worldPoses;
+    }
+
+    // Number of spawned parts above this one in the hierarchy.
+    private static int SpawnDepth(Transform t)
+    {
+        int depth = 0;
+        for (Transform p = t.parent; p != null; p = p.parent)
+        {
+            if (p.GetComponent<SpawnGameObject>() != null)
+                depth++;
+        }
+        return depth;
+    }
+
+    private bool ApplyObjectsToUnity(Dictionary<string, UnityEngine.Pose> previousWorldPoses)
     {
         // Keep track of all spawned objects by name for easy parenting
         Dictionary<string, GameObject> spawnedDict = new Dictionary<string, GameObject>();
@@ -106,6 +206,9 @@ public class UnityComponentSpawner : MonoBehaviour
             sgo.cadDataPath = obj.Cad_data;
             sgo.tag = "spawned";
             sgo.uuid = obj.Uuid;
+            sgo.parentFrame = obj.Parent_frame;
+            sgo.maxPositionOffset = maxPositionOffset;
+            sgo.maxRotationOffsetDeg = maxRotationOffsetDeg;
 
             // Create a child GameObject for EVERY reference frame of this object.
             // Frame names are fully qualified (e.g. "<Obj>_Vision_Hole_Left"), so this
@@ -188,6 +291,15 @@ public class UnityComponentSpawner : MonoBehaviour
                 }
             }
         }
+
+        // Third pass: set poses, parents before children, so a part kept at its previous
+        // world pose is placed relative to its parent's final pose.
+        var spawnedParts = new List<SpawnGameObject>();
+        foreach (var go in spawnedDict.Values)
+            spawnedParts.Add(go.GetComponent<SpawnGameObject>());
+        spawnedParts.Sort((a, b) => SpawnDepth(a.transform).CompareTo(SpawnDepth(b.transform)));
+        foreach (var sgo in spawnedParts)
+            sgo.ApplyPose(previousWorldPoses);
 
         return true;
     }
