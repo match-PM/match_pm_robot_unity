@@ -17,12 +17,21 @@ using Joint = Unity.Robotics.UrdfImporter.Joint;
 /// and their spawn frames). Existing objects are never touched, so
 /// all manual modifications (ArticulationBody tuning, attached scripts,
 /// sensors) survive. Typical workflow after adding a tool/chuck/tip in ROS:
-///   1. colcon build, run generate_unity_urdf.py (pm_robot_description)
-///   2. here: Scan, then Import missing parts
-///   3. Play (configureRobot activates the selected items from the manifest)
+///   1. here: Sync from ROS (Tools/sync_robot_parts.py builds and generates,
+///      then Scan and Import run automatically)
+///   2. Play (configureRobot activates the selected items from the manifest)
 /// </summary>
 public class DeltaUrdfImporter : EditorWindow
 {
+    private const string SyncScriptPath = "Tools/sync_robot_parts.py";
+    private const string SyncLogPath = "Logs/robot_parts_sync.log";
+    private const int SyncTailLength = 40;
+
+    private System.Diagnostics.Process syncProcess;
+    private int syncProgressId;
+    private bool syncCancelled;
+    private readonly Queue<string> syncTail = new Queue<string>();
+
     private string urdfPath = "";
     private string manifestPath = "";
     private string meshSourceDir = "";
@@ -73,6 +82,20 @@ public class DeltaUrdfImporter : EditorWindow
         RefreshRootCandidates();
     }
 
+    void OnDisable()
+    {
+        if (syncProcess == null)
+            return;
+        // A closed window or domain reload drops the callbacks; the script
+        // keeps running and writes its log.
+        EditorApplication.update -= PollSync;
+        syncProcess = null;
+        if (Progress.Exists(syncProgressId))
+            Progress.Finish(syncProgressId, Progress.Status.Failed);
+        Debug.LogWarning($"DeltaUrdfImporter: the ROS sync continues in the background, see {SyncLogPath}. " +
+                         "Scan and import once it is done.");
+    }
+
     /// <summary>Collects every plausible robot root in the open scene. A scene
     /// can easily end up with more than one (e.g. 'pm_robot' plus a leftover
     /// 'pm_robot (1)' from an earlier full import); silently picking one would
@@ -94,6 +117,13 @@ public class DeltaUrdfImporter : EditorWindow
         EditorGUILayout.HelpBox(
             "Imports links that exist in the generated URDF/manifest but not in the scene robot. " +
             "Existing components and world poses are preserved.", MessageType.Info);
+
+        using (new EditorGUI.DisabledScope(syncProcess != null || EditorApplication.isPlayingOrWillChangePlaymode))
+        {
+            if (GUILayout.Button(syncProcess != null ? "Syncing..." : "Sync from ROS", GUILayout.Height(30)))
+                StartSync();
+        }
+        EditorGUILayout.Space();
 
         urdfPath = EditorGUILayout.TextField("Combined URDF", urdfPath);
         manifestPath = EditorGUILayout.TextField("Manifest", manifestPath);
@@ -156,6 +186,135 @@ public class DeltaUrdfImporter : EditorWindow
                     MessageType.None);
         }
         EditorGUILayout.EndScrollView();
+    }
+
+    // =========================================================================
+    // Sync from ROS
+    // =========================================================================
+
+    private void StartSync()
+    {
+        syncCancelled = false;
+        lock (syncTail)
+            syncTail.Clear();
+
+        var process = new System.Diagnostics.Process
+        {
+            StartInfo = new System.Diagnostics.ProcessStartInfo("python3", SyncScriptPath)
+            {
+                WorkingDirectory = Path.GetDirectoryName(Application.dataPath),
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+            },
+        };
+        process.OutputDataReceived += (_, e) => CollectSyncOutput(e.Data);
+        process.ErrorDataReceived += (_, e) => CollectSyncOutput(e.Data);
+        try
+        {
+            process.Start();
+        }
+        catch (Exception e)
+        {
+            scanSummary = $"Could not run python3 {SyncScriptPath}: {e.Message}";
+            return;
+        }
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+        syncProcess = process;
+
+        scanResults = null;
+        scanSummary = "Syncing from ROS...";
+        syncProgressId = Progress.Start("Robot parts sync", "Building...", Progress.Options.Indefinite);
+        Progress.RegisterCancelCallback(syncProgressId, () =>
+        {
+            // SIGTERM lets the script stop the colcon build it started.
+            syncCancelled = true;
+            if (syncProcess != null && !syncProcess.HasExited)
+                System.Diagnostics.Process.Start("kill", $"-TERM {syncProcess.Id}");
+            return true;
+        });
+        EditorApplication.update += PollSync;
+    }
+
+    private void CollectSyncOutput(string line)
+    {
+        if (line == null)
+            return;
+        lock (syncTail)
+        {
+            syncTail.Enqueue(line);
+            while (syncTail.Count > SyncTailLength)
+                syncTail.Dequeue();
+        }
+    }
+
+    private void PollSync()
+    {
+        string line;
+        lock (syncTail)
+            line = syncTail.LastOrDefault();
+        if (!string.IsNullOrEmpty(line) && Progress.Exists(syncProgressId))
+            Progress.SetDescription(syncProgressId, line.Length > 120 ? line.Substring(0, 120) : line);
+
+        if (!syncProcess.HasExited)
+            return;
+        EditorApplication.update -= PollSync;
+        syncProcess.WaitForExit(); // flushes the asynchronous output handlers
+        FinishSync();
+    }
+
+    private void FinishSync()
+    {
+        int exitCode = syncProcess.ExitCode;
+        syncProcess.Dispose();
+        syncProcess = null;
+
+        string tail;
+        lock (syncTail)
+            tail = string.Join("\n", syncTail);
+        string log = Path.Combine(Path.GetDirectoryName(Application.dataPath), SyncLogPath);
+        bool succeeded = exitCode == 0 && !syncCancelled;
+        if (Progress.Exists(syncProgressId))
+            Progress.Finish(syncProgressId, succeeded ? Progress.Status.Succeeded : Progress.Status.Failed);
+        Repaint();
+
+        if (syncCancelled)
+        {
+            scanSummary = "ROS sync cancelled.";
+            return;
+        }
+        if (exitCode != 0)
+        {
+            scanSummary = $"ROS sync failed (exit code {exitCode}), nothing was imported. Log: {log}";
+            Debug.LogError($"DeltaUrdfImporter: ROS sync failed (exit code {exitCode}). Full log: {log}\n{tail}");
+            return;
+        }
+        Debug.Log($"DeltaUrdfImporter: ROS sync finished. Full log: {log}\n{tail}");
+
+        RefreshRootCandidates();
+        if (robotRoot == null)
+        {
+            scanSummary = "ROS sync finished. Assign the robot root, then Scan and import.";
+            return;
+        }
+        Scan();
+
+        // Importing into the wrong robot would be silent, so several candidate
+        // roots stop here for the explicit choice the warning above asks for.
+        if (rootCandidates.Count > 1)
+        {
+            scanSummary = "ROS sync finished. The scene has several robot roots, check the assigned one " +
+                          "and import manually.\n" + scanSummary;
+            return;
+        }
+        if (!EditorApplication.isPlayingOrWillChangePlaymode &&
+            scanResults != null && scanResults.Any(r => r.blockedReason == null))
+        {
+            Import();
+            scanSummary = "ROS sync finished and parts imported, save the scene to keep them.\n" + scanSummary;
+        }
     }
 
     // =========================================================================

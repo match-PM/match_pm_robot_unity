@@ -66,6 +66,7 @@ public class configureRobot : MonoBehaviour
     // -------------------------------------------------------------------------
     private Dictionary<string, object> _yamlRoot;
     private RobotUnityManifest _manifest;
+    private ConfocalEpsilon _topConfocalSensor;
     private Vector3 _gonioRightAppliedOffset; // Unity frame, currently added to Gonio Right
 
     // ROS2
@@ -186,6 +187,7 @@ public class configureRobot : MonoBehaviour
         ConfigureAssemblies(root);
         ConfigureSmarpodStation(root);
         ApplyManifestSections(root);
+        ConfigureTopConfocalSensor(root);
     }
 
     // =========================================================================
@@ -205,6 +207,58 @@ public class configureRobot : MonoBehaviour
         measuringSystem_ConfocalHead?.SetActive(
             !manifestControlsConfocalHead && GetBool(d, "use_confocal_head"));
         measuringSystem_KeyenceBottom?.SetActive(GetBool(d, "use_keyence_bottom"));
+    }
+
+    // The legacy head owns the sensor prefab, but manifest heads contain only
+    // imported geometry. Move the sensor before leaving its old parent disabled.
+    private void ConfigureTopConfocalSensor(Dictionary<string, object> root)
+    {
+        var section = _manifest?.sections?.FirstOrDefault(
+            s => s.yamlPath == "confocal_sensor_head");
+        if (section == null || robotRoot == null)
+            return;
+
+        if (_topConfocalSensor == null && measuringSystem_ConfocalHead != null)
+            _topConfocalSensor = measuringSystem_ConfocalHead
+                .GetComponentsInChildren<ConfocalEpsilon>(true)
+                .FirstOrDefault(s => s.ServiceName ==
+                    "/uepsilon_two_channel_controller/IFC2422/ch1/distance/srv");
+        if (_topConfocalSensor == null)
+            _topConfocalSensor = robotRoot.GetComponentsInChildren<ConfocalEpsilon>(true)
+                .FirstOrDefault(s => s.ServiceName ==
+                    "/uepsilon_two_channel_controller/IFC2422/ch1/distance/srv");
+
+        if (!TryGetSubDict(root, "measuring_systems", out var measuring) ||
+            !GetBool(measuring, "use_confocal_head"))
+        {
+            _topConfocalSensor?.gameObject.SetActive(false);
+            return;
+        }
+
+        if (!TryGetSectionDict(root, section.yamlPath, out var config))
+            return;
+        var selected = section.selectKeys.Select(k => GetString(config, k)).ToArray();
+        var item = section.items.FirstOrDefault(i => IsSelected(i.yamlNames, selected));
+        var links = BuildLinkIndex();
+        GameObject head = null;
+        foreach (var link in item?.rootLinks ?? Array.Empty<string>())
+            if (links.TryGetValue(link, out var candidate) && candidate.activeInHierarchy)
+            {
+                head = candidate;
+                break;
+            }
+
+        if (_topConfocalSensor == null || head == null)
+        {
+            _topConfocalSensor?.gameObject.SetActive(false);
+            Debug.LogError("configureRobot: cannot attach the top confocal sensor to the selected head. " +
+                "Check the legacy sensor prefab and import the selected manifest head.");
+            return;
+        }
+
+        _topConfocalSensor.AttachToHead(head.transform);
+        _topConfocalSensor.gameObject.SetActive(true);
+        Debug.Log($"configureRobot: top confocal sensor attached to '{head.name}'.");
     }
 
     private void ConfigureAssemblies(Dictionary<string, object> root)

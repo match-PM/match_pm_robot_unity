@@ -72,7 +72,11 @@ def load_config():
     try:
         config = json.loads(CONFIG_FILE.read_text())
         ws_src = os.environ.get("PM_ROS2_WS_SRC", config["ros2_ws_src"])
-        ros2_for_unity_value = os.environ.get("PM_ROS2_FOR_UNITY", config["ros2_for_unity"])
+        ros2_for_unity_values = [config["ros2_for_unity"]]
+        if config.get("ros2_for_unity_path_2"):
+            ros2_for_unity_values.append(config["ros2_for_unity_path_2"])
+        if "PM_ROS2_FOR_UNITY" in os.environ:
+            ros2_for_unity_values = [os.environ["PM_ROS2_FOR_UNITY"]]
         interface_repo = config["interface_repo"]
     except FileNotFoundError:
         raise SyncError(f"configuration file not found: {CONFIG_FILE}")
@@ -81,7 +85,18 @@ def load_config():
     except KeyError as error:
         raise SyncError(f"missing required key {error} in {CONFIG_FILE}")
 
-    ros2_for_unity = Path(os.path.expanduser(ros2_for_unity_value))
+    candidates = [Path(os.path.expanduser(value)) for value in ros2_for_unity_values]
+    ros2_for_unity = next(
+        (path for path in candidates if not ros2_for_unity_problems(path, path / interface_repo)),
+        candidates[0],
+    )
+    if len(candidates) > 1 and ros2_for_unity_problems(ros2_for_unity, ros2_for_unity / interface_repo):
+        problems = [problem for path in candidates
+                    for problem in ros2_for_unity_problems(path, path / interface_repo)]
+        raise SyncError(
+            "Interface sync path validation failed for both 'ros2_for_unity' and "
+            "'ros2_for_unity_path_2':\n- " + "\n- ".join(problems) +
+            "\nUpdate Tools/ros2_interfaces.json or set PM_ROS2_FOR_UNITY before starting Unity.")
     return Config(
         ws_src=Path(os.path.expanduser(ws_src)),
         ros2_for_unity=ros2_for_unity,
@@ -94,6 +109,19 @@ def configured_by(environment_name, json_key):
     if environment_name in os.environ:
         return f"environment variable {environment_name}"
     return f"'{json_key}' in {CONFIG_FILE.relative_to(PROJECT)}"
+
+
+def ros2_for_unity_problems(root, mirror):
+    if not root.is_dir():
+        return [f"ros2-for-unity directory does not exist: {root}"]
+    expected = (
+        (root / "src" / "ros2cs" / "build.sh", True, "ros2cs build script"),
+        (root / "src" / "ros2cs" / "src", False, "bundled ROS2 interface sources"),
+        (mirror, False, "custom interface mirror"),
+    )
+    return [f"{description} not found: {path}"
+            for path, is_file, description in expected
+            if not (path.is_file() if is_file else path.is_dir())]
 
 
 def validate_config(config):
@@ -118,17 +146,7 @@ def validate_config(config):
             detail += f"\n  possible installation found at: {likely}"
         problems.append(detail)
     else:
-        expected = (
-            (config.ros2_for_unity / "src" / "ros2cs" / "build.sh", True,
-             "ros2cs build script"),
-            (config.ros2_for_unity / "src" / "ros2cs" / "src", False,
-             "bundled ROS2 interface sources"),
-            (config.mirror, False, "custom interface mirror"),
-        )
-        for path, is_file, description in expected:
-            exists = path.is_file() if is_file else path.is_dir()
-            if not exists:
-                problems.append(f"{description} not found: {path}")
+        problems.extend(ros2_for_unity_problems(config.ros2_for_unity, config.mirror))
 
     if problems:
         raise SyncError(

@@ -37,6 +37,17 @@ namespace ROS2
         public string PublisherName = "/pm_uepsilon_confocal/value";
         private const float startPositionOffset = 0.003f;
 
+        // Imported head origins are the calibrated sensor TCP. Keep only the
+        // ray start offset when switching heads, including after Start has run.
+        public void AttachToHead(Transform head)
+        {
+            transform.SetParent(head, false);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+            if (ros2Initialized)
+                transform.position -= GetRayDirection() * startPositionOffset;
+        }
+
         private Vector3 GetRayDirection()
         {
             switch (Direction)

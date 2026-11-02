@@ -93,6 +93,7 @@ To bring them into Unity:
 Packages that are still in the mirror but no longer in the workspace are kept and reported as `orphaned`. `python3 Tools/sync_ros2_interfaces.py sync --prune` removes them, but refuses as long as a Unity script still uses them.
 
 Paths can be changed in `Tools/ros2_interfaces.json` or with the environment variables `PM_ROS2_WS_SRC` and `PM_ROS2_FOR_UNITY`.
+The sync tries `ros2_for_unity` first, then `ros2_for_unity_path_2`, selecting the first installation with all required files and directories. `~` expands to the current user's home directory. Setting `PM_ROS2_FOR_UNITY` overrides both JSON paths.
 
 ## Implementing
 
