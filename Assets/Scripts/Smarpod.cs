@@ -311,6 +311,56 @@ namespace ROS2
             });
         }
 
+        // --- Robot state save/restore (RobotStateTeleporter, main thread only) ---
+
+        /// <summary>True if `body` is one of the plate or tower joints this
+        /// script sets every physics step.</summary>
+        public bool OwnsBody(ArticulationBody body)
+        {
+            return body != null && (Array.IndexOf(PlateAxes, body) >= 0 || Array.IndexOf(TowerAxes, body) >= 0);
+        }
+
+        /// <summary>Current commanded pose X/Y/Z [m], A/B/C [rad] and speed [m/s].</summary>
+        public void GetSavedState(double[] pose, out double currentSpeed)
+        {
+            Array.Copy(setpoint, pose, 6);
+            currentSpeed = speed;
+        }
+
+        /// <summary>Places the platform at `pose` without a move and holds it
+        /// there. Commands received before the call are applied first, so none
+        /// of them can replace the jump afterwards.</summary>
+        public bool Teleport(double[] pose, out string error)
+        {
+            if (pose == null || pose.Length != 6 || Array.Exists(pose, v => double.IsNaN(v) || double.IsInfinity(v)))
+            {
+                error = "the SmarPod pose needs six finite values";
+                return false;
+            }
+            if (!WithinTowerStroke(pose))
+            {
+                error = $"the SmarPod pose exceeds the tower stroke of {maxTowerStroke * 1000.0:0.###} mm";
+                return false;
+            }
+
+            while (mainThreadActions.TryDequeue(out var action))
+                action?.Invoke();
+
+            Array.Copy(pose, setpoint, 6);
+            Array.Copy(pose, target, 6);
+            Array.Clear(setpointVelocity, 0, 6);
+            moveStatus = StatusHolding;
+            holdUntil = double.PositiveInfinity;
+
+            var axes = PlateAxes;
+            for (int i = 0; i < 6; i++)
+                SetJointPosition(axes[i], setpoint[i]);
+            UpdateTowers(new SmarpodPose(pose[0], pose[1], pose[2], pose[3], pose[4], pose[5]));
+
+            error = null;
+            return true;
+        }
+
         // --- State ---
 
         private void PublishState(SmarpodPose pose)

@@ -51,26 +51,39 @@ public class RobotAxisControl : MonoBehaviour
     void writePosition()
     {
         // Get the current position of the axis.
-        float position = axis.articulationBody.jointPosition[0];
-        Variant value;
+        Variant value = new Variant(PositionToIncrements(axis.articulationBody.jointPosition[0]));
+        OPCUA_Client.writeToServer(gameObject.name,  writeNodeName[(int)mode], value);
+    }
 
+    // Converts a joint position [m or rad] to OPC UA increments (inverse of DriveComponent.move).
+    int PositionToIncrements(float position)
+    {
         if (axis.articulationBody.jointType == ArticulationJointType.RevoluteJoint)
         {
             if (axis.articulationBody.transform.name == "RobotAxisR" || axis.articulationBody.transform.name == "RobotAxisQ")
             {
-                value = new Variant((int)(position * 180 / Math.PI / (float)unitsPerIncrement)*-1);
+                return (int)(position * 180 / Math.PI / (float)unitsPerIncrement)*-1;
             }
-            else
-            {
-                value = new Variant((int)(position * 180 / Math.PI / (float)unitsPerIncrement));
-            }
+            return (int)(position * 180 / Math.PI / (float)unitsPerIncrement);
         }
-        else
-        {
-            value = new Variant((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
-        }
-        //value = new Variant((int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6)));
-        OPCUA_Client.writeToServer(gameObject.name,  writeNodeName[(int)mode], value);
+        return (int)(position / (float)unitsPerIncrement * (float)Math.Pow(10, 6));
+    }
+
+    /// <summary>
+    /// Called by RobotStateTeleporter after it placed the joint at `position` [m or rad]. Writes the new
+    /// position as target and actual position, so the OPC UA server matches Unity.
+    /// The axis does not move: the drive already holds the new position, and the echo
+    /// of the target only sets the drive to the same value.
+    /// </summary>
+    public void OnTeleported(float position)
+    {
+        if (!isComplete || mode != chooseMode.Mode.Simulation || !OPCUA_Client.IsConnected)
+            return;
+
+        unitsPerIncrement = (double)OPCUA_Client.allNodes[gameObject.name + "/" + "UnitsPerIncrement"].dataValue.Value;
+        Variant value = new Variant(PositionToIncrements(position));
+        OPCUA_Client.WriteNodeDirectly(gameObject.name, "TargetPosition", value);
+        OPCUA_Client.writeToServer(gameObject.name, "ActualPosition", value);
     }
 
     //  Start is called before the first frame update

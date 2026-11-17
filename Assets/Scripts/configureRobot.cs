@@ -44,6 +44,10 @@ public class configureRobot : MonoBehaviour
     [Tooltip("YAML: measuring_systems.use_keyence_bottom")]
     public GameObject measuringSystem_KeyenceBottom;
 
+    [Tooltip("YAML: measuring_systems.use_robot_head_camera — simulated RealSense D405 on the Z axis " +
+             "(RGB, depth, segmentation). Found automatically (RealSenseD405 component) when empty.")]
+    public GameObject measuringSystem_RobotHeadCamera;
+
     // -------------------------------------------------------------------------
     // Assemblies (enable flags; their chucks/tools come from the manifest)
     // -------------------------------------------------------------------------
@@ -207,6 +211,24 @@ public class configureRobot : MonoBehaviour
         measuringSystem_ConfocalHead?.SetActive(
             !manifestControlsConfocalHead && GetBool(d, "use_confocal_head"));
         measuringSystem_KeyenceBottom?.SetActive(GetBool(d, "use_keyence_bottom"));
+
+        // Off when the key is missing (older configs): the camera only renders and
+        // publishes when it is explicitly enabled.
+        GameObject headCamera = FindRobotHeadCamera();
+        if (headCamera != null)
+            headCamera.SetActive(GetBool(d, "use_robot_head_camera"));
+    }
+
+    private GameObject FindRobotHeadCamera()
+    {
+        if (measuringSystem_RobotHeadCamera == null)
+        {
+            var camera = FindObjectsByType<RealSenseD405>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                .FirstOrDefault(c => c.gameObject.scene.IsValid());
+            if (camera != null)
+                measuringSystem_RobotHeadCamera = camera.gameObject;
+        }
+        return measuringSystem_RobotHeadCamera;
     }
 
     // The legacy head owns the sensor prefab, but manifest heads contain only
